@@ -1,3 +1,11 @@
+#Eclipse Folders
+Debug/
+Release/
+*.cproject
+*.project
+.settings/
+*.stackdump
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
