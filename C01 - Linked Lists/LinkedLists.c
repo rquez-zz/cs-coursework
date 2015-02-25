@@ -81,7 +81,6 @@ void readInFile(Node *head) {
 		return;
 	}
 
-
 	/*
 	 * Read in each line in the file as long
 	 * as there is a line to read. Each line
