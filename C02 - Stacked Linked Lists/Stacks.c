@@ -9,23 +9,25 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct produceItem {
+struct produce_item {
 
 	char produce[20];
 	char type[20];
-	char soldBy[20];
+	char sold_by[20];
 	float price;
-	int quantityInStock;
-	struct produceItem *next;
+	int stock_quantity;
+	struct produce_item *next;
+
 };
 
-// Output %5d %3 %-13s %-16s %6.2f %8d \n
-
-void stock_produce_department();
-void display_inventory();
+void menu(struct produce_item** top);
+void stock_produce_department(struct produce_item** top);
+void display_inventory(struct produce_item** top);
 void reverse_inventory();
 void export_inventory();
-void insert(char* produce, char* type, char* soldBy, float price);
+void push(struct produce_item** top, char* name, char* type, char* sold_by, float price, int stock_quantity);
+void pop(struct produce_item** top);
+void clear_stdin();
 
 int main () {
 
@@ -33,17 +35,17 @@ int main () {
 	setvbuf(stdout, NULL, _IONBF, 0);
 	setvbuf(stderr, NULL, _IONBF, 0);
 
-	char * charPrice = "1.29";
-	//float price = strtof(charPrice);
-	//printf("%.2f", price);
+	// Create the top node of the stack
+	struct produce_item *top = NULL;
 
-	//menu();
+	menu(&top);
 
 	return 0;
 }
 
-int menu() {
+void menu(struct produce_item** top) {
 
+	// Print Menu
 	printf("List Operations\n");
 	printf("===============\n");
 	printf("1. Stock Produce Department\n");
@@ -52,34 +54,50 @@ int menu() {
 	printf("4. Export Produce Inventory\n");
 	printf("5. Exit Program\n");
 
-	int choice;
+	int exit = 1;
 
-	switch(choice) {
-		case 1:
-			stock_produce_department();
-			break;
-		case 2:
-			//display_inventory();
-			break;
-		case 3:
-			//reverse_inventory();
-			break;
-		case 4:
-			//export_inventory();
-			break;
-		case 5:
-			return 0;
-			break;
-		default:
-			break;
+	stock_produce_department(top);
+	display_inventory(top);
+	reverse_inventory(top);
+	display_inventory(top);
+
+	while (exit == 0) {
+
+		//Prompt User Input
+		int menuChoice = 1;
+		//scanf("%d", &menuChoice);
+
+		// Clear STDIN
+		//clear_stdin();
+
+		switch(menuChoice) {
+			case 1:
+				stock_produce_department(top);
+				break;
+			case 2:
+				//display_inventory();
+				break;
+			case 3:
+				//reverse_inventory();
+				break;
+			case 4:
+				//export_inventory();
+				break;
+			case 5:
+				// Exit Program
+				exit = 1;
+				break;
+			default:
+				break;
+		}
 	}
-
-	menu();
-
-	return 0;
 }
 
-void stock_produce_department() {
+void clear_stdin() {
+	while(getchar() != '\n');
+}
+
+void stock_produce_department(struct produce_item** top) {
 
 	// Pointer to file
 	FILE *ptrFile;
@@ -108,27 +126,113 @@ void stock_produce_department() {
 
 		// Initalize pointers for the following operations
 		char *token = NULL;
-		char *produce = NULL;
+		char *Produce_item = NULL;
 		char *type = NULL;
-		char *soldBy = NULL;
-		char *char_price = NULL;
+		char *sold_by = NULL;
 
+		float price;
+		int stock_quantity;
+
+		// Read Produce_item Name
 		token = (char *)strtok(str, ",");
-		produce = token;
+		Produce_item = token;
 
+		// Read Produce_item Type
 		token = strtok(NULL, ",");
 		type = token;
 
+		// Read Sold By
 		token = strtok(NULL, ",");
-		soldBy = token;
+		sold_by = token;
 
+		// Read Produce_item Price as Char*
 		token = strtok(NULL, ",");
-		char_price = token;
+		// Convert Char* to float
+		price = (float)strtof(token, NULL);
 
-		//float price = strtof(price);
+		// Read Stock Quantity
+		token = strtok(NULL, ",");
+		// Convert Char* to int
+		stock_quantity = (int)atoi(token);
 
-		//insert(produce, type, soldBy, price);
+		// Push into stack
+		push(top, Produce_item, type, sold_by, price, stock_quantity);
+	}
+}
+
+void push(struct produce_item** top, char* produce, char* type, char* sold_by, float price, int stock_quantity) {
+
+	// Create new produce item
+	struct produce_item *item = calloc(1, sizeof(struct produce_item));
+
+	// Insert values into new item
+	strncpy(item->produce,produce,sizeof(item->produce));
+	strncpy(item->type,type,sizeof(item->type));
+	strncpy(item->sold_by,sold_by,sizeof(item->type));
+	item->price = price;
+	item->stock_quantity = stock_quantity;
+
+	// Check if this is the first push
+	if (*top != NULL) {
+
+		// Let item point to top node
+		item->next = *top;
 
 	}
 
+	// Change top pointer to item
+	*top = item;
+
 }
+
+void display_inventory(struct produce_item** top) {
+
+	struct produce_item* helper = *top;
+
+	int item_count = 1;
+
+	// Print Header
+	printf("===========================================================================\n");
+	printf(" %-7s %-14s %-16s %-14s %-8s %-8s\n", "Item #", "Produce", "Type", "Sold By", "Price", "In Stock");
+	printf("===========================================================================\n");
+
+	while (helper->next != NULL) {
+		// Print with formatting
+		printf("   %-5d %-13s %-16s %-13s %6.2f %8d\n",
+				item_count++,
+				helper->produce,
+				helper->type,
+				helper->sold_by,
+				helper->price,
+				helper->stock_quantity);
+
+		// Move to the next item in stack
+		helper = helper->next;
+
+	}
+}
+
+void reverse_inventory(struct produce_item** top) {
+
+	// Base Case
+	if ((*top)->next != NULL) {
+		reverse_inventory(&((*top)->next));
+	}
+
+	// Reverse link between nodes
+	(*top)->next = *top;
+
+
+}
+
+void export_inventory(struct produce_item** top) {
+
+
+}
+
+void pop (struct produce_item** top) {
+
+
+}
+
+
