@@ -22,11 +22,10 @@ struct produce_item {
 
 void menu(struct produce_item** top);
 void stock_produce_department(struct produce_item** top);
-void display_inventory(struct produce_item** top);
-void reverse_inventory();
+char* inventory_table(struct produce_item** top);
+void reverse_inventory(struct produce_item** top, struct produce_item** prev_top);
 void export_inventory();
 void push(struct produce_item** top, char* name, char* type, char* sold_by, float price, int stock_quantity);
-void pop(struct produce_item** top);
 void clear_stdin();
 
 int main () {
@@ -45,43 +44,37 @@ int main () {
 
 void menu(struct produce_item** top) {
 
-	// Print Menu
-	printf("List Operations\n");
-	printf("===============\n");
-	printf("1. Stock Produce Department\n");
-	printf("2. Display Produce Inventory\n");
-	printf("3. Reverse Order of Produce Inventory\n");
-	printf("4. Export Produce Inventory\n");
-	printf("5. Exit Program\n");
-
-	int exit = 1;
-
-	stock_produce_department(top);
-	display_inventory(top);
-	reverse_inventory(top);
-	display_inventory(top);
+	int exit = 0;
 
 	while (exit == 0) {
 
+		// Print Menu
+		printf("List Operations\n");
+		printf("===============\n");
+		printf("1. Stock Produce Department\n");
+		printf("2. Display Produce Inventory\n");
+		printf("3. Reverse Order of Produce Inventory\n");
+		printf("4. Export Produce Inventory\n");
+		printf("5. Exit Program\n");
+
 		//Prompt User Input
 		int menuChoice = 1;
-		//scanf("%d", &menuChoice);
-
-		// Clear STDIN
-		//clear_stdin();
+		printf("Enter your choice: ");
+		scanf("%d", &menuChoice);
 
 		switch(menuChoice) {
 			case 1:
 				stock_produce_department(top);
 				break;
 			case 2:
-				//display_inventory();
+				printf("%s", (char*)inventory_table(top));
 				break;
 			case 3:
-				//reverse_inventory();
+				reverse_inventory(top, &((*top)->next));
+				printf("Produce inventory has been reversed.\n");
 				break;
 			case 4:
-				//export_inventory();
+				export_inventory(top);
 				break;
 			case 5:
 				// Exit Program
@@ -100,7 +93,7 @@ void clear_stdin() {
 void stock_produce_department(struct produce_item** top) {
 
 	// Pointer to file
-	FILE *ptrFile;
+	FILE *ptr_file;
 
 	// Stores one line from the file
 	char str[100];
@@ -109,10 +102,10 @@ void stock_produce_department(struct produce_item** top) {
 	 * Assume input.txt exists in the
 	 * same directory this source file
 	 */
-	ptrFile = fopen("AssignmentTwoInput.txt" , "r");
+	ptr_file = fopen("AssignmentTwoInput.txt" , "r");
 
 	// Check if file exists
-	if(ptrFile == NULL) {
+	if(ptr_file == NULL) {
 		perror("Error opening file.");
 		return;
 	}
@@ -122,7 +115,7 @@ void stock_produce_department(struct produce_item** top) {
 	 * as there is a line to read. Each line
 	 * is stored in the str array
 	 */
-	while ( fgets(str, 100, (FILE*)ptrFile) != NULL ){
+	while ( fgets(str, 100, (FILE*)ptr_file) != NULL ){
 
 		// Initalize pointers for the following operations
 		char *token = NULL;
@@ -158,6 +151,9 @@ void stock_produce_department(struct produce_item** top) {
 		// Push into stack
 		push(top, Produce_item, type, sold_by, price, stock_quantity);
 	}
+
+	fclose(ptr_file);
+	printf("Produce department has been stocked.\n");
 }
 
 void push(struct produce_item** top, char* produce, char* type, char* sold_by, float price, int stock_quantity) {
@@ -185,20 +181,22 @@ void push(struct produce_item** top, char* produce, char* type, char* sold_by, f
 
 }
 
-void display_inventory(struct produce_item** top) {
+char* inventory_table(struct produce_item** top) {
 
 	struct produce_item* helper = *top;
 
+	char* target = malloc(2500);
+
 	int item_count = 1;
 
-	// Print Header
-	printf("===========================================================================\n");
-	printf(" %-7s %-14s %-16s %-14s %-8s %-8s\n", "Item #", "Produce", "Type", "Sold By", "Price", "In Stock");
-	printf("===========================================================================\n");
+	// Concat header to buffer string
+	sprintf(target,"%s","==========================================================================\r\n");
+	sprintf(target+strlen(target)," %-7s %-14s %-16s %-14s %-8s %-8s\r\n", "Item #", "Produce", "Type", "Sold By", "Price", "In Stock");
+	sprintf(target+strlen(target),"%s","==========================================================================\r\n");
 
-	while (helper->next != NULL) {
-		// Print with formatting
-		printf("   %-5d %-13s %-16s %-13s %6.2f %8d\n",
+	while (helper != NULL) {
+		// Concat row to buffer
+		sprintf(target+strlen(target),"   %-5d %-13s %-16s %-13s %6.2f %8d\r\n",
 				item_count++,
 				helper->produce,
 				helper->type,
@@ -210,27 +208,78 @@ void display_inventory(struct produce_item** top) {
 		helper = helper->next;
 
 	}
+
+	return target;
 }
 
-void reverse_inventory(struct produce_item** top) {
+void reverse_inventory(struct produce_item** top, struct produce_item** below_top) {
 
-	// Base Case
-	if ((*top)->next != NULL) {
-		reverse_inventory(&((*top)->next));
+	/*
+	 * Each time this function is invoked, it handles 3 nodes
+	 *
+	 * top[C] -> below_top[B] -> [A]
+	 */
+	struct produce_item* helper;
+
+	if (*below_top != NULL) {
+
+		/*
+		 * top[C] -> below_top[B] -> [A]
+		 * Helper is a copy of node pointer A
+		 */
+		helper = (*below_top)->next;
+
+		/*
+		 * top[C] -> below_top[B] -> [C]
+		 * Node pointer A becomes C
+		 * Which makes C and B point to each other
+		 * top[C] <-> below_top[B]
+		 */
+		(*below_top)->next = (*top);
+
+		/*
+		 * top[B] -> below_top[B]
+		 * Node pointer C becomes B
+		 */
+		*top = *below_top;
+
+		/*
+		 * top[B] -> below_top[A]
+		 * Node pointer B (pointed by below_top)
+		 * becomes node pointer helper which is A
+		 */
+		*below_top = helper;
+
+		/*
+		 * top[B] -> below_top[A]
+		 */
+		reverse_inventory(top, below_top);
 	}
-
-	// Reverse link between nodes
-	(*top)->next = *top;
-
 
 }
 
 void export_inventory(struct produce_item** top) {
 
+	char* file_name = "AssignmentTwoOutput.txt";
 
-}
+	printf("Trying to create file %s\n", file_name);
 
-void pop (struct produce_item** top) {
+	// Open file
+	FILE *ptr_file = fopen(file_name, "w");
+
+	// Check if it exists
+	if (ptr_file == NULL) {
+		printf("Error opening file!\n");
+		return;
+	}
+
+	// Write table string to file
+	fprintf(ptr_file, "%s", inventory_table(top));
+
+	printf("Successfully wrote out file %s\n", file_name	);
+
+	// Close file
+	fclose(ptr_file);
 
 
 }
