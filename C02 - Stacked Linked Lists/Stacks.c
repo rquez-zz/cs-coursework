@@ -30,10 +30,6 @@ void clear_stdin();
 
 int main () {
 
-	// Set stream buffer for eclipse console
-	setvbuf(stdout, NULL, _IONBF, 0);
-	setvbuf(stderr, NULL, _IONBF, 0);
-
 	// Create the top node of the stack
 	struct produce_item *top = NULL;
 
@@ -218,41 +214,31 @@ void reverse_inventory(struct produce_item** top, struct produce_item** below_to
 	 * Each time this function is invoked, it handles 3 nodes
 	 *
 	 * top[C] -> below_top[B] -> [A]
+	 *
+	 * Becomes
+	 *
+	 * top[B] -> [C] -> below_top[A]
+	 *
+	 * Each time this block runs, the pointer
+	 * at C is placed at the bottom, then
+	 * the node pointer at B has it's next
+	 * point to C, which then points to A.
+	 *
+	 * below_top becomes the pointer to the node
+	 * pointer above top.
 	 */
 	struct produce_item* helper;
 
 	if (*below_top != NULL) {
 
-		/*
-		 * top[C] -> below_top[B] -> [A]
-		 * Helper is a copy of node pointer A
-		 */
 		helper = (*below_top)->next;
 
-		/*
-		 * top[C] -> below_top[B] -> [C]
-		 * Node pointer A becomes C
-		 * Which makes C and B point to each other
-		 * top[C] <-> below_top[B]
-		 */
 		(*below_top)->next = (*top);
 
-		/*
-		 * top[B] -> below_top[B]
-		 * Node pointer C becomes B
-		 */
 		*top = *below_top;
 
-		/*
-		 * top[B] -> below_top[A]
-		 * Node pointer B (pointed by below_top)
-		 * becomes node pointer helper which is A
-		 */
 		*below_top = helper;
 
-		/*
-		 * top[B] -> below_top[A]
-		 */
 		reverse_inventory(top, below_top);
 	}
 
