@@ -28,7 +28,32 @@ int median(struct binTreeNode* root);
 int sum(struct binTreeNode* root);
 int count(struct binTreeNode* root);
 int delete(struct binTreeNode* root);
-void generateBST();
+int* getIntArrayFromFile(char* fileName);
+int* sortIntArray(int* intArray);
+struct binTreeNode* generateBST(int* sortedIntArray);
+int getMedian(int* sortedIntArray);
+int* getLeftHalf(int* sortedIntArray);
+int* getRightHalf(int* sortedIntArray);
+
+struct binTreeNode* generateBST(int* sortedIntArray) {
+    
+    // Create the node
+    struct binTreeNode* node = malloc(sizeof(struct binTreeNode));
+    
+    // Get the median value in the sorted array
+    int medianValue = getMedian(sortedIntArray);
+    node->data = medianValue;
+    
+    // Get the left half of array
+    int* leftHalf = getLeftHalf(sortedIntArray);
+    node->left = generateBST(leftHalf);
+
+    // Get the right half of array
+    int* rightHalf = getRightHalf(sortedIntArray);
+    node->right = generateBST(rightHalf);
+    
+    return node;  
+}
 
 int main () {
 
