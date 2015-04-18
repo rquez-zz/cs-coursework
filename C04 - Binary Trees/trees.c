@@ -30,7 +30,7 @@ int count(struct binTreeNode* root);
 int delete(struct binTreeNode* root);
 int* getIntArrayFromFile();
 int* sortIntArray(int* intArray, int length);
-struct binTreeNode* generateBST(int* sortedIntArray[], int low, int high);
+struct binTreeNode* generateBST(int* sortedIntArray, int low, int high);
 int getIntArrayLength();
 
 int getIntArrayLength() {
@@ -90,7 +90,7 @@ int* sortIntArray(int* unsortedArray, int length) {
 
     return unsortedArray;
 }
-struct binTreeNode* generateBST(int* sortedIntArray[], int low, int high) {
+struct binTreeNode* generateBST(int* sortedIntArray, int low, int high) {
     
     /*
      * When the high index isn't equal to the low index, that means
@@ -100,14 +100,16 @@ struct binTreeNode* generateBST(int* sortedIntArray[], int low, int high) {
     if (high > low) {
         int mid = (low + high) / 2; 
         struct binTreeNode* node = malloc(sizeof(struct binTreeNode));
-        node->data = *sortedIntArray[mid];
+        printf("DEBUG - NODE VALUE:%d LOW:%d HIGH:%d\n", sortedIntArray[mid], low, high);
+        node->data = sortedIntArray[mid];
         node->left = generateBST(sortedIntArray, low, mid-1);
         node->right = generateBST(sortedIntArray, mid+1, high);
         return node;
     } else if (high == low) { 
         // High = Low so there's only 1 value to choose from
         struct binTreeNode* node = malloc(sizeof(struct binTreeNode));
-        node->data = *sortedIntArray[high];
+        printf("DEBUG - NODE VALUE:%d LOW:%d HIGH:%d\n", sortedIntArray[high], low, high);
+        node->data = sortedIntArray[high];
         node->left = NULL;
         node->right = NULL;
         return node;
@@ -117,14 +119,44 @@ struct binTreeNode* generateBST(int* sortedIntArray[], int low, int high) {
     }
 }
 
+void printPreOrder(struct binTreeNode* root) {
+
+    if (root != NULL) {
+        printf("%d ", root->data);
+        printPreOrder(root->left);
+        printPreOrder(root->right);
+    }
+}
+
+void printInOrder(struct binTreeNode* root) {
+
+    if (root != NULL) {
+        printInOrder(root->left);
+        printf("%d ", root->data);
+        printInOrder(root->right);
+    }
+}
+
+void printPostOrder(struct binTreeNode* root) {
+
+    if (root != NULL) {
+        printPostOrder(root->left);
+        printPostOrder(root->right);
+        printf("%d ", root->data);
+    }
+}
 int main () {
 
     int arrayLength = getIntArrayLength();
     int* unsortedArray = getIntArrayFromFile(arrayLength);
     int* sortedArray = sortIntArray(unsortedArray, arrayLength);
-    int c;
-    for (c = 0; c < arrayLength; c++) {
-        printf("%d\n", sortedArray[c]);
-    } 
+    printf("DEBUG - ARRAY LENGTH:%d\n", arrayLength);
+    struct binTreeNode* rootNode = generateBST(sortedArray, 0, arrayLength - 1);
+    printf("Pre Order\n");
+    printPreOrder(rootNode);
+    printf("\nIn Order\n");
+    printInOrder(rootNode);
+    printf("\nPost Order\n");
+    printPostOrder(rootNode);
     return 0;
 }
