@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct binTreeNode
 {
@@ -15,7 +16,6 @@ struct binTreeNode
     struct binTreeNode* left;
 };
 
-// Generate BST
 void printPreOrder(struct binTreeNode* root);
 void printInOrder(struct binTreeNode* root);
 void printPostOrder(struct binTreeNode* root);
@@ -28,35 +28,103 @@ int median(struct binTreeNode* root);
 int sum(struct binTreeNode* root);
 int count(struct binTreeNode* root);
 int delete(struct binTreeNode* root);
-int* getIntArrayFromFile(char* fileName);
-int* sortIntArray(int* intArray);
-struct binTreeNode* generateBST(int* sortedIntArray);
-int getMedian(int* sortedIntArray);
-int* getLeftHalf(int* sortedIntArray);
-int* getRightHalf(int* sortedIntArray);
+int* getIntArrayFromFile();
+int* sortIntArray(int* intArray, int length);
+struct binTreeNode* generateBST(int* sortedIntArray[], int low, int high);
+int getIntArrayLength();
 
-struct binTreeNode* generateBST(int* sortedIntArray) {
-    
-    // Create the node
-    struct binTreeNode* node = malloc(sizeof(struct binTreeNode));
-    
-    // Get the median value in the sorted array
-    int medianValue = getMedian(sortedIntArray);
-    node->data = medianValue;
-    
-    // Get the left half of array
-    int* leftHalf = getLeftHalf(sortedIntArray);
-    node->left = generateBST(leftHalf);
+int getIntArrayLength() {
+    // Open file
+    FILE *filePtr = fopen("AssignmentFourInput.txt", "r");
 
-    // Get the right half of array
-    int* rightHalf = getRightHalf(sortedIntArray);
-    node->right = generateBST(rightHalf);
+    // Error opening file
+    if(filePtr == NULL) {
+        perror("Error opening file.");
+        return 0; 
+    }
+
+    // Count the number of integers in the file
+    int numCount = 0;    
+    int num;
+    while ( fscanf((FILE*)filePtr, "%d", &num) != EOF)
+        numCount = numCount + 1;
+    fclose(filePtr);
+    return numCount; 
+}
+
+int* getIntArrayFromFile(int length) {
+    // Open File
+    FILE *filePtr = fopen("AssignmentFourInput.txt", "r");
     
-    return node;  
+    // Make the unsorted integer array
+    int *intArray = malloc(length * sizeof(int));
+
+    // Read Array from File
+    int i, num;
+    for (i = 0; i < length; i++) {
+        fscanf((FILE*)filePtr, "%d", &num);
+        intArray[i] = num;
+    }
+    
+    fclose(filePtr); 
+    return intArray; 
+}
+
+int* sortIntArray(int* unsortedArray, int length) {
+    
+    int i, g, temp;
+    
+    for (i = 1; i < length; i++) {
+        
+        g = i; 
+        
+        // Switch elements when the previous is greater than the one in front
+        while (g > 0 && unsortedArray[g] < unsortedArray[g-1]) {
+            temp = unsortedArray[g];
+            unsortedArray[g] = unsortedArray[g-1];
+            unsortedArray[g-1]= temp;
+            g--;
+        }
+    
+    } 
+
+    return unsortedArray;
+}
+struct binTreeNode* generateBST(int* sortedIntArray[], int low, int high) {
+    
+    /*
+     * When the high index isn't equal to the low index, that means
+     * isn't a value to choose from in the array since the indices crossed,
+     * so return null so that leaves are properly made. 
+     */
+    if (high > low) {
+        int mid = (low + high) / 2; 
+        struct binTreeNode* node = malloc(sizeof(struct binTreeNode));
+        node->data = *sortedIntArray[mid];
+        node->left = generateBST(sortedIntArray, low, mid-1);
+        node->right = generateBST(sortedIntArray, mid+1, high);
+        return node;
+    } else if (high == low) { 
+        // High = Low so there's only 1 value to choose from
+        struct binTreeNode* node = malloc(sizeof(struct binTreeNode));
+        node->data = *sortedIntArray[high];
+        node->left = NULL;
+        node->right = NULL;
+        return node;
+    } else {
+        // High < Low so there isn't a value for this node
+        return NULL;
+    }
 }
 
 int main () {
 
-
+    int arrayLength = getIntArrayLength();
+    int* unsortedArray = getIntArrayFromFile(arrayLength);
+    int* sortedArray = sortIntArray(unsortedArray, arrayLength);
+    int c;
+    for (c = 0; c < arrayLength; c++) {
+        printf("%d\n", sortedArray[c]);
+    } 
     return 0;
 }
