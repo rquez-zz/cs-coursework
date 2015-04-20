@@ -34,7 +34,7 @@ int find(struct binTreeNode* root, int value);
 int findMin(struct binTreeNode* root);
 int findMax(struct binTreeNode* root);
 int average(struct binTreeNode* root);
-int median(struct binTreeNode* root);
+int median(struct binTreeNode* root, int size, int cnt);
 int sum(struct binTreeNode* root);
 int count(struct binTreeNode* root);
 struct binTreeNode* delete(struct binTreeNode* root, int value);
@@ -295,9 +295,24 @@ int count(struct binTreeNode* root) {
     }
 }
 
-int median(struct binTreeNode* root) {
-    //WIP
-    return root->data;
+int median(struct binTreeNode* root, int size, int cnt) {
+
+    printf("COUNT - MEDIAN: %d\n", cnt);
+    if (cnt == (size / 2))
+        return root->data;
+
+    if (root->left != NULL) { 
+        if (root->right != NULL)
+            median(root->left, size, cnt+1) + median(root->right, size, cnt+1);
+        else
+            median(root->left,size, cnt+1);
+    }
+    if (root->right != NULL) {
+        if (root->left != NULL)
+            median(root->left, size, cnt+1) + median(root->right, size, cnt+1);
+        else
+            median(root->right, size, cnt+1);
+    } 
 }
 
 struct binTreeNode* getNode(struct binTreeNode* root, int value) {
@@ -382,7 +397,6 @@ struct binTreeNode* delete(struct binTreeNode* root, int value) {
                 node = NULL;
                 return node;
             }
-
         }
     } else {
         return 0;
@@ -415,18 +429,6 @@ int main () {
     printf("AVERAGE: %d\n", average(rootNode));        
     printf("SUM: %d\n", sum(rootNode));        
     printf("COUNT: %d\n", count(rootNode));        
-    printf("MEDIAN: %d\n", median(rootNode));        
-    printf("DELETED? %d\n", delete(rootNode, 1)->data);
-    printf("Pre Order\n");
-    printPreOrder(rootNode);
-    printf("DELETED? %d\n", delete(rootNode, 4)->data);
-    printf("Pre Order\n");
-    printPreOrder(rootNode);
-    printf("DELETED? %d\n", delete(rootNode, 21)->data);
-    printf("Pre Order\n");
-    printPreOrder(rootNode);
-    printf("DELETED? %d\n", delete(rootNode, 87)->data);
-    printf("Pre Order\n");
-    printPreOrder(rootNode);
+    printf("MEDIAN: %d\n", median(rootNode, count(rootNode), 0));        
     return 0;
 }
