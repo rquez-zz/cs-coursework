@@ -34,7 +34,7 @@ int find(struct binTreeNode* root, int value);
 int findMin(struct binTreeNode* root);
 int findMax(struct binTreeNode* root);
 int average(struct binTreeNode* root);
-int median(struct binTreeNode* root, int size, int cnt);
+int median(struct binTreeNode* root, int halfSize);
 int sum(struct binTreeNode* root);
 int count(struct binTreeNode* root);
 struct binTreeNode* delete(struct binTreeNode* root, int value);
@@ -295,24 +295,30 @@ int count(struct binTreeNode* root) {
     }
 }
 
-int median(struct binTreeNode* root, int size, int cnt) {
-
-    printf("COUNT - MEDIAN: %d\n", cnt);
-    if (cnt == (size / 2))
-        return root->data;
-
-    if (root->left != NULL) { 
-        if (root->right != NULL)
-            median(root->left, size, cnt+1) + median(root->right, size, cnt+1);
-        else
-            median(root->left,size, cnt+1);
+int median(struct binTreeNode* root, int halfSize) {
+    // Find the median is the same as finding the (n/2)th largest node
+    if (root == NULL) {
+        return 0;
     }
-    if (root->right != NULL) {
-        if (root->left != NULL)
-            median(root->left, size, cnt+1) + median(root->right, size, cnt+1);
-        else
-            median(root->right, size, cnt+1);
-    } 
+
+    int rightTreeSize = 0;
+   
+    // Count nodes in right subtree 
+    if(root->right != NULL) {
+        rightTreeSize = count(root->right);
+    }
+
+    // Root is median
+    if (halfSize == rightTreeSize + 1) {
+        return root->data;
+    }
+
+    if (halfSize > rightTreeSize) {
+        return median(root->left, (halfSize - rightTreeSize - 1));
+    } else {
+        return median(root->right, halfSize);
+    }
+
 }
 
 struct binTreeNode* getNode(struct binTreeNode* root, int value) {
@@ -332,7 +338,6 @@ struct binTreeNode* getNode(struct binTreeNode* root, int value) {
 
 struct binTreeNode* delete(struct binTreeNode* root, int value) {
     
-    printf("ROOT: %d\n", root->data);    
     if (root != NULL) {
         // When the left child of this parent matches 
         if (root->left != NULL && (root->left)->data == value) {
@@ -357,11 +362,9 @@ struct binTreeNode* delete(struct binTreeNode* root, int value) {
         } else {
             
             // When reached, the current root is to be deleted
-            printf("MATCH: %d\n", root->data);
-                
+            
             // Node has both left and right child
             if (root->left != NULL && root->right != NULL) {
-                printf("NODE HAS BOTH\n");    
 
                 // Get the value of the node with the highest value in the 
                 // left subtree and save it.
@@ -377,7 +380,6 @@ struct binTreeNode* delete(struct binTreeNode* root, int value) {
             
             // OR Node has either left of right child    
             if (root->left != NULL || root->right != NULL) { 
-                printf("NODE HAS EITHER\n");
                 if (root->left != NULL) {
                     struct binTreeNode* node = root->left;
                     free(root);
@@ -391,7 +393,6 @@ struct binTreeNode* delete(struct binTreeNode* root, int value) {
             
             // Otherwise node is a leaf
             else {
-                printf("LEAF MATCH: %d\n", root->data);
                 struct binTreeNode* node = root;
                 free(node);
                 node = NULL;
@@ -405,30 +406,118 @@ struct binTreeNode* delete(struct binTreeNode* root, int value) {
 
 int main () {
 
-    int arrayLength = getIntArrayLength();
-    int* unsortedArray = getIntArrayFromFile(arrayLength);
-    int* sortedArray = sortIntArray(unsortedArray, arrayLength);
-    struct binTreeNode* rootNode = generateBST(sortedArray, 0, arrayLength - 1);
-    printf("Pre Order\n");
-    printPreOrder(rootNode);
-    printf("\nIn Order\n");
-    printInOrder(rootNode);
-    printf("\nPost Order\n");
-    printPostOrder(rootNode);
-    printf("\n\n");
-    struct nodeInQueue* firstNode = malloc(sizeof(struct nodeInQueue));
-    firstNode->data = rootNode;
-    firstNode->next = NULL;
-    printBreathFirst(firstNode);
-    if (find(rootNode, 101) == 1) 
-        printf("Value found\n");
-    else
-        printf("Value not Found\n");
-    printf("MIN: %d\n", findMin(rootNode));        
-    printf("MAX: %d\n", findMax(rootNode));        
-    printf("AVERAGE: %d\n", average(rootNode));        
-    printf("SUM: %d\n", sum(rootNode));        
-    printf("COUNT: %d\n", count(rootNode));        
-    printf("MEDIAN: %d\n", median(rootNode, count(rootNode), 0));        
+    int exit = 0;
+
+	while (exit == 0) {
+
+        // Print Menu
+		printf("List Operations\n");
+		printf("===============\n");
+		printf("1. Generate Binary Search Tree\n");
+		printf("2. Print the BST in pre-order format\n");
+		printf("3. Print the BST in in-order format\n");
+		printf("4. Print the BST in post-order format\n");
+		printf("5. Print the BST in breath-first format\n");
+		printf("6. Find a value in the BST\n");
+		printf("7. Find the miniumum value in the BST nodes\n");
+		printf("8. Find the maximum value in the BST nodes\n");
+		printf("9. Calculate the average value of the BST nodes\n");
+        printf("10. Find the median value of the BST nodes\n");
+        printf("11. Calculate the sum of the BST nodes\n");
+        printf("12. Count the number of BST nodes\n");
+        printf("13. Delete a value in the BST\n");
+        printf("14. Exit Program\n");
+
+		//Prompt User Input
+		int menuChoice = 1;
+		printf("Enter your choice: ");
+		scanf("%d", &menuChoice);
+
+        // Initialize Variables
+        int arrayLength;
+        int* unsortedArray;
+        int* sortedArray;
+        struct binTreeNode* rootNode;
+
+		switch(menuChoice) {
+			case 1: // Generate Binary Tree
+                arrayLength = getIntArrayLength();
+                unsortedArray = getIntArrayFromFile(arrayLength);
+                sortedArray = sortIntArray(unsortedArray, arrayLength);
+                rootNode = generateBST(sortedArray, 0, arrayLength - 1);
+                printf("Binary search tree generated.\n\n");
+				break;
+			case 2: // Print Pre-Order
+                printf("Pre Order\n");
+                printPreOrder(rootNode);
+                printf("\n\n");
+				break;
+			case 3: // Print In-Order
+                printf("In Order\n");
+                printInOrder(rootNode);
+                printf("\n\n");
+				break;
+			case 4: // Print Post-Order
+                printf("Post Order\n");
+                printPostOrder(rootNode);
+                printf("\n\n");
+				break;
+            case 5: { // Print Breath-First
+                struct nodeInQueue* firstNode = 
+                    malloc(sizeof(struct nodeInQueue));
+                firstNode->data = rootNode;
+                firstNode->next = NULL;
+                printf("Breath First\n");
+                printBreathFirst(firstNode);
+                printf("\n\n");
+				break;
+            }
+            case 6: // Find Value
+                printf("Enter value to find: ");
+                int value;
+                scanf("%d", &value);
+                if (find(rootNode, value) == 1) 
+                    printf("%d was found\n\n", value);
+                else
+                    printf("%d was not Found\n\n", value);
+                break;
+            case 7: // Find Min
+                printf("Minimum: %d\n\n", findMin(rootNode));        
+                break;
+            case 8: // Find Max
+                printf("Maximum: %d\n\n", findMax(rootNode));        
+                break;
+            case 9: // Calculate Average
+                printf("Average: %d\n\n", average(rootNode));        
+                break;
+            case 10: // Find Median
+                printf("Median: %d\n\n", 
+                        median(rootNode, (count(rootNode)/2)));        
+                break;
+            case 11: // Calculate Sum
+                printf("Sum: %d\n\n", sum(rootNode));        
+                break;
+            case 12: // Count Nodes
+                printf("Count: %d\n\n", count(rootNode));        
+                break;
+            case 13: // Delete 
+                printf("Enter value to delete: ");
+                int valueNode;
+                scanf("%d", &valueNode);
+                if (find(rootNode, valueNode) == 0) {
+                    printf("%d is not in the BST.\n\n", valueNode);
+                } else {
+                    delete(rootNode, valueNode);
+                    printf("%d was deleted\n\n", valueNode);
+                }
+                break;
+            case 14: // Exit
+                exit = 1;
+                break;
+			default:
+				break;
+		}
+	}
+
     return 0;
 }
