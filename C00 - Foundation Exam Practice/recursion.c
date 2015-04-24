@@ -18,12 +18,15 @@ void caesar_cipher(char* str, int length) {
 }
 
 int oddRecPal(char* str, int sIndex, int eIndex) {
-
+    /* This is different from regular palindrome identification because
+     * its only valid if the indicies equal each other at some point when they
+     * reduce at the same rate given that each iteration has matching chars*/
     if (sIndex != (eIndex - 1)) {
 
         if (str[sIndex] == str[eIndex - 1]) {
             return oddRecPal(str, sIndex + 1, eIndex - 1);
         } else {
+            /* If any iteration returns 0, then the whole function returns 0 */
             return 0; 
         }
 
@@ -31,7 +34,6 @@ int oddRecPal(char* str, int sIndex, int eIndex) {
         // Middle of the string end recursion
         return 1;
     }
-
 }
 
 int main() {
