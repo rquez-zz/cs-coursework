@@ -26,6 +26,28 @@ struct node* reverse(struct node* front)
     return prev;
 }
 
+/* 09Aug Q1 */
+void print_reverse(struct node* front) {
+
+    struct node* current = front;
+    struct node* next;
+    struct node* prev = NULL;
+
+    while ( current != NULL ) {
+        
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+        
+    }
+
+    while ( prev != NULL) {
+        printf("%d ", prev->value);
+        prev = prev->next;
+    }
+}
+
 /* WK1 Q4 Part B */ 
 struct node* frontToBack(struct node* front) {
     struct node* first = front;
@@ -130,5 +152,8 @@ int main() {
     print(first);
     first = delValue(first, 7);
     print(first);
+    print(first);
+    printf("PRINTING IN REVERSE\n");
+    print_reverse(first);
     return 0;
 }
