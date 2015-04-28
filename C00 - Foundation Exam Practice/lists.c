@@ -48,6 +48,33 @@ void print_reverse(struct node* front) {
     }
 }
 
+/* 09Dec PartB Q2 */ 
+void delEveryOther(struct node* front) {
+
+    if (front == NULL || front->next == NULL)
+        return;
+
+    int count = 0;
+    struct node* prev = NULL;
+
+    while( front != NULL) {
+    
+        count++;
+
+        if (count % 2 == 0) {
+            prev->next = front->next; 
+            free(front);
+            front = prev->next;
+        
+        } else {
+            prev = front;
+            front = front->next;
+        }
+    
+    }
+
+}
+
 /* WK1 Q4 Part B */ 
 struct node* frontToBack(struct node* front) {
     struct node* first = front;
@@ -122,38 +149,33 @@ void print(struct node* front) {
     printf("\n");
 }
 
+/* function to generate a linked list */
+struct node* generateLinkedList(int values[], int size){
+
+    int i = 0;
+    struct node* prev = NULL;
+    struct node* first;
+    for (i = 0; i < size; i++) {
+        struct node* node = malloc(sizeof(struct node));
+        node->value = values[i];
+        node->next = NULL;
+        if (i != 0) {
+            prev->next = node; 
+        } else {
+            first = node;
+        }
+        prev = node; 
+    }
+    return first; 
+}
+
 int main() {
     
-    struct node* first = malloc(sizeof(struct node));
-    first->value = 1;
-    struct node* second = malloc(sizeof(struct node));
-    second->value = 2;
-    struct node* third = malloc(sizeof(struct node));
-    third->value = 3;
-    struct node* fourth = malloc(sizeof(struct node));
-    fourth->value = 4;
-
-    first->next = second;
-    second->next = third;
-    third->next = fourth;
-    fourth->next = NULL;
-    print(first);
-    first = reverse(first);
-    print(first);
-    first = reverse(first);
-    print(first);
-    addC(first, 1);
-    print(first);
-    addC(first,2);
-    print(first);
-    first = frontToBack(first);
-    print(first); 
-    first = doubleList(first);
-    print(first);
-    first = delValue(first, 7);
-    print(first);
-    print(first);
-    printf("PRINTING IN REVERSE\n");
-    print_reverse(first);
+    int values[0];
+    struct node* list = generateLinkedList(values, 1);
+    print(list);
+    printf("DELETING EVERY OTHER NODE\n");
+    delEveryOther(list);
+    print(list);
     return 0;
 }
