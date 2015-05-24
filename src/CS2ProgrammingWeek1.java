@@ -92,7 +92,7 @@ public class CS2ProgrammingWeek1
 	static int MatchUpLists(int[] NumberList1, int[] NumberList2) 
 	{
 		int intCount = 0;
-		for(int i = 0; i < NumberList1[i]; i++)
+		for(int i = 0; i < NumberList1.length; i++)
 		{
 			if (Math.abs(NumberList1[i] - NumberList2[i]) <= 2 &&
 					NumberList1[i] != NumberList2[i])
@@ -124,7 +124,7 @@ public class CS2ProgrammingWeek1
 	{
 		int intCountConsecutiveEvens = 0;
 		int intCountConsecutiveOdds = 0;
-		for (int i = 0; i < NumberList[i]; i++)
+		for (int i = 0; i < NumberList.length; i++)
 		{
 			if (NumberList[i] % 2 == 1) 
 			{
@@ -137,9 +137,7 @@ public class CS2ProgrammingWeek1
 				intCountConsecutiveEvens++;
 			}
 			if (intCountConsecutiveEvens == 3 || intCountConsecutiveOdds == 3)
-			{
 				return true;
-			}
 		}
 		return false;
 	}
@@ -180,16 +178,10 @@ public class CS2ProgrammingWeek1
 				intLargest = NumberList[i];
 		}
 		int intSum = 0;
-		int intCount = 0;
 		for (int i = 0; i < NumberList.length; i++)
-		{
-			if (intSmallest != NumberList[i] && intLargest != NumberList[i])
-			{
-				intSum += NumberList[i];
-				intCount++;
-			}
-		}
-		return intSum / intCount;
+			intSum += NumberList[i];
+		intSum -= (intSmallest + intLargest);
+		return intSum / (NumberList.length - 2);
 	}
 	
 	// Given an array of ints, return true if every 2 that 
@@ -231,21 +223,6 @@ public class CS2ProgrammingWeek1
 	
 	public static void main(String[] args)
 	{
-		int[] NumberList1 = {4, 2, 2, 3};
-		System.out.println(LookForTwoTwo(NumberList1));
-		int[] NumberList2 = {2, 2, 4};
-		System.out.println(LookForTwoTwo(NumberList2));
-		int[] NumberList3 = {2, 2, 4, 2};
-		System.out.println(LookForTwoTwo(NumberList3));
-		int[] NumberList4 = {2, 2, 4, 2, 5};
-		System.out.println(LookForTwoTwo(NumberList4));
-		
-		int[] NumberList5 = {1, 2, 3, 4, 100};
-		System.out.println(FindCenteredAverage(NumberList5));
-		int[] NumberList6 = {1, 1, 5, 5, 10, 8, 7}; 
-		System.out.println(FindCenteredAverage(NumberList6));
-		int[] NumberList7 = {-10, -4, -2, -4, -2, 0};
-		System.out.println(FindCenteredAverage(NumberList7));
 	}
 	
 }
