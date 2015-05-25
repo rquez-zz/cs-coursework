@@ -23,7 +23,7 @@ public class CS2RecitationWeek1
 	 */
 	static String GetNameAndPID()
 	{
-		return( "Last,First,PID");
+		return( "Vasquez,Ricardo,R2905752");
 	}
 	
 	// Write a method that recursively prints out all the 
@@ -32,6 +32,10 @@ public class CS2RecitationWeek1
 
 	static void PrintRec(DataStruct ds) 
 	{
+		do {
+			System.out.println(ds.KeyValue);
+			ds = ds.Next;
+		} while (ds != null);
 	}
 
 	// Write a function that recursively prints out all 
@@ -40,6 +44,12 @@ public class CS2RecitationWeek1
 
 	static void PrintBackRec(DataStruct ds) 
 	{
+		ds = ds.Last;
+		do 
+		{
+			System.out.println(ds.KeyValue);
+			ds = ds.Prev;
+		} while (ds != null);
 	}
 
 	// Write a function that iterates through a linked list 
@@ -49,6 +59,16 @@ public class CS2RecitationWeek1
 
 	static void EditList(DataStruct ds) 
 	{
+		while (ds != null) 
+		{
+			System.out.print("Before: " + ds.KeyValue);
+			if (ds.KeyValue % 2 == 0)
+				ds.KeyValue += 5;
+			else 
+				ds.KeyValue -= 4;
+			System.out.println(" After: " + ds.KeyValue);
+			ds = ds.Next;
+		}
 	}
 	
 	// Write a recursive function that takes in two linked 
@@ -64,6 +84,14 @@ public class CS2RecitationWeek1
 
 	static int EqualLists(DataStruct list1, DataStruct list2) 
 	{
+		if (list1 == null && list2 == null)
+			return 1;
+		else if (list1 == null || list2 == null)
+			return 0;
+		else if (list1.KeyValue == list2.KeyValue) 
+			return EqualLists(list1.Next, list2.Next);
+		else
+			return 0;
 	}
 
 	// Write a function that takes in a pointer to the front 
@@ -74,6 +102,13 @@ public class CS2RecitationWeek1
 
 	static int InOrder(DataStruct list) 
 	{
+		while (list != null && list.Next != null) {
+			if (list.KeyValue <= list.Next.KeyValue)
+                list = list.Next;
+			else
+				return 0;
+		}
+		return 1;
 	}
 	
 	///////////////////////////////////////////
