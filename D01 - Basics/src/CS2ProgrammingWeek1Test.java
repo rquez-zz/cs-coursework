@@ -68,11 +68,13 @@ public class CS2ProgrammingWeek1Test {
 		int[] NumberList3 = {2, 2, 4, 2};
 		int[] NumberList4 = {2, 2, 4, 2, 5};
 		int[] NumberList5 = {6, 2, 4, 2, 2, 3};
+		int[] NumberList6 = {2};
 		assertTrue(CS2ProgrammingWeek1.LookForTwoTwo(NumberList1));
 		assertTrue(CS2ProgrammingWeek1.LookForTwoTwo(NumberList2));
 		assertFalse(CS2ProgrammingWeek1.LookForTwoTwo(NumberList3));
 		assertFalse(CS2ProgrammingWeek1.LookForTwoTwo(NumberList4));
 		assertFalse(CS2ProgrammingWeek1.LookForTwoTwo(NumberList5));
+		assertFalse(CS2ProgrammingWeek1.LookForTwoTwo(NumberList6));
 	}
 
 }

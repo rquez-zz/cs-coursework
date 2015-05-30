@@ -202,6 +202,8 @@ public class CS2ProgrammingWeek1
 	 */
 	static boolean LookForTwoTwo(int[] NumberList) 
 	{
+		if (NumberList.length == 1 && NumberList[0] == 2)
+			return false;
 		for (int i = 1; i < NumberList.length; i++) 
 		{
 			if (NumberList[i] == 2) 
