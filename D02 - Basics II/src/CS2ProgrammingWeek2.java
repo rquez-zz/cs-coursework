@@ -8,7 +8,7 @@ import java.util.Scanner;
 //
 ///////////////////////////////////////////
 
-public class CS2Week2 
+public class CS2ProgrammingWeek2 
 {
 	
 	///////////////////////////////////////////
@@ -24,7 +24,7 @@ public class CS2Week2
 	 */
 	static String GetNameAndPID()
 	{
-		return( "Last,First,PID");
+		return( "Vasquez,Ricardo,R2905753");
 	}
 	
 	//	Problem #1
@@ -47,6 +47,17 @@ public class CS2Week2
 	 */
 	static boolean FindThreeIncreasingNumbers(int[] NumberList) 
 	{
+		int intCount = 0; 
+		for (int i = 1; i < NumberList.length; i++) 
+		{
+			if (NumberList[i] > NumberList[i-1])
+				intCount++;
+			else 
+				intCount = 0;
+			if (intCount == 2)
+				return true;
+		}
+		return false; 
 	}
 
 	//	Problem #2
@@ -69,6 +80,15 @@ public class CS2Week2
 	 */
 	static int[] multiplesOfTen(int[] NumberList) 
 	{
+		int intMultiple = 0;
+		for (int i = 0; i < NumberList.length; i++) 
+		{
+			if (NumberList[i] % 10 == 0)
+				intMultiple = NumberList[i];	
+			if (intMultiple != 0)
+				NumberList[i] = intMultiple;
+		}
+		return NumberList;
 	}	
 
 	//	Problem #3
@@ -94,6 +114,18 @@ public class CS2Week2
 	 */
 	static int[] CheckForAloneNumbers(int[] NumberList, int changingNumber) 
 	{
+		int[] NumberListCopy = NumberList;
+		for (int i = 1; i < NumberList.length - 1; i++) 
+		{
+			if (NumberList[i] == changingNumber && NumberList[i] != NumberList[i-1] && NumberList[i] != NumberList[i+1])
+			{
+				if (NumberList[i-1] > NumberList[i+1])
+					NumberListCopy[i] = NumberList[i-1];
+				else
+					NumberListCopy[i] = NumberList[i+1];
+			}
+		}
+		return NumberListCopy;
 	}	
 
 	//	Problem #4
@@ -117,6 +149,24 @@ public class CS2Week2
 	 */
 	public static int[] ReplaceZerosWithLargestOdd(int[] NumberList) 
 	{
+		int[] NumberListCopy = NumberList;
+		for (int i = 0; i < NumberList.length - 1; i++)
+		{
+			if (NumberList[i] == 0)
+			{
+				int intLargestOdd = 0;
+				for (int j = i; j < NumberList.length; j++)
+				{
+					if (NumberList[j] % 2 == 1)
+					{
+						if (NumberList[j] > intLargestOdd)
+							intLargestOdd = NumberList[j];
+					}
+				}
+				NumberListCopy[i] = intLargestOdd;
+			}
+		}
+		return NumberListCopy;
 	}
 	
 	//	Problem #5
@@ -232,7 +282,6 @@ public class CS2Week2
 
 	public static void main(String[] args)
 	{
-
 	}
 	
 }
