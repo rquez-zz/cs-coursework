@@ -1,5 +1,4 @@
-﻿import java.util.Scanner;
-
+﻿
 ///////////////////////////////////////////
 //
 // Test frame for CS2 programming assignments

@@ -1,4 +1,3 @@
-import java.util.Scanner;
 
 ///////////////////////////////////////////
 //
@@ -44,7 +43,7 @@ public class CS2RecitationWeek1
 
 	static void PrintBackRec(DataStruct ds) 
 	{
-		ds = ds.Last;
+		ds = DataStruct.Last;
 		do 
 		{
 			System.out.println(ds.KeyValue);
@@ -119,33 +118,6 @@ public class CS2RecitationWeek1
 	
 	public static void main(String[] args)
 	{
-		DataStruct ds = new DataStruct();
-		for( int i=0; i<4; i++ )
-		{
-			ds.AddToEndOfList(new DataStruct());
-		}
-		
-		DataStruct ds2 = new DataStruct();
-		ds2.KeyValue = 1;
-		for( int i=0; i<4; i++ )
-		{
-			DataStruct ds3 = new DataStruct();
-			ds3.KeyValue = 2 + i;
-			ds2.AddToEndOfList(ds3);
-		}
-
-		// Test code here...
-		PrintRec( ds );
-
-		PrintBackRec( DataStruct.Last );
-
-		EditList( ds );
-
-		int nEqual = EqualLists( ds, ds );
-
-		int nInOrder = InOrder(ds);
-
-		nInOrder = InOrder(ds2);
 
 
 	}
