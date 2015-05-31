@@ -191,6 +191,13 @@ public class CS2ProgrammingWeek2
 	 */
 	static int[] CreateIncreasingArray(int start, int end) 
 	{
+		int intSize = end - start; 
+		if (intSize <= 0)
+			return new int[]{};
+        int[] NumberList = new int[intSize];
+        for (int i = 0; i < NumberList.length; i++)
+        	NumberList[i] = start + i; 
+        return NumberList;
 	}
 	
 	//	Problem #6
@@ -215,6 +222,12 @@ public class CS2ProgrammingWeek2
 	 */
 	static int[] CopyNumbersBeforeFour(int[] NumberList) 
 	{
+		for (int i = 0; i < NumberList.length; i++)
+		{
+			if (NumberList[i] == 4)
+				return Arrays.copyOfRange(NumberList, 0, i);
+		}
+		return new int[]{};
 	}
 	
 	//	Problem #7
@@ -240,6 +253,22 @@ public class CS2ProgrammingWeek2
 	 */
 	static int[] MoveZerosToFront(int[] NumberList) 
 	{
+		int intZeroCount = 0;
+		for (int i = 0; i < NumberList.length; i++) 
+		{
+			if (NumberList[i] == 0)
+				intZeroCount++;
+		}
+		int[] NumberListReturned = new int[NumberList.length];
+		for (int i = 0; i < NumberList.length; i++)
+		{
+			if (NumberList[i] != 0)	
+			{
+				NumberListReturned[intZeroCount] = NumberList[i];
+				intZeroCount++;
+			}
+		}
+		return NumberListReturned;
 	}
 	
 	//	Problem #8
@@ -265,6 +294,18 @@ public class CS2ProgrammingWeek2
 	 */
 	static int[] EvenFrontOddBack(int[] NumberList) 
 	{
+		int intEvenIndex = 0;
+		for (int i = 0; i < NumberList.length; i++)
+		{
+			if (NumberList[i] % 2 == 0)
+			{
+				int temp = NumberList[intEvenIndex];
+				NumberList[intEvenIndex] = NumberList[i];
+				NumberList[i] = temp;
+				intEvenIndex++;
+			}
+		}
+		return NumberList;
 	}
 	
 	///////////////////////////////////////////

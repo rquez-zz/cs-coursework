@@ -55,22 +55,33 @@ public class CS2ProgrammingWeek2Test {
 
 	@Test
 	public void testCreateIncreasingArray() {
-		fail("Not yet implemented");
+		assertArrayEquals(new int[]{5,6,7,8,9}, CS2ProgrammingWeek2.CreateIncreasingArray(5, 10));
+		assertArrayEquals(new int[]{11,12,13,14,15,16,17}, CS2ProgrammingWeek2.CreateIncreasingArray(11, 18));
+		assertArrayEquals(new int[]{1,2}, CS2ProgrammingWeek2.CreateIncreasingArray(1, 3));
+		assertArrayEquals(new int[]{}, CS2ProgrammingWeek2.CreateIncreasingArray(1, 1));
 	}
 
 	@Test
 	public void testCopyNumbersBeforeFour() {
-		fail("Not yet implemented");
+		assertArrayEquals(new int[]{1,2}, CS2ProgrammingWeek2.CopyNumbersBeforeFour(new int[]{1,2,4,1}));
+		assertArrayEquals(new int[]{3,1}, CS2ProgrammingWeek2.CopyNumbersBeforeFour(new int[]{3,1,4}));
+		assertArrayEquals(new int[]{1}, CS2ProgrammingWeek2.CopyNumbersBeforeFour(new int[]{1,4,4}));
+		assertArrayEquals(new int[]{}, CS2ProgrammingWeek2.CopyNumbersBeforeFour(new int[]{1,3,2}));
 	}
 
 	@Test
 	public void testMoveZerosToFront() {
-		fail("Not yet implemented");
+		assertArrayEquals(new int[]{0,0,1,1}, CS2ProgrammingWeek2.MoveZerosToFront(new int[]{1,0,0,1}));
+		assertArrayEquals(new int[]{0,0,1,1,1}, CS2ProgrammingWeek2.MoveZerosToFront(new int[]{0,1,1,0,1}));
+		assertArrayEquals(new int[]{0,1}, CS2ProgrammingWeek2.MoveZerosToFront(new int[]{1,0}));
 	}
 
 	@Test
 	public void testEvenFrontOddBack() {
-		fail("Not yet implemented");
+		assertArrayEquals(new int[]{0,0,0,1,1,1,1}, CS2ProgrammingWeek2.EvenFrontOddBack(new int[]{1,0,1,0,0,1,1}));
+		assertArrayEquals(new int[]{2,3,3}, CS2ProgrammingWeek2.EvenFrontOddBack(new int[]{3,3,2}));
+		assertArrayEquals(new int[]{2,2,2}, CS2ProgrammingWeek2.EvenFrontOddBack(new int[]{2,2,2}));
+		assertArrayEquals(new int[]{}, CS2ProgrammingWeek2.EvenFrontOddBack(new int[]{}));
 	}
 	
 }
