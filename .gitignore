@@ -5,6 +5,9 @@ bin/
 doc/
 *.zip
 *.jar
+*.png
+.metadata/
+.recommenders/
 
 # Windows image file caches
 Thumbs.db
