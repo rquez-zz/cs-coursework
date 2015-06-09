@@ -71,12 +71,12 @@ public class BST
     public void Insert( int nKeyValue ) 
     {
     	// The root node is returned to m_objRootNode from Insert()
-    	m_objRootNode = SetSubTreeSizes( SetRanks(Insert( nKeyValue, m_objRootNode ), 0));
+    	m_objRootNode = SetSubTreeSizes( SetRanks(Insert( nKeyValue, m_objRootNode, 3 ), 0));
     }    
 
     // Class protected (internal) method to insert nodes. This method
     //   will be called recursively.
-    protected BSTNode Insert( int nKeyValue, BSTNode objNode ) 
+    protected BSTNode Insert( int nKeyValue, BSTNode objNode, int k ) 
     {
  
     	// This node is null and simply needs to be allocated.
@@ -88,15 +88,33 @@ public class BST
         // Here we need to walk left.
         else if( nKeyValue < objNode.GetKeyValue() )
         {
-        	// Set the left node of this object by recursively walking left.
-        	objNode.SetLeftNode( Insert( nKeyValue, objNode.GetLeftNode() ) );
+        	if (objNode.GetLeftNode() == null) 
+        	{
+        		if ( Math.abs(nKeyValue - objNode.GetKeyValue()) >= k )
+        			objNode.SetLeftNode( Insert( nKeyValue, objNode.GetLeftNode(), k ) );
+        		else
+        			return objNode;
+        	}
+        	else 
+        	{
+        		objNode.SetLeftNode( Insert( nKeyValue, objNode.GetLeftNode(), k ) );
+        	}
         }
         
         // Here we need to talk right.
         else if( nKeyValue > objNode.GetKeyValue() )
         {
-        	// Set the right node of this object by recursively walking right.
-        	objNode.SetRightNode( Insert( nKeyValue, objNode.GetRightNode() ) );
+        	if (objNode.GetRightNode() == null) 
+        	{
+        		if ( Math.abs(nKeyValue - objNode.GetKeyValue()) >= k )
+        			objNode.SetRightNode( Insert( nKeyValue, objNode.GetRightNode(), k ) );
+        		else
+        			return objNode;
+        	}
+        	else 
+        	{
+        		objNode.SetRightNode( Insert( nKeyValue, objNode.GetRightNode(), k ) );
+        	}
         }
         
         return( objNode );

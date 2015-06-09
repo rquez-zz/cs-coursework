@@ -6,7 +6,7 @@ public class BinarySearchTrees
 	
 	public static void main(String[] args) 
 	{
-		
+	/*	
 		m_objBST.Insert(10);
 		m_objBST.Insert(15);
 		m_objBST.Insert(5);
@@ -17,6 +17,11 @@ public class BinarySearchTrees
 		m_objBST.Insert(120);
 		m_objBST.Insert(1);
 		m_objBST.Delete(5);
+		*/
+		m_objBST.Insert(10);
+		m_objBST.Insert(9);
+		m_objBST.Insert(11);
+		m_objBST.Insert(24);
 		m_objBST.PrintInOrder(m_objBST.m_objRootNode);
 	}
 	
