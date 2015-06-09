@@ -13,9 +13,11 @@ public class BinarySearchTrees
 		m_objBST.Insert(3);
 		m_objBST.Insert(6);
 		m_objBST.Insert(18);
-		m_objBST.Delete(15);
-		m_objBST.Search(15);
-		System.out.println(m_objBST.GetMin());
+		m_objBST.Insert(13);
+		m_objBST.Insert(120);
+		m_objBST.Insert(1);
+		m_objBST.Delete(5);
+		m_objBST.PrintInOrder(m_objBST.m_objRootNode);
 	}
 	
 }

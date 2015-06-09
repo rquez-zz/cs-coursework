@@ -2,7 +2,7 @@
 public class BSTNode 
 {
 	BSTNode m_objLeftNode, m_objRightNode;
-	int m_nKeyValue, intRank, intSubTreeSize;
+	int m_nKeyValue, m_nRank, m_nSubTreeSize;
 	
 	public BSTNode()
 	{
@@ -12,8 +12,8 @@ public class BSTNode
 		
 		// Set this node's key value to default of 0.
 		m_nKeyValue = 0;
-		intRank = 0;
-		intSubTreeSize = 0;
+		m_nRank = 0;
+		m_nSubTreeSize = 0;
 	}
 
 	public BSTNode(int nKeyValue)
@@ -24,8 +24,8 @@ public class BSTNode
 		
 		// Set this node's key value
 		m_nKeyValue = nKeyValue;
-		intRank = 0;
-		intSubTreeSize = 0;
+		m_nRank = 0;
+		m_nSubTreeSize = 0;
 	}
 
 	// Accessor method to set the left node.
@@ -33,7 +33,6 @@ public class BSTNode
 	{
 		// Assign the left node object reference.
 		m_objLeftNode = objLeftNode;
-		intSubTreeSize = intSubTreeSize + 1 + objLeftNode.intSubTreeSize;
 	}
 	
 	// Accessor method to set the right node.
@@ -41,7 +40,6 @@ public class BSTNode
 	{
 		// Assign the right node object reference.
 		m_objRightNode = objRightNode;
-		intSubTreeSize = intSubTreeSize + 1 + objRightNode.intSubTreeSize;
 	}
 	
 	// Accessor method to get the left node object.
@@ -72,4 +70,24 @@ public class BSTNode
 		return( m_nKeyValue );
 	}
 	
+	public int GetRank() 
+	{
+		return ( m_nRank );
+	}
+	// Accessor method to set the node's rank value.
+	public void SetRank( int nRank )
+	{
+		// Set the value.
+		m_nRank = nRank;
+	}
+	
+	public int GetSubTreeSize()
+	{
+		return ( m_nSubTreeSize );
+	}
+	
+	public void SetSubTreeSize( int nSize ) 
+	{
+		m_nSubTreeSize = nSize;
+	}
 }

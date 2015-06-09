@@ -71,7 +71,7 @@ public class BST
     public void Insert( int nKeyValue ) 
     {
     	// The root node is returned to m_objRootNode from Insert()
-    	m_objRootNode = Insert( nKeyValue, m_objRootNode );
+    	m_objRootNode = SetSubTreeSizes( SetRanks(Insert( nKeyValue, m_objRootNode ), 0));
     }    
 
     // Class protected (internal) method to insert nodes. This method
@@ -104,7 +104,7 @@ public class BST
     
     public void Delete( int nKeyValue)
     {
-    	m_objRootNode = Delete(nKeyValue, m_objRootNode);
+    	m_objRootNode = SetSubTreeSizes( SetRanks(Delete(nKeyValue, m_objRootNode), 0));
     }
 
     private BSTNode Delete( int nKeyValue, BSTNode objNode ) {
@@ -164,34 +164,68 @@ public class BST
 
     private BSTNode GetMin(BSTNode objNode) 
     { 
-    	System.out.println(objNode.GetKeyValue());
     	if (objNode.GetLeftNode() == null) 
     		return objNode;
     	return GetMin(objNode.GetLeftNode());
     }
     
-    public int GetCount(objNode) 
+    public int GetCount(BSTNode objNode) 
     {
-    	if (objNode != null)
-    	{
-    		return 1 + GetCount(objNode);
-    	} else {
-    		return 0;
-    	}
+    	if (objNode == null) return 0;
+    	
+    	return 1 + GetCount(objNode.GetLeftNode()) + GetCount(objNode.GetRightNode());
     }
-    
-    private BSTNode	SetRanks(BSTNode objNode, int n) 
-    {
-    	if ( objNode.GetLeftNode() != null) 
-    	{
-    		return SetRanks(objNode.GetLeftNode(), n - 1);
-    	}
-    	if ( objNode.GetRightNode() != null)
-    	{
-    		return SetRanks(objNode.GetRightNode(), n - 1);
-    	}
-    	objNode.SetRank(n);
-    	return objNode; 
-    }
-    
+   
+   public void PrintInOrder(BSTNode objNode) 
+   {
+	   if ( objNode == null) 
+		   return;
+	   PrintInOrder(objNode.GetLeftNode()); 
+	   System.out.print("( Value:" + objNode.GetKeyValue() + ", Rank:" + objNode.GetRank() + ", SubTreeSize: " + objNode.GetSubTreeSize() + ") ");
+	   PrintInOrder(objNode.GetRightNode());
+   }
+
+   private BSTNode SetRanks(BSTNode objNode, int n) 
+   {
+	   if ( objNode == null) 
+		   return null;
+
+	   SetRanks(objNode.GetLeftNode(), n); 
+
+	   if ( n == 0 && objNode.GetLeftNode() == null)
+		   n = 0;
+	   else if ( n != 0 )
+	   {
+		   if (objNode.GetLeftNode() != null)
+			   n = GetMaxRank(objNode.GetLeftNode()) + 1;
+		   else 
+			   n = n + 1;
+	   }
+	   else
+		   n = GetMaxRank(objNode.GetLeftNode()) + 1;
+
+	   objNode.SetRank(n);
+
+	   SetRanks(objNode.GetRightNode(), n);
+
+	   return objNode;
+   }
+   
+   private int GetMaxRank(BSTNode objNode) 
+   {
+	   if (objNode == null) return 0;
+	   if (objNode.GetRightNode() == null)
+		   return objNode.GetRank();
+	   else
+		   return GetMaxRank(objNode.GetRightNode());
+   }
+   
+   private BSTNode SetSubTreeSizes( BSTNode objNode )
+   {
+	  if (objNode == null) return null;
+	  SetSubTreeSizes(objNode.GetLeftNode());
+	  objNode.SetSubTreeSize(GetCount(objNode));
+	  SetSubTreeSizes(objNode.GetRightNode());
+	  return objNode;
+   }
 }
