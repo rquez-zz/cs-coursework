@@ -1,5 +1,8 @@
 import java.applet.Applet;
+import java.awt.Button;
 import java.awt.Color;
+import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.MediaTracker;
 import java.awt.event.ActionEvent;
@@ -11,9 +14,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 
 
-public class EightQueens extends Applet implements MouseListener, MouseMotionListener, Runnable, ActionListener{
+public class EightQueens extends Applet implements MouseListener, MouseMotionListener, ActionListener{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -31,18 +35,10 @@ public class EightQueens extends Applet implements MouseListener, MouseMotionLis
 	MediaTracker tracker = new MediaTracker(this);
 	BufferedImage m_imgQueen;
 
-	@Override
-	public void actionPerformed(ActionEvent e) 
-	{
-		// TODO Auto-generated method stub
-		
-	}
+	private static Button startButton = new Button("Start"); 
+	private static Button resetButton = new Button("Reset"); 
 	
-	@Override
-	public void run()
-	{
-		
-	}
+	Thread solveThread;
 
 	@Override
 	public void init() 
@@ -52,7 +48,6 @@ public class EightQueens extends Applet implements MouseListener, MouseMotionLis
 
 		setSize(1020,700);
 		
-		// Load Queen Image
 		try
 		{
 			m_imgQueen = ImageIO.read(EightQueens.class.getResourceAsStream("queen.png"));
@@ -70,13 +65,40 @@ public class EightQueens extends Applet implements MouseListener, MouseMotionLis
 		{
 			System.out.println(e.getLocalizedMessage());
 		}		
+		
+
+		startButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) 
+			{
+				solveThread = new Thread(new Backtracking());
+				solveThread.start();
+			}
+		});
+
+		resetButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) 
+			{
+				for (int i = 0; i < m_nBoard.length; i++) 
+				{
+					for (int j = 0; j < m_nBoard.length; j++)
+					{
+						m_nBoard[i][j] = 0;
+					}
+				}
+				repaint();
+			}
+		});
+
+		this.add(startButton);
+		this.add(resetButton);
 
 		m_strStatus = "Image loaded";
-		
 	}
 	
+
 	public void paint (Graphics canvas)
 	{
+		System.out.println("DEBUG: Painting...");
 		m_bClash = false;
 		DrawSquares(canvas);
 		canvas.setColor(Color.RED);
@@ -118,7 +140,6 @@ public class EightQueens extends Applet implements MouseListener, MouseMotionLis
 					nColCount++;
 				}
 			}
-			
 			if (nColCount > 1)
 			{
 				canvas.drawLine(BOARDLEFT + nCol * SQUAREWIDTH + (SQUAREWIDTH / 2), 
@@ -135,7 +156,7 @@ public class EightQueens extends Applet implements MouseListener, MouseMotionLis
 		for(  int nRow=0; nRow<NUMROWS; nRow++ )
 		{
 			int nRowCount = 0;
-			for( int nCol=0; nCol<NUMCOLS; nCol++ )
+			for( int nCol = 0; nCol < NUMCOLS; nCol++ )
 			{
 				if( m_nBoard[nRow][nCol] != 0 )
 				{
@@ -329,4 +350,54 @@ public class EightQueens extends Applet implements MouseListener, MouseMotionLis
 
 	@Override
 	public void mouseExited(MouseEvent e) {}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	class Backtracking implements Runnable {
+
+		@Override
+		public void run() {
+			solve(0, 0);
+		}
+		
+        public boolean solve (int nCol, int nRow)
+        {
+                if (nCol >= NUMCOLS && nRow >= NUMROWS)
+                {
+                        return true;
+                }
+                
+                m_nBoard[nRow][nCol] = 1;
+                repaint();
+                System.out.println("Painting");
+                try {
+                        Thread.sleep(100);
+                        System.out.println("Sleeping");
+                } catch (InterruptedException e) {
+                        e.printStackTrace();
+                }
+                
+                if (m_bClash)
+                {
+                        m_nBoard[nRow][nCol] = 0;
+                        if (nRow == NUMROWS - 1)
+                        {
+                                return false; 
+                        }
+                        return solve(nCol, nRow + 1);
+                }
+                else
+                {
+                        if (nCol == NUMCOLS - 1)
+                        {
+                                return true;
+                        }
+                        return solve(nCol + 1, nRow);
+                }
+        }
+	}
 }
