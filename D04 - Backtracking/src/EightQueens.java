@@ -27,6 +27,7 @@ public class EightQueens extends Applet implements MouseListener, MouseMotionLis
 	private static final int SQUAREHEIGHT = 50;
 	private static final int BOARDLEFT = 50;
 	private static final int BOARDTOP = 50;
+	private static final int PAINTDELAY = 25;
 	
 	int m_nBoard[][] = new int[NUMROWS][NUMCOLS];
 	boolean m_bClash;
@@ -37,9 +38,11 @@ public class EightQueens extends Applet implements MouseListener, MouseMotionLis
 
 	private static Button startButton = new Button("Start"); 
 	private static Button resetButton = new Button("Reset"); 
+	private static Button stopButton = new Button("Stop");
+	private static Button resumeButton = new Button("Resume");
 	
-	Thread solveThread;
-
+	Backtracking backtrackingSolver;
+	
 	@Override
 	public void init() 
 	{
@@ -48,6 +51,8 @@ public class EightQueens extends Applet implements MouseListener, MouseMotionLis
 
 		setSize(1020,700);
 		
+		backtrackingSolver = new Backtracking();
+
 		try
 		{
 			m_imgQueen = ImageIO.read(EightQueens.class.getResourceAsStream("queen.png"));
@@ -70,35 +75,72 @@ public class EightQueens extends Applet implements MouseListener, MouseMotionLis
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) 
 			{
-				solveThread = new Thread(new Backtracking());
-				solveThread.start();
+				reset();
+				backtrackingSolver.start();
+				startButton.setEnabled(false);
+				stopButton.setEnabled(true);
+				resetButton.setEnabled(false);
 			}
 		});
 
 		resetButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) 
 			{
-				for (int i = 0; i < m_nBoard.length; i++) 
-				{
-					for (int j = 0; j < m_nBoard.length; j++)
-					{
-						m_nBoard[i][j] = 0;
-					}
-				}
-				repaint();
+				reset();
+				backtrackingSolver.end();
+				startButton.setEnabled(true);
+				resumeButton.setEnabled(false);
 			}
 		});
 
+		stopButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event)
+			{
+				backtrackingSolver.suspend();
+				resumeButton.setEnabled(true);
+				stopButton.setEnabled(false);
+				resetButton.setEnabled(true);
+			}
+		});
+		
+		resumeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event)
+			{
+				backtrackingSolver.resume();
+				resumeButton.setEnabled(false);
+				stopButton.setEnabled(true);
+				resetButton.setEnabled(false);
+			}
+			
+		});
 		this.add(startButton);
 		this.add(resetButton);
+		this.add(stopButton);
+		this.add(resumeButton);
+
+		resumeButton.setEnabled(false);
+		stopButton.setEnabled(false);
 
 		m_strStatus = "Image loaded";
+	}
+	
+	public void reset ()
+	{
+        for (int i = 0; i < m_nBoard.length; i++) 
+		{
+        	for (int j = 0; j < m_nBoard.length; j++)
+			{
+        		m_nBoard[i][j] = 0;
+			}
+		}
+        m_strStatus = "";
+		repaint();
+		
 	}
 	
 
 	public void paint (Graphics canvas)
 	{
-		System.out.println("DEBUG: Painting...");
 		m_bClash = false;
 		DrawSquares(canvas);
 		canvas.setColor(Color.RED);
@@ -108,6 +150,16 @@ public class EightQueens extends Applet implements MouseListener, MouseMotionLis
 		CheckDiagonal2(canvas);
 		canvas.setColor(Color.BLUE);
 		canvas.drawString(m_strStatus, BOARDLEFT, BOARDTOP + SQUAREHEIGHT*8 + 20);
+		
+		startButton.setSize(100, 50);
+		startButton.setLocation(50, 500);
+		resetButton.setSize(100, 50);
+		resetButton.setLocation(200, 500);
+		stopButton.setSize(100, 50);
+		stopButton.setLocation(50, 600);
+		resumeButton.setSize(100, 50);
+		resumeButton.setLocation(200, 600);
+		
 	}
 	
 	public void DrawSquares (Graphics canvas)
@@ -359,45 +411,107 @@ public class EightQueens extends Applet implements MouseListener, MouseMotionLis
 	
 	class Backtracking implements Runnable {
 
+		private volatile Thread solveThread;
+		boolean suspended; 
+
 		@Override
-		public void run() {
-			solve(0, 0);
+		public void run() 
+		{
+			Thread thisThread = Thread.currentThread();
+			while (solveThread == thisThread)
+			{
+                solve(0,0);
+                repaint();
+                stopButton.setEnabled(false);
+                startButton.setEnabled(true);
+                resetButton.setEnabled(true);
+                end();
+			}
+		}
+		
+		public void start()
+		{
+            solveThread = new Thread(this);
+            solveThread.start();
+		}
+		
+		public void end()
+		{
+			solveThread = null;
+		}
+		
+		void suspend() 
+		{
+			suspended = true;
+		}
+		
+		void resume()
+		{
+			synchronized (solveThread)
+			{
+				suspended = false;
+				solveThread.notify();
+			}
 		}
 		
         public boolean solve (int nCol, int nRow)
         {
-                if (nCol >= NUMCOLS && nRow >= NUMROWS)
-                {
-                        return true;
-                }
+
+        	if (suspended)
+        	{
+
+        		synchronized (solveThread)
+        		{
+                	try 
+                	{
+                    	solveThread.wait();
+                	} catch (InterruptedException e) {
+                    	e.printStackTrace();
+                	}
+        		}
+        	}
+        	
+
+        	// If column after the last column is reached, the algorithm is finished.
+            if (nCol == NUMCOLS)
+            {
+            	m_strStatus = "Finished!";
+                return true;
+            }
+            
+            // If a row is out of bounds, then go back to the previous column
+            if (nRow >= NUMROWS)
+            {
+            	return false;
+            }
                 
-                m_nBoard[nRow][nCol] = 1;
-                repaint();
-                System.out.println("Painting");
-                try {
-                        Thread.sleep(100);
-                        System.out.println("Sleeping");
-                } catch (InterruptedException e) {
-                        e.printStackTrace();
-                }
+            // Try this cell
+            m_strStatus = "Trying (" + nRow + "," + nCol + ")...";
+            m_nBoard[nRow][nCol] = 1;
+            repaint();
+
+            // Delay so repaint can finish
+            try {
+                Thread.sleep(PAINTDELAY);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
                 
-                if (m_bClash)
-                {
-                        m_nBoard[nRow][nCol] = 0;
-                        if (nRow == NUMROWS - 1)
-                        {
-                                return false; 
-                        }
-                        return solve(nCol, nRow + 1);
-                }
-                else
-                {
-                        if (nCol == NUMCOLS - 1)
-                        {
-                                return true;
-                        }
-                        return solve(nCol + 1, nRow);
-                }
+            // If there's a clash, erase the cell and go to the next row
+            if (m_bClash)
+            {
+                m_nBoard[nRow][nCol] = 0;
+                return solve(nCol, nRow + 1);
+            }
+           
+            // There's no clash so go to the next column
+            if (solve(nCol + 1, 0))
+            	return true; 
+            else
+            {
+            	m_nBoard[nRow][nCol] = 0;
+            	return solve(nCol, nRow + 1);
+            }
         }
 	}
 }
