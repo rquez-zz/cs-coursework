@@ -1,8 +1,6 @@
 import java.applet.Applet;
 import java.awt.Button;
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.MediaTracker;
 import java.awt.event.ActionEvent;
@@ -14,7 +12,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 
 
 public class EightQueens extends Applet implements MouseListener, MouseMotionListener, ActionListener{
