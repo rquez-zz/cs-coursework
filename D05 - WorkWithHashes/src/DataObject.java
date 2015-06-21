@@ -1,4 +1,3 @@
-
 public class DataObject {
 
 	public DataObject(String strKey)
@@ -6,10 +5,15 @@ public class DataObject {
 		m_strKey = strKey;
 	}
 	
-	String m_strKey = "";
+	private String m_strKey = "";
 	
 	public String GetKey()
 	{
 		return m_strKey;
+	}
+	
+	public void SetKey(String strString)
+	{
+		m_strKey = strString;
 	}
 }
