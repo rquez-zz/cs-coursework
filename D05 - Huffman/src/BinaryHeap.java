@@ -36,9 +36,26 @@ public class BinaryHeap {
 		return heap;
 	}
 	
-	public void deleteFromHeapAt(int index)
+	public int getSmallestNodeIndex()
 	{
 		HuffmanTreeNode[] heap = this.getHuffmanHeap();
+		
+		int smallest = 0;
+		
+		for (int i = 1; i < heap.length; i++)
+		{
+			if (heap[i].compareTo(heap[smallest]) < 0)
+				smallest = i;
+		}
+		
+		return smallest;
+	}
+	
+	public HuffmanTreeNode deleteFromHeapAt(int index)
+	{
+		HuffmanTreeNode[] heap = this.getHuffmanHeap();
+		
+		HuffmanTreeNode deletedNode = heap[index];
 
 		// Make a new smaller array
 		HuffmanTreeNode[] newHeap = new HuffmanTreeNode[heap.length - 1];
@@ -62,6 +79,8 @@ public class BinaryHeap {
 		newHeap = setLeftRightNodes(newHeap);
 
 		this.setHuffmanHeap(newHeap);
+		
+		return deletedNode;
 	}
 	
 	public void insertIntoHeap(HuffmanTreeNode node)
