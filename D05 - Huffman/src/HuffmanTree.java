@@ -3,9 +3,6 @@ public class HuffmanTree extends HuffmanTreeNode {
 	
 	public HuffmanTree(HuffmanTree left, HuffmanTree right)
 	{
-		super(left.getIntByteFrequency() + right.getIntByteFrequency(), (byte)0);
-		this.setLeft(left);
-		this.setRight(right);
 	}
 	
 	/**

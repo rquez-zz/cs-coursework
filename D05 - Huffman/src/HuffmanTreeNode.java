@@ -1,33 +1,38 @@
 
-public class HuffmanTreeNode {
+public class HuffmanTreeNode implements Comparable<HuffmanTreeNode>{
 
-	private byte byteValue;
-	private int intByteFrequency;
+	private int intByte;
+	private int intFrequency;
 	private HuffmanTreeNode left;
 	private HuffmanTreeNode right;
 
-	public HuffmanTreeNode(int intByteFrequency, byte byteValue)
+	public HuffmanTreeNode(int intByte, int intFrequency, HuffmanTreeNode left, HuffmanTreeNode right)
 	{
-		this.setByteValue(byteValue);
-		this.setIntByteFrequency(intByteFrequency);
-		this.setLeft(null);
-		this.setRight(null);
+		this.setByteValue(intByte);
+		this.setIntByteFrequency(intFrequency);
+		this.setLeft(left);
+		this.setRight(right);
 	}
 
-	public byte getByteValue() {
-		return byteValue;
+	public boolean isLeaf() 
+	{
+		return ( left == null && right == null );
 	}
 
-	public void setByteValue(byte byteValue) {
-		this.byteValue = byteValue;
+	public int getByteValue() {
+		return intByte;
+	}
+
+	public void setByteValue(int intByte) {
+		this.intByte = intByte;
 	}
 
 	public int getIntByteFrequency() {
-		return intByteFrequency;
+		return intFrequency;
 	}
 
-	public void setIntByteFrequency(int intByteFrequency) {
-		this.intByteFrequency = intByteFrequency;
+	public void setIntByteFrequency(int intFrequency) {
+		this.intFrequency = intFrequency;
 	}
 
 	public HuffmanTreeNode getLeft() {
@@ -46,4 +51,13 @@ public class HuffmanTreeNode {
 		this.right = right;
 	}
 
+	@Override
+	public int compareTo(HuffmanTreeNode node) {
+		return this.intFrequency - node.intFrequency;
+	}
+	
+	public String toString()
+	{
+		return "{ intByte: " + intByte + ", intFrequency: " + intFrequency + " }";
+	}
 }
