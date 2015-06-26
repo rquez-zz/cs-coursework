@@ -1,41 +1,46 @@
+/**
+ * @author Ricardo Vasquez
+ *
+ */
 public class BinaryHeap {
 
+	// The Array representation of the binary heap
 	private HuffmanTreeNode[] HuffmanHeap;
 	
-	public BinaryHeap(int freq[])
+	public BinaryHeap(int freq[][])
 	{
 		HuffmanHeap = heapify(freq);
 	}
-
-	private HuffmanTreeNode[] heapify(int freq[])
+	
+	/**
+	 * Takes in the frequency array and transforms it into
+	 * a binary heap array implementation.
+	 * 
+	 * The frequency and byte values are initialized into a 
+	 * HuffmanTreeNode
+	 * 
+	 * @param freq
+	 * @return HuffmanTreeNode[]
+	 */
+	private HuffmanTreeNode[] heapify(int freq[][])
 	{
-		// Count the number of non zero frequencies
-		int intNonZeroFreqCount = 0;
+		HuffmanTreeNode[] heap = new HuffmanTreeNode[freq.length];
 		for (int i = 0; i < freq.length; i++)
 		{
-            if (freq[i] > 0)
-            	intNonZeroFreqCount++;
+			heap[i] = new HuffmanTreeNode(freq[i][1], freq[i][0], null, null);
 		}
 		
-		// Initialize Heap Array 
-		HuffmanTreeNode[] heap = new HuffmanTreeNode[intNonZeroFreqCount];
-
-		// Create HuffmanTreeNodes for each frequency
-		for (int i = 0; i < freq.length; i++)
-		{
-			if (freq[i] > 0)
-				heap[i] = new HuffmanTreeNode(i, freq[i], null, null);
-		}
-		
-		// Sort the array to a proper binary heap implementation
 		heap = heapSort(heap);
-
-		// Set left right nodes
-		heap = setLeftRightNodes(heap);
 
 		return heap;
 	}
 	
+	/**
+	 * Gets the index of the lowest value in the 
+	 * binary heap array.
+	 * 
+	 * @return int
+	 */
 	public int getSmallestNodeIndex()
 	{
 		HuffmanTreeNode[] heap = this.getHuffmanHeap();
@@ -44,51 +49,48 @@ public class BinaryHeap {
 		
 		for (int i = 1; i < heap.length; i++)
 		{
-			if (heap[i].compareTo(heap[smallest]) < 0)
+			if (heap[smallest].compareTo(heap[i]) > 0)
 				smallest = i;
 		}
 		
 		return smallest;
 	}
 	
+	/**
+	 * Deletes a node from the binary heap at a specific
+	 * index and returns the deleted node.
+	 * 
+	 * @param index
+	 * @return HuffmanTreeNode
+	 */
 	public HuffmanTreeNode deleteFromHeapAt(int index)
 	{
-		HuffmanTreeNode[] heap = this.getHuffmanHeap();
+		HuffmanTreeNode[] heap = swap(this.getHuffmanHeap(), index, this.getHuffmanHeap().length - 1);
 		
-		HuffmanTreeNode deletedNode = heap[index];
+		HuffmanTreeNode deletedNode = heap[heap.length - 1];
 
-		// Make a new smaller array
 		HuffmanTreeNode[] newHeap = new HuffmanTreeNode[heap.length - 1];
 	
-		for (int i = 0; i < heap.length; i++)
-		{
-			if (i == index)
-			{
-				if (i != (heap.length - 1))
-				{
-                    newHeap[i] = heap[i + 1];
-                    i = i + 1;
-				}
-			}
-			else
-				newHeap[i] = heap[i];
-		}
+		for (int i = 0; i < newHeap.length; i++)
+			newHeap[i] = heap[i];
 		
-		// Sort and set left/right relations
 		newHeap = heapSort(newHeap);
-		newHeap = setLeftRightNodes(newHeap);
 
 		this.setHuffmanHeap(newHeap);
 		
 		return deletedNode;
 	}
 	
+	/**
+	 * Inserts a new node into the binary heap.
+	 * 
+	 * @param node
+	 */
 	public void insertIntoHeap(HuffmanTreeNode node)
 	{
 
 		HuffmanTreeNode[] heap = this.getHuffmanHeap();
 
-		// Make a new larger array
 		HuffmanTreeNode[] newHeap = new HuffmanTreeNode[heap.length + 1];
 		
 		for (int i = 0; i < heap.length; i++)
@@ -98,41 +100,17 @@ public class BinaryHeap {
 		
 		newHeap[heap.length] = node;
 		
-		// Sort and set left/right relations
 		newHeap = heapSort(newHeap);
-		newHeap = setLeftRightNodes(newHeap);
 		
 		this.setHuffmanHeap(newHeap);
 	}
 	
-	private HuffmanTreeNode[] setLeftRightNodes(HuffmanTreeNode[] heap)
-	{
-		// Clear the left and right relations
-		for (int i =0 ; i < heap.length; i++)
-		{
-			heap[i].setLeft(null);
-			heap[i].setRight(null);
-		}
-
-		// Set left and right nodes
-		for (int i = 0; i < heap.length; i++)
-		{
-            if (heap.length > (2*i + 1))
-                heap[i].setLeft(heap[2*i + 1]);
-            if (heap.length > (2*i + 2))
-                heap[i].setRight(heap[2*i + 2]);
-		}
-		return heap;
-	}
-
-	public HuffmanTreeNode[] getHuffmanHeap() {
-		return HuffmanHeap;
-	}
-
-	public void setHuffmanHeap(HuffmanTreeNode[] huffmanHeap) {
-		HuffmanHeap = huffmanHeap;
-	}
-
+	/**
+	 * Sorts the binary heap as a proper heap.
+	 * 
+	 * @param heap
+	 * @return HuffmanTreeNode[]
+	 */
 	private HuffmanTreeNode[] heapSort(HuffmanTreeNode[] heap)
 	{
 		boolean unsorted = true;
@@ -141,7 +119,6 @@ public class BinaryHeap {
 			// Sort and swap
 			for (int i = 0; i < heap.length; i++)
             {
-                // Check left
 				if (heap.length > (2*i + 1))
 				{
                     if (heap[i].compareTo(heap[2*i + 1]) < 0)
@@ -181,6 +158,15 @@ public class BinaryHeap {
 		return heap;
 	}
 	
+	/**
+	 * Swaps two nodes in the binary heap and
+	 * returns the binary heap
+	 * 
+	 * @param heap
+	 * @param index1
+	 * @param index2
+	 * @return HuffmanTreeNode[]
+	 */
 	private HuffmanTreeNode[] swap(HuffmanTreeNode[] heap, int index1, int index2)
 	{
 		HuffmanTreeNode temp = heap[index1];
@@ -188,12 +174,16 @@ public class BinaryHeap {
 		heap[index2] = temp;
 		return heap;
 	}
-	
-	public String toString()
-	{
-		return printInline(HuffmanHeap[0]);
-	}
 
+
+	/**
+	 * Returns the string representation of the binary
+	 * heap inorder traversal. Called by toString()
+	 * on the root node of the binary heap.
+	 * 
+	 * @param node
+	 * @return String
+	 */
 	public String printInline(HuffmanTreeNode node)
 	{
 		if (node != null)
@@ -213,5 +203,19 @@ public class BinaryHeap {
 		else
 			return null;
 	}
+
+	public String toString()
+	{
+		return printInline(HuffmanHeap[0]);
+	}
+
+	public HuffmanTreeNode[] getHuffmanHeap() {
+		return HuffmanHeap;
+	}
+
+	public void setHuffmanHeap(HuffmanTreeNode[] huffmanHeap) {
+		HuffmanHeap = huffmanHeap;
+	}
+
 
 }

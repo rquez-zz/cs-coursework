@@ -1,5 +1,7 @@
 import static org.junit.Assert.*;
 
+import java.util.Random;
+
 import org.junit.Test;
 
 
@@ -9,10 +11,18 @@ public class HuffmanTest {
 	public void testBinaryHeapSort() 
 	{
 		
-		int[] freq = {3, 5, 7, 11, 2};
-		int[] sortedFreq = {11, 7, 5, 3, 2};
-		BinaryHeap heap = new BinaryHeap(freq);
+		int[][] mergedfreq = new int[5][2];
+		int[] freq = {3, 2, 7, 5, 11};
+		int[] bytes = {-128, -127, -126, -125, -124};
+		for (int i = 0; i < freq.length; i++)
+		{
+			mergedfreq[i][0] = freq[i];
+			mergedfreq[i][1] = bytes[i];
+
+		}
+		BinaryHeap heap = new BinaryHeap(mergedfreq);
 		
+		int[] sortedFreq = {11, 7, 3, 2, 5};
 		for (int i = 0; i < heap.getHuffmanHeap().length; i++)
 		{
 			assertEquals(sortedFreq[i], heap.getHuffmanHeap()[i].getIntByteFrequency());
@@ -24,83 +34,116 @@ public class HuffmanTest {
 	public void testBinaryHeapInsertDelete() 
 	{
 		
-		int[] freq = {3, 5, 7, 11, 2};
-		int[] sortedFreq = {11, 7, 5, 3, 2, 5};
-		int[] sortedModFreq = {11, 7, 5, 3, 2};
+		int[][] mergedfreq = new int[5][2];
+		int[] freq = {3, 2, 7, 5, 11};
+		int[] bytes = {-128, -127, -126, -125, -124};
+		for (int i = 0; i < freq.length; i++)
+		{
+			mergedfreq[i][0] = freq[i];
+			mergedfreq[i][1] = bytes[i];
 
-		BinaryHeap heap = new BinaryHeap(freq);
+		}
+
+		int[] sortedFreq = {11, 7, 5, 2, 5, 3};
+		int[] sortedModFreq = {11, 7, 5, 2, 5};
+
+		BinaryHeap heap = new BinaryHeap(mergedfreq);
 		HuffmanTreeNode newNode = new HuffmanTreeNode(22, 5, null, null);
 		heap.insertIntoHeap(newNode);
 
 		for (int i = 0; i < heap.getHuffmanHeap().length; i++)
-		{
 			assertEquals(sortedFreq[i], heap.getHuffmanHeap()[i].getIntByteFrequency());
-		}
 		
 		heap.deleteFromHeapAt(5);
 
 		for (int i = 0; i < heap.getHuffmanHeap().length; i++)
-		{
 			assertEquals(sortedModFreq[i], heap.getHuffmanHeap()[i].getIntByteFrequency());
-		}
 
 	}
 
 	@Test
-	public void testBuildHuffmanTree()
+	public void testMakeHuffmanCodes1()
 	{
-		int[] freq = {3, 5, 7, 11, 2};
+		int[] freq = {1,2,3};
+		int[][] freqTable = Huffman.processFreqArrayPublic(freq);
+		boolean[][] codes = Huffman.makeHuffmanCodes(freq);
 		
-		BinaryHeap heap = new BinaryHeap(freq);
-		
-		// Delete 2
-		HuffmanTreeNode node1 = heap.deleteFromHeapAt(heap.getSmallestNodeIndex());
-		// Delete 3
-		HuffmanTreeNode node2 = heap.deleteFromHeapAt(heap.getSmallestNodeIndex());
-		
-		// Make 5
-		HuffmanTree tree1 = HuffmanTree.merge(node1, node2);
-		
-		// Put tree1 back into heap
-		heap.insertIntoHeap(tree1);
-		
-		// Delete 5
-		HuffmanTreeNode node3 = heap.deleteFromHeapAt(heap.getSmallestNodeIndex());
-
-		// Delete 5
-		HuffmanTreeNode node4 = heap.deleteFromHeapAt(heap.getSmallestNodeIndex());
-		
-		// Make 10
-		HuffmanTree tree2 = HuffmanTree.merge(node3, node4);
-
-		// Put tree2 into heap
-		heap.insertIntoHeap(tree2);
-		
-		// Delete 7
-		HuffmanTreeNode node5 = heap.deleteFromHeapAt(heap.getSmallestNodeIndex());
-
-		// Delete 10
-		HuffmanTreeNode node6 = heap.deleteFromHeapAt(heap.getSmallestNodeIndex());
-		
-		// Make 17
-		HuffmanTree tree3 = HuffmanTree.merge(node5, node6);
+		assertNotNull(codes);
+		System.out.println(stringifyHuffmanCodes(freqTable, codes));
+	}
 	
-		// Put tree3 into heap
-		heap.insertIntoHeap(tree3);
+	@Test
+	public void testMakeHuffmanCodes2()
+	{
+		int[] freq = {3, 5, 7, 11, 2, 6, 14, 22};
+		int[][] freqTable = Huffman.processFreqArrayPublic(freq);
+		boolean[][] codes = Huffman.makeHuffmanCodes(freq);
 		
-		// Delete 11
-		HuffmanTreeNode node7 = heap.deleteFromHeapAt(heap.getSmallestNodeIndex());
-
-		// Delete 17
-		HuffmanTreeNode node8 = heap.deleteFromHeapAt(heap.getSmallestNodeIndex());
-		
-		// Make 28
-		HuffmanTree tree4 = HuffmanTree.merge(node7, node8);
+		assertNotNull(codes);
+		System.out.println(stringifyHuffmanCodes(freqTable, codes));
+	}
 	
-		// Put tree4 into heap
-		heap.insertIntoHeap(tree4);
+	@Test
+	public void testMakeHuffmanCodes3()
+	{
+		Random randomGenerator = new Random();
 		
-		System.out.println(heap.getHuffmanHeap()[0].toString());
+		int[] freq = new int[100];
+		for (int i = 0; i < freq.length; i++)
+			freq[i] = randomGenerator.nextInt(20);
+
+		int[][] freqTable = Huffman.processFreqArrayPublic(freq);
+		boolean[][] codes = Huffman.makeHuffmanCodes(freq);
+		
+		assertNotNull(codes);
+		System.out.println(stringifyHuffmanCodes(freqTable, codes));
 	}
 
+	@Test
+	public void testMakeHuffmanCodes4()
+	{
+		Random randomGenerator = new Random();
+		
+		int[] freq = new int[256];
+		for (int i = 0; i < freq.length; i++)
+			freq[i] = randomGenerator.nextInt(20);
+
+		int[][] freqTable = Huffman.processFreqArrayPublic(freq);
+		boolean[][] codes = Huffman.makeHuffmanCodes(freq);
+		
+		assertNotNull(codes);
+		System.out.println(stringifyHuffmanCodes(freqTable, codes));
+	}
+	
+	@Test
+	public void testMakeHuffmanCodes5()
+	{
+		int[] freq = {1, 2};
+		int[][] freqTable = Huffman.processFreqArrayPublic(freq);
+		boolean[][] codes = Huffman.makeHuffmanCodes(freq);
+		
+		assertNotNull(codes);
+		System.out.println(stringifyHuffmanCodes(freqTable, codes));
+	}
+
+	public String stringifyHuffmanCodes(int[][] freqTable, boolean[][] codes)
+	{
+		StringBuffer sb = new StringBuffer();
+
+		sb.append(freqTable.length + " nonzero elements in table.\n");
+		for (int i = 0; i < codes.length; i++)
+		{
+			sb.append(freqTable[i][0] + ":" + freqTable[i][1] + "\t");
+			for (int j = 0; j < codes[i].length; j++)
+			{
+				if (codes[i][j])
+					sb.append(1);
+				else
+					sb.append(0);
+			}
+			sb.append("\n");
+		}
+		
+		return sb.toString();
+	}
 }

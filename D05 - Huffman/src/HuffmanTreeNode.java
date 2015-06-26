@@ -1,4 +1,7 @@
-
+/**
+ * @author Ricardo Vasquez
+ *
+ */
 public class HuffmanTreeNode implements Comparable<HuffmanTreeNode>{
 
 	private int intByte;
@@ -14,9 +17,47 @@ public class HuffmanTreeNode implements Comparable<HuffmanTreeNode>{
 		this.setRight(right);
 	}
 
+	/**
+	 * Returns the depth of the node (how far its subtree goes down).
+	 * If its just a node, it'll return only 1.
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public int getDepth(HuffmanTreeNode node)
+	{
+		if ( node == null)
+			return 0;
+		else
+		{
+			int leftDepth = getDepth(node.getLeft());
+			int rightDepth = getDepth(node.getRight());
+			
+			if (leftDepth > rightDepth)
+				return (leftDepth + 1);
+			else
+				return (rightDepth + 1);
+		}
+	}
+	
+	/**
+	 * Returns true if node is a leaf. 
+	 * 
+	 * @return
+	 */
 	public boolean isLeaf() 
 	{
 		return ( left == null && right == null );
+	}
+
+	@Override
+	public int compareTo(HuffmanTreeNode node) {
+		return this.intFrequency - node.intFrequency;
+	}
+	
+	public String toString()
+	{
+		return "{ " + this.getByteValue() + ":" + this.getIntByteFrequency() + " }";
 	}
 
 	public int getByteValue() {
@@ -51,13 +92,4 @@ public class HuffmanTreeNode implements Comparable<HuffmanTreeNode>{
 		this.right = right;
 	}
 
-	@Override
-	public int compareTo(HuffmanTreeNode node) {
-		return this.intFrequency - node.intFrequency;
-	}
-	
-	public String toString()
-	{
-		return "{ intByte: " + intByte + ", intFrequency: " + intFrequency + " }";
-	}
 }

@@ -1,4 +1,7 @@
-
+/**
+ * @author Ricardo Vasquez
+ *
+ */
 public class HuffmanTree extends HuffmanTreeNode {
 	
 	public HuffmanTree(HuffmanTreeNode left, HuffmanTreeNode right)
@@ -7,18 +10,25 @@ public class HuffmanTree extends HuffmanTreeNode {
 	}
 	
 	/**
-	 * @return result of two merged Huffman trees
+	 * Merges two HuffmanTreeNodes which can be nodes or trees into a HuffmanTree
+	 * 
+	 * @param left
+	 * @param right
+	 * @return HuffmanTree
 	 */
 	public static HuffmanTree merge(HuffmanTreeNode left, HuffmanTreeNode right)
 	{
 		return new HuffmanTree(left, right);
 	}
 	
-	public String toString()
-	{
-		return printInline(this);
-	}
 
+	/**
+	 * String of the inorder representation of the tree
+	 * Called by toString()
+	 * 
+	 * @param node
+	 * @return String
+	 */
 	public String printInline(HuffmanTreeNode node)
 	{
 		if (node != null)
@@ -28,7 +38,10 @@ public class HuffmanTree extends HuffmanTreeNode {
 			if (node.getLeft() != null)
                 sb.append(this.printInline(node.getLeft()));
 
-			sb.append(node.toString());
+			if (node instanceof HuffmanTree)
+				sb.append(((HuffmanTree)node).toStringTree());
+			else
+				sb.append(node.toString());
 			
 			if (node.getRight() != null)
                 sb.append(this.printInline(node.getRight()));
@@ -37,5 +50,15 @@ public class HuffmanTree extends HuffmanTreeNode {
 		}
 		else
 			return null;
+	}
+
+	public String toString()
+	{
+		return printInline(this);
+	}
+	
+	public String toStringTree()
+	{
+		return "{ " + this.getByteValue() + ":" + this.getIntByteFrequency() + " }";
 	}
 }
