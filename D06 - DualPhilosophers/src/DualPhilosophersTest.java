@@ -11,8 +11,8 @@ public class DualPhilosophersTest {
 		int[][] input = new int [4][2];
 		input[0] = new int[]{3, 3};
 		input[1] = new int[]{1, 2};
-		input[2] = new int[]{3, 2};
-		input[3] = new int[]{2, 1};
+		input[1] = new int[]{2, 3};
+		input[2] = new int[]{3, 1};
 		
 		assertEquals(0, DualPhilosophers.findArragements(input));
 	}
@@ -23,10 +23,36 @@ public class DualPhilosophersTest {
 		int[][] input = new int [4][2];
 		input[0] = new int[]{4, 3};
 		input[1] = new int[]{3, 4};
-		input[2] = new int[]{4, 3};
-		input[3] = new int[]{1, 2};
+		input[2] = new int[]{1, 2};
+		input[3] = new int[]{4, 3};
 
 		assertEquals(0, DualPhilosophers.findArragements(input));
+	}
+	
+	public void testOneToOneWithOneLessRelation()
+	{
+		
+		int[][] input = new int [5][2];
+		input[0] = new int[]{5, 4};
+		input[1] = new int[]{3, 1};
+		input[2] = new int[]{4, 2};
+		input[3] = new int[]{1, 5};
+		input[4] = new int[]{5, 4};
+		
+		assertEquals(1, DualPhilosophers.findArragements(input));
+	}
+	
+	public void testManyArrangements()
+	{
+		
+		int[][] input = new int [5][2];
+		input[0] = new int[]{5, 4};
+		input[1] = new int[]{1, 5};
+		input[2] = new int[]{5, 2};
+		input[3] = new int[]{3, 2};
+		input[4] = new int[]{4, 3};
+		
+		assertEquals(2, DualPhilosophers.findArragements(input));
 	}
 	
 	public void printArray(int[] array)
