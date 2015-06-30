@@ -1,0 +1,29 @@
+==========================================================================
+ Item #  Produce        Type             Sold By        Price    In Stock
+==========================================================================
+   1     Zucchini       Squash           pound          2.19       45
+   2     Yellow         Squash           pound          1.79       15
+   3     Tomatoes       Ugly Ripe        each           0.99       67
+   4     Strawberries                    package        4.99       38
+   5     Spaghetti      Squash           each           1.99       18
+   6     Raspberries    Red              package        3.99       50
+   7     Radishes       Red              package        0.99       25
+   8     Peppers        Jalapeno         pound          0.99        7
+   9     Peppers        Green            each           0.59      100
+   10    Orange         Navel            pound          1.99       80
+   11    Okra                            package        6.99       12
+   12    Mushrooms      Shiitake         package        4.99       20
+   13    Mango                           each           3.59       44
+   14    Lime           Persian          each           0.10       60
+   15    Lettuce        Iceberg          each           1.19      100
+   16    Lemon                           each           0.29       40
+   17    Kiwi                            each           0.99       20
+   18    Green Beans    Stringless       pound          1.59       80
+   19    Grapes         Red Seedless     pound          1.99        8
+   20    Eggplant       Japanese         each           1.59       10
+   21    Cauliflower                     each           2.59       26
+   22    Cantaloupe                      each           1.49       53
+   23    Broccoli       Florets          package        3.45       67
+   24    Blueberries                     package        3.99       43
+   25    Asparagus                       pound          2.54       23
+   26    Apple          Granny Smith     pound          2.99      100

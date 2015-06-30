@@ -1,0 +1,25 @@
+George Washington, 2345678
+John Adams, 3456789
+Thomas Jefferson, 4567890
+James Madison, 0987654
+James Monroe, 9876543
+John Quincy Adams, 8765432
+Andrew Jackson, 7654321
+Martin Van Buren, 6543210
+William Henry Harrison, 5432109
+John Tyler, 4321098
+James K Polk, 3210987
+Zachary Taylor, 2109876
+Millard Fillmore, 1098765
+Franklin Pierce, 1234567
+James Buchanan, 2345678
+Abraham Lincoln, 3456789
+Andrew Jackson, 4567890
+Ulysses S Grant, 5678901
+Rutherford B Hayes, 6789012
+James A Garfield, 7890123
+Chester Arthur, 8901234
+Grover Cleveland, 9012345
+Benjamin Harrison, 0123456
+William McKinley, 1357924
+Theodore Roosevelt, 2468013
