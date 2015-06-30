@@ -14,7 +14,7 @@ public class DualPhilosophersTest {
 		input[1] = new int[]{2, 3};
 		input[2] = new int[]{3, 1};
 		
-		assertEquals(0, DualPhilosophers.findArragements(input));
+		assertEquals(0, DualPhilosophers.findArrangements(input));
 	}
 
 	@Test
@@ -26,9 +26,10 @@ public class DualPhilosophersTest {
 		input[2] = new int[]{1, 2};
 		input[3] = new int[]{4, 3};
 
-		assertEquals(0, DualPhilosophers.findArragements(input));
+		assertEquals(0, DualPhilosophers.findArrangements(input));
 	}
 	
+	@Test
 	public void testOneToOneWithOneLessRelation()
 	{
 		
@@ -39,9 +40,10 @@ public class DualPhilosophersTest {
 		input[3] = new int[]{1, 5};
 		input[4] = new int[]{5, 4};
 		
-		assertEquals(1, DualPhilosophers.findArragements(input));
+		assertEquals(1, DualPhilosophers.findArrangements(input));
 	}
 	
+	@Test
 	public void testManyArrangements()
 	{
 		
@@ -52,7 +54,7 @@ public class DualPhilosophersTest {
 		input[3] = new int[]{3, 2};
 		input[4] = new int[]{4, 3};
 		
-		assertEquals(2, DualPhilosophers.findArragements(input));
+		assertEquals(2, DualPhilosophers.findArrangements(input));
 	}
 	
 	public void printArray(int[] array)
