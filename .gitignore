@@ -3,8 +3,9 @@ bin/
 .settings/
 .classpath
 .project
-
-
+doc/
+*.zip
+*.jar
 
 # Windows image file caches
 Thumbs.db
