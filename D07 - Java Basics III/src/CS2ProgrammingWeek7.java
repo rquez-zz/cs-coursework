@@ -152,8 +152,35 @@ public class CS2ProgrammingWeek7
 	 */
 	static int[] follow3with4(int[] nums) 
 	{
+		for (int i = 1; i < nums.length; i++)
+		{
+			if (nums[i - 1] == 3)
+			{
+				int indexFour = 0;
+                for (int j = 1; j < nums.length; j++)
+                {
+                    if (nums[j-1] != 3 && nums[j] == 4)
+                    {
+                        indexFour = j;
+                    }
+                }
+				
+				int numTemp = nums[i];
+				
+				if (nums[0] == 4)
+				{
+                    nums[i] = nums[0];
+                    nums[0] = numTemp;
+				}
+				else if (indexFour != 0)
+				{
+					nums[i] = nums[indexFour];
+					nums[indexFour] = numTemp;
+				}
+			}
+		}
 
-		return new int[2];
+		return nums;
 	}
 	
 	//	Problem #5
@@ -178,6 +205,21 @@ public class CS2ProgrammingWeek7
 	 */
 	static boolean innerAppearsInOuter(int[] outer, int[] inner) 
 	{
+		int count = 0;
+		for (int i = 0; i < inner.length; i++)
+		{
+			for (int j = 0; j < outer.length; j++)
+			{
+				if (inner[i] == outer[j])
+				{
+					count++;
+					j = outer.length;
+				}
+			}
+		}
+		
+		if (count == inner.length)
+			return true;
 
 		return false;
 	}

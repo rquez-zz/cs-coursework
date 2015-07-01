@@ -30,12 +30,17 @@ public class CS2ProgrammingWeek7Test {
 
 	@Test
 	public void testFollow3with4() {
-		fail("Not yet implemented");
+		assertArrayEquals(new int[]{1, 3, 4, 1}, CS2ProgrammingWeek7.follow3with4(new int[]{1, 3, 1, 4}));
+		assertArrayEquals(new int[]{1, 3, 4, 1, 1, 3, 4}, CS2ProgrammingWeek7.follow3with4(new int[]{1, 3, 1, 4, 4, 3, 1}));
+		assertArrayEquals(new int[]{3, 4, 2, 2}, CS2ProgrammingWeek7.follow3with4(new int[]{3, 4, 2, 2}));
+		assertArrayEquals(new int[]{3, 4}, CS2ProgrammingWeek7.follow3with4(new int[]{3, 4}));
 	}
 
 	@Test
 	public void testInnerAppearsInOuter() {
-		fail("Not yet implemented");
+		assertTrue(CS2ProgrammingWeek7.innerAppearsInOuter(new int[]{1,2,4,6}, new int[]{2, 4}));
+		assertFalse(CS2ProgrammingWeek7.innerAppearsInOuter(new int[]{1,2,4,6}, new int[]{2, 3, 4}));
+		assertTrue(CS2ProgrammingWeek7.innerAppearsInOuter(new int[]{1,2,4,4,6}, new int[]{2, 4}));
 	}
 
 	@Test
