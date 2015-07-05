@@ -45,22 +45,30 @@ public class CS2ProgrammingWeek7Test {
 
 	@Test
 	public void testMaximumMirrorSpan() {
-		fail("Not yet implemented");
+		assertEquals(3, CS2ProgrammingWeek7.maximumMirrorSpan(new int[]{1, 2, 3, 8, 9, 3, 2, 1}));
+		assertEquals(3, CS2ProgrammingWeek7.maximumMirrorSpan(new int[]{1, 2, 3, 8, 9, 3, 2, 1}));
+		assertEquals(2, CS2ProgrammingWeek7.maximumMirrorSpan(new int[]{7, 1, 2, 9, 7, 2, 1,}));
 	}
 
 	@Test
 	public void testFollow4with5() {
-		fail("Not yet implemented");
+		assertArrayEquals(new int[]{9,4,5,4,5,9}, CS2ProgrammingWeek7.follow4with5(new int[]{5, 4, 9, 4, 9, 5}));
+		assertArrayEquals(new int[]{1,4,5,1}, CS2ProgrammingWeek7.follow4with5(new int[]{1,4,1,5}));
+		assertArrayEquals(new int[]{1,4,5,1,1,4,5}, CS2ProgrammingWeek7.follow4with5(new int[]{1,4,1,5,5,4,1}));
 	}
 
 	@Test
 	public void testReverseArithSeries() {
-		fail("Not yet implemented");
+		assertArrayEquals(new int[]{0, 0, 1, 0, 2, 1, 3, 2, 1}, CS2ProgrammingWeek7.reverseArithSeries(3));
+		assertArrayEquals(new int[]{0, 1, 2, 1}, CS2ProgrammingWeek7.reverseArithSeries(2));
+		assertArrayEquals(new int[]{0, 0, 0, 1, 0, 0, 2, 1, 0, 3, 2, 1, 4, 3, 2, 1}, CS2ProgrammingWeek7.reverseArithSeries(4));
 	}
 
 	@Test
 	public void testLargestClump() {
-		fail("Not yet implemented");
+		assertEquals(2, CS2ProgrammingWeek7.largestClump(new int[]{1,2,2,3,4,4}));
+		assertEquals(2, CS2ProgrammingWeek7.largestClump(new int[]{1,1,2,1,1}));
+		assertEquals(1, CS2ProgrammingWeek7.largestClump(new int[]{1,1,1,1,1}));
 	}
 
 }

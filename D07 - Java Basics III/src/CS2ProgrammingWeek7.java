@@ -244,8 +244,53 @@ public class CS2ProgrammingWeek7
 	 */
 	static int maximumMirrorSpan(int[] nums) 
 	{
-
-		return 0;
+		int maxSpan = 0;
+		for (int i = 0; i < nums.length; i++)
+		{
+			for (int k = 0; k < nums.length; k++)
+			{
+				if (i <= k)
+				{
+					int indexEnd = k - i;
+					int[] reverseArray = new int[indexEnd + 1];
+					for (int j = i; j <= k; j++)
+					{
+						reverseArray[indexEnd] = nums[j];
+						indexEnd--;
+					}
+					
+					int indexStart = 0;
+					boolean check = false;
+					for (int j = 0; j < nums.length; j++)
+					{
+						if (nums[j] == reverseArray[indexStart])
+						{
+							indexStart++;
+							
+							if (indexStart >= reverseArray.length)
+							{
+								check = true;
+								break;
+							}
+						} 
+						else
+						{
+							indexStart = 0;
+						}
+								
+                    }
+					
+					if (check)
+					{
+						if (reverseArray.length > maxSpan)
+						{
+							maxSpan = reverseArray.length;
+						}
+					}
+                }
+            }
+        }
+		return maxSpan;
 	}
 	
 	//	Problem #7
@@ -269,8 +314,34 @@ public class CS2ProgrammingWeek7
 	 */
 	static int[] follow4with5(int[] nums) 
 	{
+        for(int i = 0; i < nums.length; i++) 
+        {
+            if(nums[i] == 4 && i != nums.length) 
+            {
+            	int index = 0;
+                for(int k = 0; k < nums.length; k++) 
+                {
+                    if((k == 0 && nums[k] == 5) || (nums[k] == 5 && nums[k - 1] != 4)) 
+                    {
+                        index = k;
+                        break;
+                    }
+                    else
+                    {
+                    	index = -1;
+                    }
+                }
 
-		return new int[1];
+                if(index != -1) 
+                {
+                  int temp = nums[i + 1];
+                  nums[i + 1] = nums[index];
+                  nums[index] = temp;
+                }
+            }
+        }
+        
+        return nums;
 	}
 	
 	//	Problem #8
@@ -291,8 +362,17 @@ public class CS2ProgrammingWeek7
 	 */
 	static int[] reverseArithSeries(int n) 
 	{
-
-		return new int[1];
+		int[] seriesArray = new int[n*n];
+		int index;
+		for(int i = 1; i <= n; i++)
+		{
+			index = n * i - 1;
+			for(int j = 1; j <= i; j++, index--)
+			{
+				seriesArray[index] = j;
+			}
+		}
+		return seriesArray;
 	}
 	
 	//	Problem #9
@@ -313,8 +393,22 @@ public class CS2ProgrammingWeek7
 	 */
 	static int largestClump(int[] nums) 
 	{
-
-		return 0;
+		int clumpCount = 0;
+		boolean isClump = false;
+        for(int i = 0; i < nums.length - 1; i++)
+        {
+            if(isClump)
+            {
+              if(nums[i] != nums[i+1])
+                  isClump = false;
+            }
+            else if(nums[i] == nums[i+1])
+            {
+              isClump = true;
+              clumpCount++;
+            }
+        }
+        return clumpCount;
 	}
 	
 	///////////////////////////////////////////
