@@ -116,14 +116,31 @@ public class CaesarCipher {
         return count;
     }
 
-    double percent(int num1, int num2)
+    /**
+     * Calculates the percentage of one integer with respect to another, returning the result as a float
+     * @param num1 numerator
+     * @param num2 denominator
+     * @return float percent
+     */
+    static double percent(int num1, int num2)
     {
-        return 0.0;
+        return ((double) num1 / (double) num2) * 100;
     }
 
-    double[] freqs(String str)
+    /**
+     *  Returns the list of percentage frequencies of each of the lower-case letters 'a' to 'z' in a string
+     * @param str string to analyze
+     * @return list of percentages
+     */
+    static double[] freqs(String str)
     {
-        return null;
+        double[] freqs = new double[26];
+        char[] strArray = str.toCharArray();
+        for (int i = 0; i < freqs.length; i++)
+        {
+            freqs[i] = percent(count(nat2let(i + 1), str), str.length());
+        }
+        return freqs;
     }
 
     double[] rotate(int n, double[] list)

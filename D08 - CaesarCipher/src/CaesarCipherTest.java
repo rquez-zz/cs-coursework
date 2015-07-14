@@ -60,12 +60,14 @@ public class CaesarCipherTest {
 
     @Test
     public void testPercent() throws Exception {
-
+        assertEquals(16.6667, CaesarCipher.percent(2,12), .0001);
+        assertEquals(11.9048, CaesarCipher.percent(5,42), .0001);
+        assertEquals(500.0000, CaesarCipher.percent(10,2), .0001);
     }
 
     @Test
     public void testFreqs() throws Exception {
-
+        assertArrayEquals(new double[]{8.33333,0.0,0.0,0.0,8.33333,8.33333,0.0,8.33333, 8.33333,0.0,8.33333,16.6667,0.0,8.33333,0.0,0.0,0.0,0.0,16.6667,0.0,8.33333,0.0,0.0,0.0,0.0,0.0}, CaesarCipher.freqs("haskellisfun"), .0001);
     }
 
     @Test
