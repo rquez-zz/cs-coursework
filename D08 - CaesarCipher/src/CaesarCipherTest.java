@@ -31,12 +31,16 @@ public class CaesarCipherTest {
 
     @Test
     public void testEncode() throws Exception {
-
+        assertEquals("kdvnhoolvixq", CaesarCipher.encode(3, "haskellisfun"));
+        assertEquals("pbqdphlvulfdugr", CaesarCipher.encode(3, "mynameisricardo"));
+        assertEquals("ykzmyqueduomdpa", CaesarCipher.encode(12, "mynameisricardo"));
     }
 
     @Test
     public void testDecode() throws Exception {
-
+        assertEquals("haskellisfun", CaesarCipher.decode(3, "kdvnhoolvixq"));
+        assertEquals("mynameisricardo", CaesarCipher.decode(3, "pbqdphlvulfdugr"));
+        assertEquals("mynameisricardo", CaesarCipher.decode(12, "ykzmyqueduomdpa"));
     }
 
     @Test

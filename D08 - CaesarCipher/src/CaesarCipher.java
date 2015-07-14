@@ -38,21 +38,44 @@ public class CaesarCipher {
     {
         int code = let2nat(c);
         if (code < 27 && code > 0)
-            return nat2let(code + shftAmt);
+        {
+            int shiftCode = (code + shftAmt);
+            if (shiftCode > 26)
+                shiftCode = shiftCode % 26;
+            if (shiftCode < 1)
+                shiftCode += 26;
+            return nat2let(shiftCode);
+        }
         else
             return c;
     }
 
-    String encode(int shftAmt, String str)
+    /**
+     * Encodes a string using a given shift factor
+     * @param shftAmt amount to shift
+     * @param str string to encode
+     * @return encoded string
+     */
+    static String encode(int shftAmt, String str)
     {
-
-        return "";
+        char[] strArray = str.toCharArray();
+        for (int i = 0; i < strArray.length; i++)
+            strArray[i] = shift(shftAmt, strArray[i]);
+        return new String(strArray);
     }
 
-    String decode(int shftAmt, String str)
+    /**
+     * Performs the inverse method to encode
+     * @param shftAmt amount to shift
+     * @param str string to decode
+     * @return decoded string
+     */
+    static String decode(int shftAmt, String str)
     {
-
-        return "";
+        char[] strArray = str.toCharArray();
+        for (int i = 0; i < strArray.length; i++)
+            strArray[i] = shift((-1 * shftAmt), strArray[i]);
+        return new String(strArray);
     }
 
     int lowers(String str)
