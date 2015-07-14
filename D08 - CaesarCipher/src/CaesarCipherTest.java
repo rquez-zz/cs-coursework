@@ -3,7 +3,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Created by Ricardo on 7/13/2015.
+ * Ricardo Vasquez
+ * CasearCipherTest.java
  */
 public class CaesarCipherTest {
 
@@ -45,12 +46,16 @@ public class CaesarCipherTest {
 
     @Test
     public void testLowers() throws Exception {
-
+        assertEquals(12, CaesarCipher.lowers("haskellisfun"));
+        assertEquals(2, CaesarCipher.lowers("ADFADFAaaDFADFAD"));
+        assertEquals(0, CaesarCipher.lowers(""));
     }
 
     @Test
     public void testCount() throws Exception {
-
+        assertEquals(2, CaesarCipher.count('s', "haskellisfun"));
+        assertEquals(0, CaesarCipher.count('x', "haskellisfun"));
+        assertEquals(0, CaesarCipher.count('s', ""));
     }
 
     @Test

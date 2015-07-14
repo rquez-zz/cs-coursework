@@ -1,5 +1,7 @@
 /**
- * Created by Ricardo on 7/13/2015.
+ * Ricardo Vasquez
+ * CasearCipher.java
+ *
  */
 public class CaesarCipher {
 
@@ -78,16 +80,40 @@ public class CaesarCipher {
         return new String(strArray);
     }
 
-    int lowers(String str)
+    /**
+     * Calculates the number of lower-case letters in a string
+     * @param str string to count letters in
+     * @return number of letters in string
+     */
+    static int lowers(String str)
     {
-
-        return 0;
+        char[] strArray = str.toCharArray();
+        int count = 0;
+        for (int i = 0; i < strArray.length; i++)
+        {
+            int letterCode = let2nat(strArray[i]);
+            if (letterCode > 0 && letterCode < 27)
+               count++;
+        }
+        return count;
     }
 
-    int count(String str)
+    /**
+     * Calculates the number of a given character in a string
+     * @param str string to look in
+     * @return count of character occurance in string
+     */
+    static int count(char c, String str)
     {
-
-        return 0;
+        int cLetterCode = let2nat(c);
+        char[] strArray = str.toCharArray();
+        int count = 0;
+        for (int i = 0; i < strArray.length; i++)
+        {
+            if (cLetterCode == let2nat(strArray[i]))
+                count++;
+        }
+        return count;
     }
 
     double percent(int num1, int num2)
