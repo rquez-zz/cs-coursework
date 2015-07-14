@@ -7,22 +7,40 @@ public class CaesarCipher {
     private static final double[] FREQUENCY_TABLE = {8.2, 1.5, 2.8, 4.3, 12.7, 2.2, 2.0, 6.1, 7.0, 0.2, 0.8, 4.0, 2.4,
             6.7, 7.5, 1.9, 0.1, 6.0, 6.3, 9.1, 2.8, 1.0, 2.4, 0.2, 2.0, 0.1};
 
-    int let2nat(char c)
+    /**
+     * Converts a lower-case letter in the range a to z into the corresponding natural number in the range 0 to 25
+     * @param char letter
+     * @return natural number
+     */
+    static int let2nat(char c)
     {
-
-        return 0;
+        return ((int) c) - 96;
     }
 
-    char nat2let(int code)
+    /**
+     * Performs the inverse method to let2nat
+     * @param int char as natural number
+     * @return char
+     */
+    static char nat2let(int code)
     {
-
-        return 'c';
+        return (char) (code + 96);
     }
 
-    char shift(int shftAmt, char c)
+    /**
+     * Applies a shift factor in the range 0 to 25 to a lower-case letter in the range ’a’ to ’z’.
+     * Characters outside this range, such as upper-case letters and punctuation, should be returned unshifted.
+     * @param shftAmt amount to shift
+     * @param c character to shift from
+     * @return character shftAmnt away from c
+     */
+    static char shift(int shftAmt, char c)
     {
-
-        return c;
+        int code = let2nat(c);
+        if (code < 27 && code > 0)
+            return nat2let(code + shftAmt);
+        else
+            return c;
     }
 
     String encode(int shftAmt, String str)
