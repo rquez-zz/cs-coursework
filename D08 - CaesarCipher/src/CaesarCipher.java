@@ -149,20 +149,16 @@ public class CaesarCipher {
      */
     static double[] rotate(int n, double[] list)
     {
-        double[] rotatedList = new double[list.length];
-        int i = 0;
-        int k = n;
-        while(k < list.length)
+        for(int i = 0; i < n; i++)
         {
-            if (n > 0) {
-                rotatedList[list.length - n] = list[i];
-                n--;
+            double temp = list[0];
+            for (int j = 0; j < list.length - 1; j++)
+            {
+                list[j] = list[j+1];
             }
-            rotatedList[i] = list[k];
-            i++;
-            k++;
+            list[list.length - 1] = temp;
         }
-        return rotatedList;
+        return list;
     }
 
     /**
@@ -177,7 +173,7 @@ public class CaesarCipher {
     {
         double sum = 0.0;
         for (int i = 0; i < os.length; i++)
-            sum +=  Math.pow((os[i] - EXPECTED_FREQUENCY_TABLE[i]),2) / EXPECTED_FREQUENCY_TABLE[i];
+            sum += Math.pow((os[i] - EXPECTED_FREQUENCY_TABLE[i]), 2) / EXPECTED_FREQUENCY_TABLE[i];
         return sum;
     }
 
@@ -197,9 +193,33 @@ public class CaesarCipher {
         return -1;
     }
 
-    String crack(String str)
+    static double findMinimum(double[] list)
     {
-        return "";
+        double min = list[0];
+        for (int i = 1; i < list.length; i++)
+        {
+            if (min > list[i])
+                min = list[i];
+        }
+        return min;
+    }
+
+    /**
+     *  Attempts to decode at string by first calcluating the letter frequencies in the string, then calculating the
+     *  chi square value of each rotation (in the range zero to twenty-five) of this list with respect to the table of
+     *  expected frequencies, and finally using the position of the minimum value in this list as the shift factor to
+     *  decode the original string.
+     * @param str string to decode
+     * @return decoded string
+     */
+    static String crack(String str)
+    {
+        double[] chisqrValues = new double[26];
+        for (int i = 0; i < chisqrValues.length; i++)
+            chisqrValues[i] = chisqr(rotate(i, freqs(str)));
+
+        int shiftAmt = position(findMinimum(chisqrValues), chisqrValues);
+        return decode(shiftAmt, str);
     }
 
 
