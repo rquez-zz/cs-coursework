@@ -6,7 +6,7 @@
 public class CaesarCipher {
 
 
-    private static final double[] FREQUENCY_TABLE = {8.2, 1.5, 2.8, 4.3, 12.7, 2.2, 2.0, 6.1, 7.0, 0.2, 0.8, 4.0, 2.4,
+    private static final double[] EXPECTED_FREQUENCY_TABLE = {8.2, 1.5, 2.8, 4.3, 12.7, 2.2, 2.0, 6.1, 7.0, 0.2, 0.8, 4.0, 2.4,
             6.7, 7.5, 1.9, 0.1, 6.0, 6.3, 9.1, 2.8, 1.0, 2.4, 0.2, 2.0, 0.1};
 
     /**
@@ -137,26 +137,64 @@ public class CaesarCipher {
         double[] freqs = new double[26];
         char[] strArray = str.toCharArray();
         for (int i = 0; i < freqs.length; i++)
-        {
             freqs[i] = percent(count(nat2let(i + 1), str), str.length());
-        }
         return freqs;
     }
 
-    double[] rotate(int n, double[] list)
+    /**
+     * Rotates a list n places to the left assuming n is in the range zero to the length of the list
+     * @param n places to rotates left
+     * @param list list to rotate
+     * @return rotated list
+     */
+    static double[] rotate(int n, double[] list)
     {
-        return null;
+        double[] rotatedList = new double[list.length];
+        int i = 0;
+        int k = n;
+        while(k < list.length)
+        {
+            if (n > 0) {
+                rotatedList[list.length - n] = list[i];
+                n--;
+            }
+            rotatedList[i] = list[k];
+            i++;
+            k++;
+        }
+        return rotatedList;
     }
 
-    double chisqr(double[] os)
+    /**
+     * Calculates the chi square statistic for a list of observed frequencies
+     * with respect to a list of expected frequencies es, which is given by
+     * sum(0, n-1, ((os[i] - es[i])^2 / es[i] ))
+     * The expected frequencies is EXPECTED_FREQUENCY_TABLE;
+     * @param os observed frequencies
+     * @return chi square statistic
+     */
+    static double chisqr(double[] os)
     {
-
-        return 0.0;
+        double sum = 0.0;
+        for (int i = 0; i < os.length; i++)
+            sum +=  Math.pow((os[i] - EXPECTED_FREQUENCY_TABLE[i]),2) / EXPECTED_FREQUENCY_TABLE[i];
+        return sum;
     }
 
-    int position(double a, double[] list)
+    /**
+     *  Returns the position at which a value occurs in a list, assuming that it occurs at least once
+     * @param a value to look for
+     * @param list list to look in
+     * @return index of value
+     */
+    static int position(double a, double[] list)
     {
-        return 0;
+        for (int i = 0; i < list.length; i++)
+        {
+            if (list[i] == a)
+                return i;
+        }
+        return -1;
     }
 
     String crack(String str)

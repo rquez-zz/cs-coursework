@@ -72,17 +72,21 @@ public class CaesarCipherTest {
 
     @Test
     public void testRotate() throws Exception {
-
+        assertArrayEquals(new double[]{3.0, 4.0, 1.0, 2.0}, CaesarCipher.rotate(2, new double[]{1.0, 2.0, 3.0, 4.0}), .01);
+        assertArrayEquals(new double[]{2.0, 3.0, 4.0, 1.0}, CaesarCipher.rotate(1, new double[]{1.0, 2.0, 3.0, 4.0}), .01);
+        assertArrayEquals(new double[]{0.0,0.0,0.0,8.33333,8.33333,0.0,8.33333, 8.33333,0.0,8.33333,16.6667,0.0,8.33333,0.0,0.0,0.0,0.0,16.6667,0.0,8.33333,0.0,0.0,0.0,0.0,0.0,8.33333}, CaesarCipher.rotate(1, CaesarCipher.freqs("haskellisfun")), .0001);
     }
 
     @Test
     public void testChisqr() throws Exception {
-
+        assertEquals(202.616, CaesarCipher.chisqr(CaesarCipher.freqs("haskellisfun")), .000000001);
     }
 
     @Test
     public void testPosition() throws Exception {
-
+        assertEquals(2, CaesarCipher.position(5.0, new double[]{1.0, 3.0, 5.0, 7.0, 11.0}));
+        assertEquals(3, CaesarCipher.position(7.0, new double[]{1.0, 3.0, 5.0, 7.0, 11.0}));
+        assertEquals(1, CaesarCipher.position(1.0, new double[]{1.0, 3.0, 5.0, 7.0, 11.0}));
     }
 
     @Test
