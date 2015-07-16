@@ -1,5 +1,5 @@
 # cs-coursework
-Collection of my cs cousework at the University of Central Florida
+Collection of my computer science coursework at the University of Central Florida
 
 COP2800 - Object Oriented Programming I
 
