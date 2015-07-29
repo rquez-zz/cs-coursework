@@ -12,6 +12,8 @@ doc/
 *.iml
 .idea/
 out/
+test
+*.o
 
 # Windows image file caches
 Thumbs.db
