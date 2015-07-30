@@ -1,6 +1,36 @@
 #include "../src/project.c"
 #include <assert.h>
 
+static unsigned Mem[16384];
+
+#define MEM(addr) (Mem[addr >> 2])
+
+void setup() {
+    Mem[4096] = 554172417;
+    Mem[4097] = 554237954;
+    Mem[4098] = 17387552;
+    Mem[4099] = 2947153920;
+    Mem[4100] = 2410348544;
+    Mem[4101] = 23748650;
+    Mem[4102] = 19556395;
+    Mem[4103] = 1007550496;
+    Mem[4104] = 134221835;
+    Mem[4105] = 3735928495;
+    Mem[4106] = 3134897839;
+    Mem[4107] = 290193405;
+
+    unsigned i;
+    printf("DISPLAYING TEST MEM\n");
+    for (i= 4096; i < 4108; i++) {
+        printf("Mem[%x]: %x\n", i << 2, Mem[i]);
+    }
+}
+
+void instruction_fetch_test() {
+
+
+}
+
 void alu_test() {
 
     unsigned A;
@@ -129,7 +159,8 @@ void alu_test() {
 
 int main() {
 
+    setup();
     alu_test();
-
+    instruction_fetch_test();
     return 0;
 }
