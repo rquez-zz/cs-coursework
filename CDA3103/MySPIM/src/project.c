@@ -6,33 +6,34 @@
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
     switch(ALUControl) {
+        // TODO: Ask if this should be parsed to binary
         case '0': // 000 add
-            *ALUresult = A + B;
+            *ALUresult = (signed)A +(signed) B;
             break;
-        case '1': // 001 sub
-            *ALUresult = A - B;
+        case '1': // 001 subtract
+            *ALUresult = (signed)A - (signed)B;
             break;
-        case '2': // 010 slt
+        case '2': // 010 set 1 if A < B else 0
+            if ((signed)A < (signed)B)
+                *ALUresult = 1;
+            else
+                *ALUresult = 0;
+            break;
+        case '3': // 011 set 1 if (unsigned)A < (unsigned)B else 0
             if (A < B)
                 *ALUresult = 1;
             else
                 *ALUresult = 0;
             break;
-        // TODO: Difference between sltu an slt
-        case '3': // 011 sltu
-            if (A < B)
-                *ALUresult = 1;
-            else
-                *ALUresult = 0;
-            break;
-        case '4': // 100 and
+        case '4': // 100 A AND B
             *ALUresult = A && B;
             break;
-        case '5': // 101 or
+        case '5': // 101 A OR B
             *ALUresult = A || B;
             break;
-        case '6': // 110 sll
-            *ALUresult = B << 16;
+        case '6': // 110 shift left B 16 bits
+            // TODO: Ask if this should be output to ALUresult
+            B = B << 16;
             break;
         case '7': // 111 not
             *ALUresult = !A;
