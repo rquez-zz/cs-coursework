@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -g -O2 -Wall
-OBJECTS = alu_test.o
+OBJECTS = tests.o
 PROGRAM = test
 
 test : $(OBJECTS)
