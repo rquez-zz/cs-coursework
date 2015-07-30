@@ -13,6 +13,7 @@ doc/
 .idea/
 out/
 test
+spimcore
 *.o
 
 # Windows image file caches
