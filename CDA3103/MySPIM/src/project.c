@@ -50,6 +50,12 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 /* 10 Points */
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {
+    // Check if PC is word aligned
+    if (PC % 4 != 0)
+        return 1;
+
+    // Shift PC right by 2 to get proper index
+    *instruction = Mem[PC >> 2];
     return 0;
 }
 
