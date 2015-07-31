@@ -64,6 +64,16 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 /* 10 Points */
 void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec)
 {
+    // Unless if the bits are already at the end of the string,
+    // shift right to place the bits at the end and then bitmask
+    // to isolate.
+    *op = (instruction >> 26)   & 0b00000000000000000000000000111111;
+    *r1 = (instruction >> 21)   & 0b00000000000000000000000000011111;
+    *r2 = (instruction >> 16)   & 0b00000000000000000000000000011111;
+    *r3 = (instruction >> 11)   & 0b00000000000000000000000000011111;
+    *funct = instruction        & 0b00000000000000000000000000111111;
+    *offset = instruction       & 0b00000000000000001111111111111111;
+    *jsec = instruction         & 0b00000011111111111111111111111111;
 }
 
 
