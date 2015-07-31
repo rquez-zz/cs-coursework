@@ -24,11 +24,56 @@ void setup() {
     for (i= 4096; i < 4108; i++) {
         printf("Mem[%x]: %x\n", i << 2, Mem[i]);
     }
+    printf("----------------------------\n\n");
 }
 
 void instruction_fetch_test() {
+    unsigned instruction;
+    unsigned PC = 0x4000;
+    int halt = 0;
 
+    // Fetch first Instruction
+    halt = instruction_fetch(PC, Mem, &instruction);
+    assert(instruction == 554172417);
+    assert(halt == 0);
+    printf("PASS\t FETCH - INSTRUCTION at 0x%x is 0x%x\n", PC, instruction);
 
+    // Fetch 5th Instruction
+    PC = 0x4010;
+    halt = instruction_fetch(PC, Mem, &instruction);
+    assert(instruction == 2410348544);
+    assert(halt == 0);
+    printf("PASS\t FETCH - INSTRUCTION at 0x%x is 0x%x\n", PC, instruction);
+
+    // Handle Unaligned Word
+    PC = 0x4012;
+    halt = instruction_fetch(PC, Mem, &instruction);
+    assert(halt == 1);
+    printf("PASS\t FETCH - PC ADDR 0x%x is not word aligned\n", PC);
+}
+
+void instruction_partition_test() {
+    unsigned instruction;
+    unsigned PC = 0x4000;
+    int halt = 0;
+    unsigned op, r1, r2, r3, funct, offset, jsec;
+
+    halt = instruction_fetch(PC, Mem, &instruction);
+    instruction_partition(instruction,&op,&r1,&r2,&r3,&funct,&offset,&jsec);
+
+    assert( halt == 0 );
+    assert( op == 0b1000 );
+    assert( r1 == 0b1000 );
+    assert( r2 == 0b1000 );
+    assert( r3 == 0b0 );
+    assert( funct == 0b1 );
+    assert( offset == 0b1 );
+    assert( jsec == 0b01000010000000000000000001);
+    printf("PASS\t PARTITION - INSTRUCTION:0x%x"
+            "\n\t\t op:0x%x \n\t\t r1:0x%x \n\t\t r2:0x%x"
+            "\n\t\t r3:0x%x \n\t\t funct:0x%x"
+            "\n\t\t offset:0x%x \n\t\t jsec:0x%x\n",
+            instruction, op, r1, r2, r3, funct, offset, jsec);
 }
 
 void alu_test() {
@@ -162,5 +207,6 @@ int main() {
     setup();
     alu_test();
     instruction_fetch_test();
+    instruction_partition_test();
     return 0;
 }
