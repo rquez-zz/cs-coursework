@@ -236,6 +236,13 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
 /* 10 Points */
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
+    // Check if offset is a negative
+    if (offset >> 15 == 1)
+        // Preserve negative by masking signficant bits to 1
+        *extended_value = offset | 0xffff0000;
+    else
+        // Append 16 bits to the front
+        *extended_value = offset & 0x0000ffff;    
 }
 
 /* ALU operations */

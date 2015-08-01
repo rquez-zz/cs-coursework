@@ -345,6 +345,18 @@ void read_register_test() {
     //TODO: WRITE TO REGISTER AND THEN READ IT
 }
 
+void sign_extend_test() {
+
+    unsigned extended_value;
+    sign_extend(0b0100000000001010, &extended_value);
+    assert( extended_value == 0x0000400A);
+    printf("PASS\t SIGN EXTEND - 0x400A (16394) EXTENDED TO 0x0000400A\n");
+
+    sign_extend(0b1111111111110110, &extended_value);
+    assert( extended_value == 0xfffffff6);
+    printf("PASS\t SIGN EXTEND - 0xFFF6 (-10) EXTENDED TO 0xFFFFFFF6A\n");
+}
+
 void alu_test() {
 
     unsigned A;
@@ -479,5 +491,6 @@ int main() {
     instruction_partition_test();
     instruction_decode_test();
     read_register_test();
+    sign_extend_test();
     return 0;
 }
