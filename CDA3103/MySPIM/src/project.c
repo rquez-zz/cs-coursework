@@ -90,7 +90,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
             controls->Branch = 0;
             controls->MemRead = 0;
             controls->MemtoReg = 0;
-            controls->ALUOp = 0b111;
+            controls->ALUOp = 7;
             controls->MemWrite = 0;
             controls->ALUSrc = 0;
             controls->RegWrite = 1;
@@ -131,22 +131,67 @@ int instruction_decode(unsigned op,struct_controls *controls)
             controls->ALUSrc = 1;
             controls->RegWrite = 1;
             break;
-        // Add Unsigned Immediate
-        case 0x9:
-            break;
         // Set to 1 if Less Than Immediate
         case 0xA:
+            controls->RegDst = 0;
+            controls->Jump = 0;
+            controls->Branch = 0;
+            controls->MemRead = 0;
+            controls->MemtoReg = 0;
+            controls->ALUOp = 2;
+            controls->MemWrite = 0;
+            controls->ALUSrc = 1;
+            controls->RegWrite = 1;
             break;
         // Set to 1 if Less Than Unsigned Immediate
         case 0xB:
+            controls->RegDst = 0;
+            controls->Jump = 0;
+            controls->Branch = 0;
+            controls->MemRead = 0;
+            controls->MemtoReg = 0;
+            controls->ALUOp = 3;
+            controls->MemWrite = 0;
+            controls->ALUSrc = 1;
+            controls->RegWrite = 1;
             break;
         // Bitwise AND Immediate
         case 0xC:
+            controls->RegDst = 0;
+            controls->Jump = 0;
+            controls->Branch = 0;
+            controls->MemRead = 0;
+            controls->MemtoReg = 0;
+            controls->ALUOp = 4;
+            controls->MemWrite = 0;
+            controls->ALUSrc = 1;
+            controls->RegWrite = 1;
             break;
         // Bitwise OR Immediate
         case 0xD:
+            controls->RegDst = 0;
+            controls->Jump = 0;
+            controls->Branch = 0;
+            controls->MemRead = 0;
+            controls->MemtoReg = 0;
+            controls->ALUOp = 5;
+            controls->MemWrite = 0;
+            controls->ALUSrc = 1;
+            controls->RegWrite = 1;
             break;
-        //Load Word
+        // Load Upper Immediate
+        case 0xF:
+            controls->RegDst = 0;
+            controls->Jump = 0;
+            controls->Branch = 0;
+            controls->MemRead = 0;
+            controls->MemtoReg = 0;
+            controls->ALUOp = 6;
+            controls->MemWrite = 0;
+            controls->ALUSrc = 1;
+            controls->RegWrite = 1;
+            break;
+        // Load Word
         case 0x23:
             controls->RegDst = 0;
             controls->Jump = 0;
