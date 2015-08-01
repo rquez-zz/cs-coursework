@@ -82,6 +82,98 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 /* 15 Points */
 int instruction_decode(unsigned op,struct_controls *controls)
 {
+    switch(op) {
+        // R-Type
+        case 0x0:
+            controls->RegDst = 1;
+            controls->Jump = 0;
+            controls->Branch = 0;
+            controls->MemRead = 0;
+            controls->MemtoReg = 0;
+            controls->ALUOp = 0b111;
+            controls->MemWrite = 0;
+            controls->ALUSrc = 0;
+            controls->RegWrite = 1;
+            break;
+        // Jump
+        case 0x2:
+            controls->RegDst = 0;
+            controls->Jump = 1;
+            controls->Branch = 0;
+            controls->MemRead = 0;
+            controls->MemtoReg = 0;
+            controls->ALUOp = 0;
+            controls->MemWrite = 0;
+            controls->ALUSrc = 0;
+            controls->RegWrite = 0;
+            break;
+        // Branch Equal
+        case 0x4:
+            controls->RegDst = 2;
+            controls->Jump = 0;
+            controls->Branch = 1;
+            controls->MemRead = 0;
+            controls->MemtoReg = 2;
+            controls->ALUOp = 1;
+            controls->MemWrite = 0;
+            controls->ALUSrc = 0;
+            controls->RegWrite = 0;
+            break;
+        // Add Immediate
+        case 0x8:
+            controls->RegDst = 0;
+            controls->Jump = 0;
+            controls->Branch = 0;
+            controls->MemRead = 0;
+            controls->MemtoReg = 0;
+            controls->ALUOp = 0;
+            controls->MemWrite = 0;
+            controls->ALUSrc = 1;
+            controls->RegWrite = 1;
+            break;
+        // Add Unsigned Immediate
+        case 0x9:
+            break;
+        // Set to 1 if Less Than Immediate
+        case 0xA:
+            break;
+        // Set to 1 if Less Than Unsigned Immediate
+        case 0xB:
+            break;
+        // Bitwise AND Immediate
+        case 0xC:
+            break;
+        // Bitwise OR Immediate
+        case 0xD:
+            break;
+        //Load Word
+        case 0x23:
+            controls->RegDst = 0;
+            controls->Jump = 0;
+            controls->Branch = 0;
+            controls->MemRead = 1;
+            controls->MemtoReg = 1;
+            controls->ALUOp = 0;
+            controls->MemWrite = 0;
+            controls->ALUSrc = 1;
+            controls->RegWrite = 1;
+            break;
+        // Store Word
+        case 0x2B:
+            controls->RegDst = 2;
+            controls->Jump = 0;
+            controls->Branch = 0;
+            controls->MemRead = 0;
+            controls->MemtoReg = 2;
+            controls->ALUOp = 0;
+            controls->MemWrite = 1;
+            controls->ALUSrc = 1;
+            controls->RegWrite = 0;
+            break;
+        // Halt Otherwise
+        default:
+            return 1;
+    }
     return 0;
 }
 
