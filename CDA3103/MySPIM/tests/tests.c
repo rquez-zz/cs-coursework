@@ -323,6 +323,28 @@ void instruction_decode_test() {
             controls.MemWrite, controls.ALUSrc, controls.RegWrite);
 }
 
+void read_register_test() {
+
+    unsigned Reg[32 + 4];
+	memset(Reg, 0, (32 + 4) * sizeof(unsigned));
+    struct_controls controls;
+    unsigned op,r1,r2,r3,funct,offset,jsec,PC,instruction,data1,data2;
+    int halt;
+
+    PC = 0x4000;
+    halt = instruction_fetch(PC, Mem, &instruction);
+    instruction_partition(instruction,&op,&r1,&r2,&r3,&funct,&offset,&jsec);
+    halt = instruction_decode(op, &controls);
+    read_register(r1, r2, Reg, &data1, &data2);
+    assert( halt == 0);
+    assert( data1 == 0);
+    assert( data2 == 0);
+    printf("PASS\t READ REGISTER - READ IN EMPTY REGISTER AT 0x%x and 0x%x\n"
+            , r1, r2);
+
+    //TODO: WRITE TO REGISTER AND THEN READ IT
+}
+
 void alu_test() {
 
     unsigned A;
@@ -456,5 +478,6 @@ int main() {
     instruction_fetch_test();
     instruction_partition_test();
     instruction_decode_test();
+    read_register_test();
     return 0;
 }
