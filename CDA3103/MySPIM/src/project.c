@@ -6,44 +6,43 @@
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
     switch(ALUControl) {
-        // TODO: Ask if this should be parsed to binary
-        case '0': // 000 add
+        case 0: // 000 add
             *ALUresult = (signed)A +(signed) B;
             break;
-        case '1': // 001 subtract
+        case 1: // 001 subtract
             *ALUresult = (signed)A - (signed)B;
             break;
-        case '2': // 010 set 1 if A < B else 0
+        case 2: // 010 set 1 if A < B else 0
             if ((signed)A < (signed)B)
                 *ALUresult = 1;
             else
                 *ALUresult = 0;
             break;
-        case '3': // 011 set 1 if (unsigned)A < (unsigned)B else 0
+        case 3: // 011 set 1 if (unsigned)A < (unsigned)B else 0
             if (A < B)
                 *ALUresult = 1;
             else
                 *ALUresult = 0;
             break;
-        case '4': // 100 A AND B
+        case 4: // 100 A AND B
             *ALUresult = A && B;
             break;
-        case '5': // 101 A OR B
+        case 5: // 101 A OR B
             *ALUresult = A || B;
             break;
-        case '6': // 110 shift left B 16 bits
+        case 6: // 110 shift left B 16 bits
             // TODO: Ask if this should be output to ALUresult
             B = B << 16;
             break;
-        case '7': // 111 not
+        case 7: // 111 not
             *ALUresult = !A;
             break;
     }
 
     if (*ALUresult == 0)
-        *Zero = '1';
+        *Zero = 1;
     else
-        *Zero = '0';
+        *Zero = 0;
 }
 
 /* instruction fetch */
@@ -219,6 +218,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
         default:
             return 1;
     }
+    // No Errors
     return 0;
 }
 
@@ -242,13 +242,64 @@ void sign_extend(unsigned offset,unsigned *extended_value)
         *extended_value = offset | 0xffff0000;
     else
         // Append 16 bits to the front
-        *extended_value = offset & 0x0000ffff;    
+        *extended_value = offset & 0x0000ffff;
 }
 
 /* ALU operations */
 /* 10 Points */
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
+    // Determine to use data2 or extended value
+    if (ALUSrc == 1)
+        data2 = extended_value;
+
+    // Generate ALUControl based on ALUOp and funct
+    unsigned ALUControl;
+    if (ALUOp == 7) { // Operation is R-Type
+        switch(funct) {
+            // Add
+            case 32:
+                ALUControl = 0b000;
+                break;
+            // Subtract
+            case 34:
+                ALUControl = 0b001;
+                break;
+            // Set 1 On Less Than
+            case 42:
+                ALUControl = 0b010;
+                break;
+            // Set 1 On Less Than Unsigned
+            case 43:
+                ALUControl = 0b011;
+                break;
+            // AND
+            case 36:
+                ALUControl = 0b100;
+                break;
+            // OR
+            case 37:
+                ALUControl = 0b101;
+                break;
+            // Shift Left Extended Value by 16
+            case 38:
+                ALUControl = 0b110;
+                break;
+            // NOT
+            case 39:
+                ALUControl = 0b111;
+                break;
+            // Unknown funct, halt
+            default:
+                return 1;
+        }
+    } else // Operation is not R-type use existing ALUOp
+        ALUControl = ALUOp;
+
+    // Send to ALU
+    ALU(data1, data2, ALUControl, ALUresult, Zero);
+
+    // No Errors
     return 0;
 }
 
@@ -264,6 +315,23 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
 /* 10 Points */
 void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,char RegWrite,char RegDst,char MemtoReg,unsigned *Reg)
 {
+    // Continue only if RegWrite is asserted
+    if( RegWrite != 1 )
+        return;
+
+    // Write to the appropriate register from the appropriate source
+    if ( MemtoReg == 1 ) { // Memory is source of write
+        if ( RegDst == 1)
+            Reg[r3] = memdata;
+        else
+            Reg[r2] = memdata;
+    } else { // ALU Result is source of write
+        if ( RegDst == 1 )
+            Reg[r3] = ALUresult;
+        else
+            Reg[r2] = ALUresult;
+    }
+
 }
 
 /* PC update */
