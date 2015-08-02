@@ -351,5 +351,20 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
 /* 10 Points */
 void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char Zero,unsigned *PC)
 {
+    // Increment the PC to the next instruction
+    *PC += 4;
+
+    // When branch and zero are asserted, increment the PC by the extended value
+    if (Branch && Zero)
+        *PC += extended_value >> 2;
+
+    // Change PC to jump address on Jump
+    if (Jump)
+    {
+        // Since jsec is 26 bits, check if PC has bits in 31-27
+        // and merge that with the shift adjusted jsec
+        *PC = (*PC & 0xf0000000) | jsec >> 2;
+    }
+
 }
 
