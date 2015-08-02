@@ -32,6 +32,33 @@ void setup() {
     Reg[0x20] = 0x4000;
 }
 
+void setupFull() {
+    Mem[0x1000] = 0x21080001;
+    Mem[0x1001] = 0x21090002;
+    Mem[0x1002] = 0x01095020;
+    Mem[0x1003] = 0xafaa0000;
+    Mem[0x1004] = 0x8fab0000;
+    Mem[0x1005] = 0x016a602a;
+    Mem[0x1006] = 0x012a682b;
+    Mem[0x1007] = 0x3c0e0020;
+    Mem[0x1008] = 0x0800100b;
+    Mem[0x1009] = 0xdeadbeaf;
+    Mem[0x100A] = 0xbadabeaf;
+    Mem[0x100B] = 0x114bfffd;
+
+    unsigned i;
+    printf("DISPLAYING TEST MEM\n");
+    for (i= 0x1000; i <= 0x100B; i++) {
+        printf("Mem[0x%04x]: 0x%08x\n", i, Mem[i]);
+    }
+    printf("----------------------------\n\n");
+
+	memset(Reg, 0, (32 + 4) * sizeof(unsigned));
+    Reg[0x1C] = 0xC000;
+    Reg[0x1D] = 0xFFFC;
+    Reg[0x20] = 0x4000;
+}
+
 void instruction_fetch_test() {
     unsigned instruction;
     unsigned PC;
@@ -403,14 +430,16 @@ void sign_extend_test() {
     printf("PASS\t SIGN EXTEND - 0xFFF6 (-10) EXTENDED TO 0xFFFFFFF6A\n");
 }
 
-void alu_operations_test() {
+void full_test() {
 
-    unsigned op,r1,r2,r3,funct,offset,jsec,PC,data1,data2,instruction,
+    unsigned op,r1,r2,r3,funct,offset,jsec,PC,data1,data2,instruction = 0,
              extended_value,ALUresult,halt, memdata;
     char Zero;
+    PC = 0x4000;
+
+    printf("\n***START FULL TEST!***\n");
 
     // First instruction - Itype
-    PC = 0x4000;
     halt = instruction_fetch(PC, Mem, &instruction);
     instruction_partition(instruction, &op, &r1, &r2, &r3, &funct, &offset,
             &jsec);
@@ -421,7 +450,7 @@ void alu_operations_test() {
             controls.ALUSrc, &ALUresult, &Zero);
     assert( ALUresult == 0x00000001 );
     assert( Zero == 0 );
-    printf("PASS\t ALU OPERATION - ITYPE OPCODE:0x%x DATA1:%u IMM:%u RESULT:%u\n",
+    printf("PASS\t addi $8, $8, 1 - ALU OPERATION - ITYPE OPCODE:0x%x DATA1:%u IMM:%u RESULT:%u\n",
             op, data1, extended_value, ALUresult);
     assert( halt == 0 );
     halt = rw_memory(ALUresult, data2, controls.MemWrite, controls.MemRead,
@@ -430,10 +459,10 @@ void alu_operations_test() {
     write_register(r2, r3, memdata, ALUresult, controls.RegWrite,
             controls.RegDst, controls.MemtoReg, Reg);
     assert( Reg[r2] == 0x00000001 );
-    printf("PASS\t WRITE REG - ITYPE RT:0x%x RESULT:%u\n", r2, ALUresult);
+    printf("PASS\t addi $8, $8, 1 - WRITE REG - ITYPE RT:0x%x RESULT:%u\n", r2, ALUresult);
+    PC_update(jsec,extended_value,controls.Branch,controls.Jump,Zero,&PC);
 
     // Second instruction - Itype
-    PC = 0x4010;
     halt = instruction_fetch(PC, Mem, &instruction);
     instruction_partition(instruction, &op, &r1, &r2, &r3, &funct, &offset,
             &jsec);
@@ -444,7 +473,7 @@ void alu_operations_test() {
             controls.ALUSrc, &ALUresult, &Zero);
     assert( ALUresult == 0x00000003 );
     assert( Zero == 0 );
-    printf("PASS\t ALU OPERATION - ITYPE OPCODE:0x%x DATA1:%u IMM:%u RESULT:%u\n",
+    printf("PASS\t addi $9, $8, 2 - ALU OPERATION - ITYPE OPCODE:0x%x DATA1:%u IMM:%u RESULT:%u\n",
             op, data1, extended_value, ALUresult);
     assert( halt == 0 );
     halt = rw_memory(ALUresult, data2, controls.MemWrite, controls.MemRead,
@@ -453,11 +482,11 @@ void alu_operations_test() {
     write_register(r2, r3, memdata, ALUresult, controls.RegWrite,
             controls.RegDst, controls.MemtoReg, Reg);
     assert( Reg[r2] == 0x00000003 );
-    printf("PASS\t WRITE REG - ITYPE RT:0x%x REG[0x%x]:%u MEMDATA:%u ALURESULT:%u\n",
+    printf("PASS\t addi $9, $8, 2 - WRITE REG - ITYPE RT:0x%x REG[0x%x]:%u MEMDATA:%u ALURESULT:%u\n",
             r2, r2, Reg[r2], memdata, ALUresult);
+    PC_update(jsec,extended_value,controls.Branch,controls.Jump,Zero,&PC);
 
     // Third instruction - rtype
-    PC = 0x4020;
     halt = instruction_fetch(PC, Mem, &instruction);
     assert( halt == 0 );
     instruction_partition(instruction, &op, &r1, &r2, &r3, &funct, &offset,
@@ -470,7 +499,7 @@ void alu_operations_test() {
             controls.ALUSrc, &ALUresult, &Zero);
     assert( ALUresult == 0x00000004 );
     assert( Zero == 0 );
-    printf("PASS\t ALU OPERATION - RTYPE FUNC:%u DATA1:%u DATA2:%u RESULT:%u\n",
+    printf("PASS\t add $10, $9, $8 - ALU OPERATION - RTYPE FUNC:%u DATA1:%u DATA2:%u RESULT:%u\n",
             funct, data1, data2, ALUresult);
     halt = rw_memory(ALUresult, data2, controls.MemWrite, controls.MemRead,
             &memdata, Mem);
@@ -478,11 +507,11 @@ void alu_operations_test() {
     write_register(r2, r3, memdata, ALUresult, controls.RegWrite,
             controls.RegDst, controls.MemtoReg, Reg);
     assert( Reg[r3] == 0x00000004 );
-    printf("PASS\t WRITE REG - RTYPE RT:0x%x RD:0x%x RESULT:%u\n",
+    printf("PASS\t add $10, $9, $8 - WRITE REG - RTYPE RT:0x%x RD:0x%x RESULT:%u\n",
             r2, r3, ALUresult);
+    PC_update(jsec,extended_value,controls.Branch,controls.Jump,Zero,&PC);
 
     // Fourth instruction - itype sw
-    PC = 0x4030;
     halt = instruction_fetch(PC, Mem, &instruction);
     assert( halt == 0 );
     instruction_partition(instruction, &op, &r1, &r2, &r3, &funct, &offset,
@@ -495,19 +524,19 @@ void alu_operations_test() {
             controls.ALUSrc, &ALUresult, &Zero);
     assert( Zero == 0 );
     assert( halt == 0 );
-    printf("PASS\t ALU OPERATION - ITYPE OPCODE:0x%x DATA1:%u IMM:%u RESULT:%u\n",
+    printf("PASS\t sw $10, 0(29) - ALU OPERATION - ITYPE OPCODE:0x%x DATA1:%u IMM:%u RESULT:%u\n",
             op, data1, extended_value, ALUresult);
     halt = rw_memory(ALUresult, data2, controls.MemWrite, controls.MemRead,
             &memdata, Mem);
     assert( Mem[ALUresult >> 2] == 0x00000004 );
     assert( halt == 0 );
-    printf("PASS\t RW MEMORY- ITYPE MEMWRITE:%u MEMREAD:%u MEMDATA:%u ADDR:0x%x MEM[addr]:%u\n", 
+    printf("PASS\t sw $10, 0(29) - RW MEMORY- ITYPE MEMWRITE:%u MEMREAD:%u MEMDATA:%u ADDR:0x%x MEM[addr]:%u\n", 
             controls.MemWrite, controls.MemRead, memdata, ALUresult >> 2, Mem[ALUresult >> 2]);
     write_register(r2, r3, memdata, ALUresult, controls.RegWrite,
             controls.RegDst, controls.MemtoReg, Reg);
+    PC_update(jsec,extended_value,controls.Branch,controls.Jump,Zero,&PC);
 
     // Fifth instruction - itype lw
-    PC = 0x4040;
     halt = instruction_fetch(PC, Mem, &instruction);
     assert( halt == 0 );
     instruction_partition(instruction, &op, &r1, &r2, &r3, &funct, &offset,
@@ -519,19 +548,151 @@ void alu_operations_test() {
     halt = ALU_operations(data1, data2, extended_value, funct, controls.ALUOp,
             controls.ALUSrc, &ALUresult, &Zero);
     assert( Zero == 0 );
-    printf("PASS\t ALU OPERATION - ITYPE OPCODE:0x%x DATA1:%u IMM:%u RESULT:%u\n",
+    printf("PASS\t lw $11 0(29) - ALU OPERATION - ITYPE OPCODE:0x%x DATA1:%u IMM:%u RESULT:%u\n",
             op, data1, extended_value, ALUresult);
     assert( halt == 0 );
     halt = rw_memory(ALUresult, data2, controls.MemWrite, controls.MemRead,
             &memdata, Mem);
     assert( memdata == 0x00000004 );
     assert( halt == 0 );
-    printf("PASS\t RW MEMORY- ITYPE MEMWRITE:%u MEMREAD:%u MEMDATA:%u ADDR:0x%x MEM[addr]:%u\n",
+    printf("PASS\t lw $11 0(29) - RW MEMORY- ITYPE MEMWRITE:%u MEMREAD:%u MEMDATA:%u ADDR:0x%x MEM[addr]:%u\n",
             controls.MemWrite, controls.MemRead, memdata, ALUresult >> 2, Mem[ALUresult >> 2]);
     write_register(r2, r3, memdata, ALUresult, controls.RegWrite,
             controls.RegDst, controls.MemtoReg, Reg);
-    printf("PASS\t WRITE REG - ITYPE RT:0x%x REG[0x%x]:%u MEMDATA:%u ALURESULT:%u\n",
+    assert( Reg[r2] == 0x00000004 );
+    printf("PASS\t lw $11 0(29) - WRITE REG - ITYPE RT:0x%x REG[0x%x]:%u MEMDATA:%u ALURESULT:%u\n",
             r2, r2, Reg[r2], memdata, ALUresult);
+    PC_update(jsec,extended_value,controls.Branch,controls.Jump,Zero,&PC);
+
+    // Sixth instruction - rtype slt
+    halt = instruction_fetch(PC, Mem, &instruction);
+    assert( halt == 0 );
+    instruction_partition(instruction, &op, &r1, &r2, &r3, &funct, &offset,
+            &jsec);
+    halt = instruction_decode(op, &controls);
+    assert( halt == 0 );
+    read_register(r1, r2, Reg, &data1, &data2);
+    sign_extend(offset, &extended_value);
+    halt = ALU_operations(data1, data2, extended_value, funct, controls.ALUOp,
+            controls.ALUSrc, &ALUresult, &Zero);
+    assert( ALUresult == 0x00000000 );
+    assert( Zero == 1 );
+    printf("PASS\t slt $12, $11, $10 - ALU OPERATION - RTYPE FUNC:%u DATA1:%u DATA2:%u RESULT:%u\n",
+            funct, data1, data2, ALUresult);
+    halt = rw_memory(ALUresult, data2, controls.MemWrite, controls.MemRead,
+            &memdata, Mem);
+    assert( halt == 0 );
+    write_register(r2, r3, memdata, ALUresult, controls.RegWrite,
+            controls.RegDst, controls.MemtoReg, Reg);
+    assert( Reg[r3] == 0x00000000 );
+    printf("PASS\t slt $12, $11, $10 - WRITE REG - RTYPE RT:0x%x RD:0x%x RESULT:%u\n",
+            r2, r3, ALUresult);
+    PC_update(jsec,extended_value,controls.Branch,controls.Jump,Zero,&PC);
+
+    // Seventh instruction - rtype sltu
+    halt = instruction_fetch(PC, Mem, &instruction);
+    assert( halt == 0 );
+    instruction_partition(instruction, &op, &r1, &r2, &r3, &funct, &offset,
+            &jsec);
+    halt = instruction_decode(op, &controls);
+    assert( halt == 0 );
+    read_register(r1, r2, Reg, &data1, &data2);
+    sign_extend(offset, &extended_value);
+    halt = ALU_operations(data1, data2, extended_value, funct, controls.ALUOp,
+            controls.ALUSrc, &ALUresult, &Zero);
+    assert( ALUresult == 0x00000001 );
+    assert( Zero == 0 );
+    printf("PASS\t sltu $13, $10, $9 - ALU OPERATION - RTYPE FUNC:%u DATA1:%u DATA2:%u RESULT:%u\n",
+            funct, data1, data2, ALUresult);
+    halt = rw_memory(ALUresult, data2, controls.MemWrite, controls.MemRead,
+            &memdata, Mem);
+    assert( halt == 0 );
+    write_register(r2, r3, memdata, ALUresult, controls.RegWrite,
+            controls.RegDst, controls.MemtoReg, Reg);
+    assert( Reg[r3] == 0x00000001 );
+    printf("PASS\t sltu $13, $10, $9 - WRITE REG - RTYPE RT:0x%x RD:0x%x RESULT:%u\n",
+            r2, r3, ALUresult);
+    PC_update(jsec,extended_value,controls.Branch,controls.Jump,Zero,&PC);
+
+    // eigth instruction - itype lui
+    halt = instruction_fetch(PC, Mem, &instruction);
+    assert( halt == 0 );
+    instruction_partition(instruction, &op, &r1, &r2, &r3, &funct, &offset,
+            &jsec);
+    halt = instruction_decode(op, &controls);
+    assert( halt == 0 );
+    read_register(r1, r2, Reg, &data1, &data2);
+    sign_extend(offset, &extended_value);
+    assert( extended_value == 0x0020 );
+    halt = ALU_operations(data1, data2, extended_value, funct, controls.ALUOp,
+            controls.ALUSrc, &ALUresult, &Zero);
+    assert( Zero == 0 );
+    assert( ALUresult == 0x00200000 );
+    printf("PASS\t lui $14, 32 - ALU OPERATION - ITYPE OPCODE:0x%x DATA1:%u IMM:%u RESULT:0x%x\n",
+            op, data1, extended_value, ALUresult);
+    assert( halt == 0 );
+    halt = rw_memory(ALUresult, data2, controls.MemWrite, controls.MemRead,
+            &memdata, Mem);
+    assert( halt == 0 );
+    write_register(r2, r3, memdata, ALUresult, controls.RegWrite,
+            controls.RegDst, controls.MemtoReg, Reg);
+    assert( Reg[r2] == 0x00200000 );
+    printf("PASS\t lui $14, 32 - WRITE REG - ITYPE RT:0x%x REG[0x%x]:%u MEMDATA:%u ALURESULT:0x%x\n",
+            r2, r2, Reg[r2], memdata, ALUresult);
+    PC_update(jsec,extended_value,controls.Branch,controls.Jump,Zero,&PC);
+
+    // ninth instruction - jtype j
+    halt = instruction_fetch(PC, Mem, &instruction);
+    assert( halt == 0 );
+    instruction_partition(instruction, &op, &r1, &r2, &r3, &funct, &offset,
+            &jsec);
+    halt = instruction_decode(op, &controls);
+    assert( halt == 0 );
+    read_register(r1, r2, Reg, &data1, &data2);
+    sign_extend(offset, &extended_value);
+    halt = ALU_operations(data1, data2, extended_value, funct, controls.ALUOp,
+            controls.ALUSrc, &ALUresult, &Zero);
+    assert( Zero == 1 );
+    printf("PASS\t j end - ALU OPERATION - JTYPE OPCODE:0x%x ADDR:0x%x RESULT:%u\n",
+            op, jsec, ALUresult);
+    assert( halt == 0 );
+    halt = rw_memory(ALUresult, data2, controls.MemWrite, controls.MemRead,
+            &memdata, Mem);
+    assert( halt == 0 );
+    write_register(r2, r3, memdata, ALUresult, controls.RegWrite,
+            controls.RegDst, controls.MemtoReg, Reg);
+    PC_update(jsec,extended_value,controls.Branch,controls.Jump,Zero,&PC);
+
+    // tenth instruction - itype beq
+    halt = instruction_fetch(PC, Mem, &instruction);
+    assert( halt == 0 );
+    instruction_partition(instruction, &op, &r1, &r2, &r3, &funct, &offset,
+            &jsec);
+    halt = instruction_decode(op, &controls);
+    assert( halt == 0 );
+    read_register(r1, r2, Reg, &data1, &data2);
+    sign_extend(offset, &extended_value);
+    halt = ALU_operations(data1, data2, extended_value, funct, controls.ALUOp,
+            controls.ALUSrc, &ALUresult, &Zero);
+    assert( Zero == 1 );
+    printf("PASS\t beq $10, $11, label - ALU OPERATION - ITYPE OPCODE:0x%x DATA1:%u IMM:%u RESULT:%u\n",
+            op, data1, extended_value, ALUresult);
+    assert( halt == 0 );
+    halt = rw_memory(ALUresult, data2, controls.MemWrite, controls.MemRead,
+            &memdata, Mem);
+    assert( halt == 0 );
+    write_register(r2, r3, memdata, ALUresult, controls.RegWrite,
+            controls.RegDst, controls.MemtoReg, Reg);
+    PC_update(jsec,extended_value,controls.Branch,controls.Jump,Zero,&PC);
+
+    // eleventh instruction - HALT
+    halt = instruction_fetch(PC, Mem, &instruction);
+    assert( halt == 0 );
+    instruction_partition(instruction, &op, &r1, &r2, &r3, &funct, &offset,
+            &jsec);
+    halt = instruction_decode(op, &controls);
+    assert( halt == 1 );
+    printf("PASS\t bad instr REACHED, HALTED\n");
 }
 
 void alu_test() {
@@ -636,15 +797,10 @@ void alu_test() {
     printf("PASS\t ALU - or %u, %u \n", A, B);
 
     // When B is left shifted by 16 bits & Zero == 0
-    // TODO:
-    /*
-    A = 0, B = 1, ALUControl = '6';
+    A = 0, B = 1, ALUControl = 6;
     ALU(A, B, ALUControl, &ALUResult, &Zero);
-    printf("%d", B);
-    assert( B != 1 );
-    assert( Zero == '0' );
+    assert( ALUResult == 65536 );
     printf("PASS\t ALU - sll %u, %u \n", A, B);
-    */
 
     // When ~A is true & Zero == 0
     A = 0, B = 0, ALUControl = 7;
@@ -667,7 +823,7 @@ void rw_memory_test() {
     unsigned memdata;
     unsigned halt;
     unsigned ALUresult, MemWrite, MemRead, data2;
-    
+
     ALUresult = 0x1000, MemWrite = 1, MemRead = 0, data2 = 0x1;
     halt = rw_memory(ALUresult, data2, MemWrite, MemRead, &memdata, MemTest);
     assert( halt == 0 );
@@ -686,7 +842,40 @@ void rw_memory_test() {
     ALUresult = 0x1001, MemWrite = 1, MemRead = 0, data2 = 0x1;
     halt = rw_memory(ALUresult, data2, MemWrite, MemRead, &memdata, MemTest);
     assert( halt == 1 );
-    printf("PASS\t RW MEMORY - HALT ON UNALINED ADDR: 0x\n%x", ALUresult);
+    printf("PASS\t RW MEMORY - HALT ON UNALINED ADDR: 0x%x\n", ALUresult);
+
+}
+
+void pc_update_test() {
+
+    unsigned jsec, extended_value, PC;
+    unsigned beforeJump;
+    char Branch, Jump, Zero;
+
+    PC = 0x4000, extended_value=0x0, Branch = 0, Jump = 0, Zero = 0, jsec=0x0;
+    PC_update(jsec, extended_value, Branch, Jump, Zero, &PC);
+    assert( PC == 0x4004);
+    printf("PASS\t PC UPDATE - NORMAL WORD INCREMENT FROM 0x%x to 0x%x\n",
+            PC - 4, PC);
+
+    PC = 0x4000, extended_value=0x8, Branch = 1, Jump = 0, Zero = 0;
+    PC_update(jsec, extended_value, Branch, Jump, Zero, &PC);
+    assert( PC == 0x4004);
+    printf("PASS\t PC UPDATE - BRANCH ATTEMPT WITHOUT ZERO, INCREMENT FROM 0x%x to 0x%x\n",
+            PC - 4, PC);
+
+    PC = 0x4000, extended_value=0x0010, Branch = 1, Jump = 0, Zero = 1;
+    PC_update(jsec, extended_value, Branch, Jump, Zero, &PC);
+    assert( PC == 0x4044);
+    printf("PASS\t PC UPDATE - BRANCH ATTEMPT WITH ZERO, INCREMENT FROM 0x%x to 0x%x\n",
+            PC - (extended_value >> 2) - 4, PC);
+
+    PC = 0x20004000, extended_value=0x0010, Branch = 0, Jump = 1, Zero = 0, jsec=0x4000000;
+    beforeJump = PC;
+    PC_update(jsec, extended_value, Branch, Jump, Zero, &PC);
+    assert( PC == 0x30000000);
+    printf("PASS\t PC UPDATE - JUMP, INCREMENT FROM 0x%x to 0x%x\n",
+            beforeJump, PC);
 
 }
 
@@ -699,7 +888,9 @@ int main() {
     instruction_decode_test();
     read_register_test();
     sign_extend_test();
-    alu_operations_test();
     rw_memory_test();
+    pc_update_test();
+    setupFull();
+    full_test();
     return 0;
 }
