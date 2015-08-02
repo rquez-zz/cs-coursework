@@ -307,8 +307,8 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
-    // Check ALUresult has a proper address
-    if (MemWrite && MemRead && ALUresult % 4 != 0)
+    // Check ALUresult has a word aligned address
+    if ((MemWrite || MemRead) && ALUresult % 4 != 0)
         return 1;
 
     if (MemWrite == 1) { // Write to Memory

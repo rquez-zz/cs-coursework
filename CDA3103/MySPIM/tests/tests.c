@@ -5,8 +5,6 @@ static unsigned Mem[16384];
 unsigned Reg[32 + 4];
 struct_controls controls;
 
-#define MEM(addr) (Mem[addr >> 2])
-
 void setup() {
     Mem[0x1000] = 0x21080001;
     Mem[0x1004] = 0x21090002;
@@ -663,6 +661,35 @@ void alu_test() {
     printf("PASS\t ALU - not %u, %u \n", A, B);
 }
 
+void rw_memory_test() {
+
+    unsigned MemTest[16384];
+    unsigned memdata;
+    unsigned halt;
+    unsigned ALUresult, MemWrite, MemRead, data2;
+    
+    ALUresult = 0x1000, MemWrite = 1, MemRead = 0, data2 = 0x1;
+    halt = rw_memory(ALUresult, data2, MemWrite, MemRead, &memdata, MemTest);
+    assert( halt == 0 );
+    assert( MemTest[ALUresult >> 2] == 0x1 );
+    printf("PASS\t RW MEMORY- MEMWRITE:%u MEMREAD:%u MEMDATA:%u ADDR:0x%x MEM[ADDR]:%u\n",
+            MemWrite, MemRead, memdata, ALUresult >> 2, MemTest[ALUresult >> 2]);
+
+    ALUresult = 0x1000, MemWrite = 0, MemRead = 1, data2 = 0x1;
+    MemTest[0x1000 >> 2] = 0x5;
+    halt = rw_memory(ALUresult, data2, MemWrite, MemRead, &memdata, MemTest);
+    assert( halt == 0 );
+    assert( memdata == 0x5 );
+    printf("PASS\t RW MEMORY- MEMWRITE:%u MEMREAD:%u MEMDATA:%u ADDR:0x%x MEM[ADDR]:%u\n",
+            MemWrite, MemRead, memdata, ALUresult >> 2, MemTest[ALUresult >> 2]);
+
+    ALUresult = 0x1001, MemWrite = 1, MemRead = 0, data2 = 0x1;
+    halt = rw_memory(ALUresult, data2, MemWrite, MemRead, &memdata, MemTest);
+    assert( halt == 1 );
+    printf("PASS\t RW MEMORY - HALT ON UNALINED ADDR: 0x\n%x", ALUresult);
+
+}
+
 int main() {
 
     setup();
@@ -673,5 +700,6 @@ int main() {
     read_register_test();
     sign_extend_test();
     alu_operations_test();
+    rw_memory_test();
     return 0;
 }
