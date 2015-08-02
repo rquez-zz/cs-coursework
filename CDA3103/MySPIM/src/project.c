@@ -307,6 +307,17 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
+    // Check ALUresult has a proper address
+    if (MemWrite && MemRead && ALUresult % 4 != 0)
+        return 1;
+
+    if (MemWrite == 1) { // Write to Memory
+        Mem[ALUresult >> 2] = data2;
+    } else if (MemRead == 1) { // Read from Memory
+        *memdata = Mem[ALUresult >> 2];
+    }
+
+    // No Errors
     return 0;
 }
 
@@ -320,6 +331,8 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
         return;
 
     // Write to the appropriate register from the appropriate source
+    // RegDst 1 is for rtype instructions
+    // RegDst 0 is for itype instructions
     if ( MemtoReg == 1 ) { // Memory is source of write
         if ( RegDst == 1)
             Reg[r3] = memdata;
