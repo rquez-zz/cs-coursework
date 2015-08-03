@@ -42,14 +42,15 @@ public class MiniMax
 		return( nNumMoves );
 	}
 
-	int DoSearch( Position pos, int nPiece, int nDepth, Board pBoard )
+	int DoSearch( Position pos, int nPiece, int nDepth, Board pBoard, int nAlpha, int nBeta )
 	{
 		// Local arrays for the legal move list and
 		//   the result list.
 		int[] nMoveList = new int[7*2];
 		int[] nResultList = new int[7];
-		// Create min and max variables.
-		int nMin = 2000000, nMax = -2000000;
+
+		// Create value for node
+		int nValue;
 
 		// First, see if a side has won.
 		if( pBoard.DidSideWin( nPiece ) )
@@ -83,55 +84,84 @@ public class MiniMax
 			pos.Col = nMoveList[1]; 
 		}
 		
-		// Loop through the legal moves.
-		for( int i=0; i<nMoves; i++ )
-		{
-			// We need a board clone so that we can place pieces
-			//   without messing up previous board positions.
-			Board SaveMe = pBoard.Clone();
-			
-			// Place the piece from the current move in the list.
-			pBoard.PlacePiece( nMoveList[i*2], nMoveList[i*2+1], nPiece );
-			
-			// Call DoSearch() recursively.
-			nResultList[i] = DoSearch( pos, nPiece ^ 1, nDepth + 1, pBoard );
-
-			// Check to see if this result is less than the current min.
-			if( nMin > nResultList[i] )
-			{
-				// Set nMin.
-				nMin = nResultList[i];
-			}
-			
-			// Check to see if this result is greater than the current max.
-			if( nMax < nResultList[i] )
-			{
-				// Set nMax.
-				nMax = nResultList[i];
-				
-				if( nDepth == 0 )
-				{
-					pos.Row = nMoveList[i*2];
-					pos.Col = nMoveList[i*2+1]; 
-				}
-			}
-			
-			// Restore the board.
-			pBoard = SaveMe.Clone();
-		}
-		
-//		System.out.println( "" + nDepth + "," + ArrayToString( nResultList ) );
 
 		// If this is max of minimax, then return the max.
 		if( nPiece == m_nSearchPiece )
 		{
-			return( nMax );
+
+			nValue = -2000000;
+
+			// Loop through the legal moves.
+			for( int i=0; i<nMoves; i++ )
+			{
+				// We need a board clone so that we can place pieces
+				//   without messing up previous board positions.
+				Board SaveMe = pBoard.Clone();
+
+				// Place the piece from the current move in the list.
+				pBoard.PlacePiece( nMoveList[i*2], nMoveList[i*2+1], nPiece );
+
+				// Save the value for later
+				int nTempValue = nValue;
+
+				// Call DoSearch() recursively.
+				nValue = Math.max( nValue, DoSearch(pos, nPiece ^ 1, nDepth + 1, pBoard, nAlpha, nBeta) );
+
+				// For nAlpha we get the max of nResultList[i] and nAlpha
+				nAlpha = Math.max(nValue, nAlpha);
+
+				// If the previous value was less than this value, then
+				//   we have a better move. If we are at depth 0 then
+				//   we save row and col to the Position data structure.
+				if( nTempValue < nValue )
+				{
+					nResultList[i] = nValue;
+
+					if( nDepth == 0 )
+					{
+						pos.Row = nMoveList[i*2];
+						pos.Col = nMoveList[i*2+1];
+					}
+				}
+
+				// Restore the board.
+				pBoard = SaveMe.Clone();
+
+				// When beta is less than or equal alpha, we don't need to keep going.
+				if (nBeta <= nAlpha)
+					break;
+			}
+
+			return( nValue );
 		}
 		
 		// If this is min of minimax, then return the min.
 		else
 		{
-			return( nMin );
+			nValue = 2000000;
+
+			// Loop through the legal moves.
+			for( int i=0; i<nMoves; i++ )
+			{
+				// We need a board clone so that we can place pieces
+				//   without messing up previous board positions.
+				Board SaveMe = pBoard.Clone();
+
+				// Place the piece from the current move in the list.
+				pBoard.PlacePiece( nMoveList[i*2], nMoveList[i*2+1], nPiece );
+
+				// Call DoSearch() recursively.
+				nValue = Math.min( nValue, DoSearch(pos, nPiece ^ 1, nDepth + 1, pBoard, nAlpha, nBeta) );
+				nBeta = Math.min( nResultList[i], nBeta );
+
+				// Restore the board.
+				pBoard = SaveMe.Clone();
+
+				// When beta is less than or equal alpha, we don't need to keep going.
+				if (nBeta <= nAlpha)
+					break;
+			}
+			return( nValue );
 		}
 		
 	}
@@ -147,7 +177,7 @@ public class MiniMax
 		brd.SetBoardData( BoardData );
 
 		// Call the recursive method.
-		DoSearch( pos, nPiece, 0, brd );
+		DoSearch( pos, nPiece, 0, brd, -2000000, 2000000);
 	}
 	
 	int ScoreIt( int nPiece, int[][] BoardData )
