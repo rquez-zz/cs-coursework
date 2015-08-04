@@ -1,6 +1,10 @@
+import java.util.HashMap;
+import java.util.Map;
 
-public class MiniMax 
+public class MiniMax
 {
+	private Map<int[], Integer> cache = new HashMap<int[], Integer>();
+
 	int m_nMaxPly = 7;
 	
 	//  This is the piece to search for. Should be either RED or YELLOW.
@@ -44,6 +48,7 @@ public class MiniMax
 
 	int DoSearch( Position pos, int nPiece, int nDepth, Board pBoard, int nAlpha, int nBeta )
 	{
+
 		// Local arrays for the legal move list and
 		//   the result list.
 		int[] nMoveList = new int[7*2];
@@ -72,11 +77,16 @@ public class MiniMax
 		// If we are at a leaf node, return the score.
 		else if( nDepth >= m_nMaxPly )
 		{
-			return( ScoreIt( m_nSearchPiece, pBoard.GetBoardData() ) );
+			return( ScoreIt( m_nSearchPiece, pBoard.GetBoardData()));
 		}
 
 		// Get the legal moves.
 		int nMoves = GetLegalMoves( pBoard.GetBoardData(), nMoveList );
+
+		// Check if result already in cache
+		if ( cache.containsKey( nMoves ) ) {
+			return cache.get( nMoves ).intValue();
+		}
 
 		if( nDepth == 0 )
 		{
@@ -132,6 +142,9 @@ public class MiniMax
 					break;
 			}
 
+			// Cache the result
+			cache.put(nMoveList, nValue);
+
 			return( nValue );
 		}
 		
@@ -161,6 +174,10 @@ public class MiniMax
 				if (nBeta <= nAlpha)
 					break;
 			}
+
+			// Cache the result
+			cache.put(nMoveList, nValue);
+
 			return( nValue );
 		}
 		
@@ -174,10 +191,10 @@ public class MiniMax
 		
 		// Create a new board with this board data.
 		Board brd = new Board();
-		brd.SetBoardData( BoardData );
+		brd.SetBoardData(BoardData);
 
 		// Call the recursive method.
-		DoSearch( pos, nPiece, 0, brd, -2000000, 2000000);
+		DoSearch(pos, nPiece, 0, brd, -2000000, 2000000);
 	}
 	
 	int ScoreIt( int nPiece, int[][] BoardData )
