@@ -1,0 +1,36 @@
+PM/0
+
+
+A Stack Architecture
+each call results in a new activation record (aka stack frame) on the stack
+
+Activation records contain all the information necessary to pass data and control
+between the caller and the called subprogram
+
+Arithmetic is done on the stack
+
+Uses a small number of registers, that are not general purpose
+    - SP (Stack Pointer): always points to the very top of the stack
+    - BP (Base Pointer): points to the base of the current activation record
+    - PC (Program Counter)
+    - IR (Instruction Register)
+
+Activation Records
+    - Parameters
+    - Locals: Space to store local variables declared within the procedure
+    - Return Address: A pointer to the next instruction to be executed
+    - Dynamic Link: A poitner to the caller's stack frame
+    - Static Link: A pointer to the frame of the procedure that statically encloses the current function
+    - Return Value
+
+Instruction Cycle
+    - Fetch Cycle
+        Fetch an instruction from the code store
+            ir <- code[pc]
+        Increment PC
+            pc <- pc + 1
+    - Execute Cycle
+        Each instruction is in the format <OP, L, M>
+        - OP: is the opcode
+        -  L: is the lexicographical level. The number of frames to walk back when performing an instruction
+        -  M: is the parameter, and means different things depending on the instruction type
