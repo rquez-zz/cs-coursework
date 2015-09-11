@@ -34,3 +34,8 @@ Instruction Cycle
         - OP: is the opcode
         -  L: is the lexicographical level. The number of frames to walk back when performing an instruction
         -  M: is the parameter, and means different things depending on the instruction type
+        o
+
+
+Read in the file
+Use it's instructions
