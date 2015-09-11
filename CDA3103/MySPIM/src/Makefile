@@ -1,17 +1,15 @@
 CC = gcc
 CFLAGS = -g -O2 -Wall
 OBJECTS = spimcore.o project.o
-PROGRAM = spimcore
-INPUT = input_file.asc
+PROGRAM = ../bin/spimcore
+INPUT = ../input/input_file.asc
 
-test : $(OBJECTS)
+spimcore : $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(PROGRAM)
+	rm *.o
 
 %.o : %.c
 	$(CC) $(CFLAGS) -c $<
 
-clean :
-	rm *.o $(PROGRAM)
-
 run :
-	./$(PROGRAM) $(INPUT)
+	$(PROGRAM) $(INPUT)
