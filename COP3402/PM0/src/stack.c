@@ -10,7 +10,7 @@ int stack(FILE* filePtr) {
     int SP = 0;
     int BP = 0;
     int PC = 0;
-    int IR = 0;
+    instruction* IR;
 
     int halt = 0;
 
@@ -18,12 +18,12 @@ int stack(FILE* filePtr) {
     instruction instructions[MAX_CODE_LENGTH];
     read(filePtr, instructions);
 
-    int i = 0;
-    while(!halt) {
-        // Fetch next instruction
-        instruction* nextInstruction = &instructions[i - 1];
-        // Execute next instruction and get next index
-        i = execute(nextInstruction, i);
+    // Fetch Cycle
+    while(halt == 0) {
+        // Fetch instruction
+        IR = &instructions[PC];
+        // Execute instruction and return new PC
+        PC = execute(IR, PC, &halt);
     }
 
     return 0;
@@ -49,6 +49,11 @@ void read(FILE* filePtr, instruction* instructions) {
 
 // Executes instructions
 // Returns next index
-int execute(instruction* instruction, int index) {
+int execute(instruction* IR, int PC, int* halt) {
 
+    // Read Instructions
+    // Switch statement on opcode
+        // halt = 1 when instruction is SIO 0 3
+    // Return next instruction index
+    return PC + 1;
 }

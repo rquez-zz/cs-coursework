@@ -10,4 +10,4 @@ typedef struct {
 
 int stack(FILE* filePtr);
 void read(FILE* filePtr, instruction* instructions);
-int execute(instruction* instruction, int index);
+int execute(instruction* IR, int PC, int* halt);
