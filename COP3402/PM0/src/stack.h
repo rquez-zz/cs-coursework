@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct {
     int opcode;
@@ -7,5 +8,6 @@ typedef struct {
     int param;
 } instruction;
 
-instruction* read(const char* path);
+int stack(FILE* filePtr);
+void read(FILE* filePtr, instruction* instructions);
 int execute(instruction* instruction, int index);
