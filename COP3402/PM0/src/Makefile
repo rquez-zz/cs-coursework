@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -g -O2 -Wall
-OBJECTS = stack.o
+OBJECTS = stack.o pm0.o
 PROGRAM = ../bin/stack
 INPUT = ../input/mcode.txt
 
