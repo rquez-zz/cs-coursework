@@ -29,9 +29,22 @@ int stack(FILE* filePtr) {
     return 0;
 }
 
-//Returns a pointer to array of instructions read from input
-instruction* read(const char* path) {
 
+/* Fills the instruction array with instructions from the input file */
+void read(FILE* filePtr, instruction* instructions) {
+
+    // Char array of each line in the file
+    char line[MAX_LINE_LENGTH];
+
+    // Loop through the end of the file
+    int i = 0;
+    while ( fgets(line, MAX_LINE_LENGTH, (FILE*)filePtr) != NULL ) {
+        // Parse token chars to int and assign instruction
+        instructions[i].opcode = (int)atoi((char *)strtok(line, " "));
+        instructions[i].lex = (int)atoi((char *)strtok(NULL, " "));
+        instructions[i].param = (int)atoi((char *)strtok(NULL, " "));
+        i++;
+    }
 }
 
 // Executes instructions
