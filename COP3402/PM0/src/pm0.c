@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
     stack(filePtr);
 
     // Close file
-    printf("Closing input file.");
+    printf("Closing input file.\n");
     fclose(filePtr);
 
     return 0;

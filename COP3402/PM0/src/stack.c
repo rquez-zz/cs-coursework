@@ -14,6 +14,10 @@ int stack(FILE* filePtr) {
 
     int halt = 0;
 
+    // Initialize stack
+    int stack[MAX_STACK_HEIGHT];
+    memset(stack, 0, sizeof(int));
+
     // Read instructions
     instruction instructions[MAX_CODE_LENGTH];
     read(filePtr, instructions);
@@ -26,7 +30,7 @@ int stack(FILE* filePtr) {
         PC = execute(IR, PC, &halt);
     }
 
-    printf("Stack operations halted.");
+    printf("Stack operations halted.\n");
 
     return 0;
 }
