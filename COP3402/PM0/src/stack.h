@@ -8,6 +8,6 @@ typedef struct {
     int param;
 } instruction;
 
-int stack(FILE* filePtr);
-void read(FILE* filePtr, instruction* instructions);
 int execute(instruction* IR, int PC, int* halt);
+int stack(FILE* inputPtr, FILE* outputPtr);
+void read(FILE* inputPtr, instruction* instructions);

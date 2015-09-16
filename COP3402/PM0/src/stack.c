@@ -5,7 +5,7 @@ const int MAX_CODE_LENGTH = 500;
 const int MAX_LINE_LENGTH = 10;
 const int MAX_LEXI_LEVEL = 3;
 
-int stack(FILE* filePtr) {
+int stack(FILE* inputPtr, FILE* outputPtr) {
 
     int SP = 0;
     int BP = 0;
@@ -20,7 +20,7 @@ int stack(FILE* filePtr) {
 
     // Read instructions
     instruction instructions[MAX_CODE_LENGTH];
-    read(filePtr, instructions);
+    read(inputPtr, instructions);
 
     // Fetch Cycle
     while(halt == 0) {
@@ -35,16 +35,15 @@ int stack(FILE* filePtr) {
     return 0;
 }
 
-
 /* Fills the instruction array with instructions from the input file */
-void read(FILE* filePtr, instruction* instructions) {
+void read(FILE* inputPtr, instruction* instructions) {
 
     // Char array of each line in the file
     char line[MAX_LINE_LENGTH];
 
     // Loop through the end of the file
     int i = 0;
-    while ( fgets(line, MAX_LINE_LENGTH, (FILE*)filePtr) != NULL ) {
+    while ( fgets(line, MAX_LINE_LENGTH, (FILE*)inputPtr) != NULL ) {
         // Parse token chars to int and assign instruction
         instructions[i].opcode = (int)atoi((char *)strtok(line, " "));
         instructions[i].lex = (int)atoi((char *)strtok(NULL, " "));
