@@ -1,12 +1,21 @@
 #include "../src/stack.c"
 #include <assert.h>
-#include <string.h>
+
+/* Opens a file and returns a FILE pointer */
+FILE* openFile(const char* path) {
+    FILE* filePtr;
+    filePtr = fopen(path, "r");
+    if(filePtr == NULL) {
+        perror("Error opening input file.");
+    }
+    return filePtr;
+}
 
 void read_test() {
 
     const char* inputPath = "../input/mcode.txt";
     FILE* filePtr = openFile(inputPath);
-    instruction instructions[MAX_CODE_LENGTH];
+    instruction instructions[50];
     read(filePtr, instructions);
     fclose(filePtr);
 
@@ -81,11 +90,26 @@ void read_test() {
     printf("READ_TEST PASSED\n");
 }
 
+void halt_test() {
+    instruction* IR = malloc(1 * sizeof(instruction));
+    IR->opcode = 11;
+    IR->lex = 0;
+    IR->param = 3;
+
+    int halt = 0;
+    execute(IR,0,&halt);
+
+    assert( halt == 1);
+
+    printf("HALT_TEST PASSED\n");
+}
+
 void execute_test() {
 
 }
 
 int main() {
     read_test();
+    halt_test();
     return 0;
 }
