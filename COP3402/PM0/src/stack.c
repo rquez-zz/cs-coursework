@@ -22,12 +22,18 @@ int stack(FILE* inputPtr, FILE* outputPtr) {
     instruction instructions[MAX_CODE_LENGTH];
     read(inputPtr, instructions);
 
+    // Build and write Instructions string to file
+    fprintf(outputPtr, "%s", buildInstructionsString(instructions));
+
     // Fetch Cycle
     while(halt == 0) {
         // Fetch instruction
         IR = &instructions[PC];
         // Execute instruction and return new PC
         PC = execute(IR, PC, &halt);
+
+        // Write execution trace line to file
+        fprintf(outputPtr, "%s", buildTraceLine(prevPC, IR, PC, BP, SP, stack));
     }
 
     printf("Stack operations halted.\n");
@@ -50,6 +56,14 @@ void read(FILE* inputPtr, instruction* instructions) {
         instructions[i].param = (int)atoi((char *)strtok(NULL, " "));
         i++;
     }
+}
+
+/* Build string showing all instructions */
+char* buildInstructionsString(instruction* instructions) {
+}
+
+/* Build string showing execution trace line */
+char* buildTraceLine(int prevPC, instruction* IR, int PC, int BP, int SP, int* stack) {
 }
 
 /* Executes the instruction IR and increments the PC */
