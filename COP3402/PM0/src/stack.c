@@ -29,8 +29,10 @@ int stack(FILE* inputPtr, FILE* outputPtr) {
     while(halt == 0) {
         // Fetch instruction
         IR = &instructions[PC];
+
         // Execute instruction and return new PC
-        PC = execute(IR, PC, &halt);
+        int prevPC = PC;
+        execute(IR, &PC, &SP, &BP, &halt, stack);
 
         // Write execution trace line to file
         fprintf(outputPtr, "%s", buildTraceLine(prevPC, IR, PC, BP, SP, stack));
@@ -67,7 +69,7 @@ char* buildTraceLine(int prevPC, instruction* IR, int PC, int BP, int SP, int* s
 }
 
 /* Executes the instruction IR and increments the PC */
-int execute(instruction* IR, int PC, int* halt) {
+void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) {
 
     // Read Instructions
     int opcode = IR->opcode;
@@ -89,7 +91,7 @@ int execute(instruction* IR, int PC, int* halt) {
         case 6: // INC
             break;
         case 7: // JMP
-            return param;
+            *PC = param;
             break;
         case 8: // JPC
             break;
@@ -103,5 +105,5 @@ int execute(instruction* IR, int PC, int* halt) {
     }
 
     // Increment PC
-    return PC + 1;
+    *PC = *PC + 1;
 }

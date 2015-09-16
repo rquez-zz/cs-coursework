@@ -8,9 +8,9 @@ typedef struct {
     int param;
 } instruction;
 
-int execute(instruction* IR, int PC, int* halt);
 int stack(FILE* inputPtr, FILE* outputPtr);
 void read(FILE* inputPtr, instruction* instructions);
 char* buildInstructionsString(instruction* instrutions);
 char* buildTraceLine(int prevPC,
         instruction* IR, int PC, int BP, int SP, int* stack);
+void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack);
