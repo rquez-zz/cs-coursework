@@ -26,6 +26,8 @@ int stack(FILE* filePtr) {
         PC = execute(IR, PC, &halt);
     }
 
+    printf("Stack operations halted.");
+
     return 0;
 }
 
@@ -47,12 +49,38 @@ void read(FILE* filePtr, instruction* instructions) {
     }
 }
 
-// Executes instructions
-// Returns next index
+/* Executes the instruction IR and increments the PC */
 int execute(instruction* IR, int PC, int* halt) {
 
     // Read Instructions
+    int opcode = IR->opcode;
+
     // Switch statement on opcode
+    switch (opcode) {
+        case 1: // LIT
+            break;
+        case 2: // OPR
+            break;
+        case 3: // LOD
+            break;
+        case 4: // STO
+            break;
+        case 5: // CAL
+            break;
+        case 6: // INC
+            break;
+        case 7: // JMP
+            break;
+        case 8: // JPC
+            break;
+        case 9: // SIO 1
+            break;
+        case 10: // SIO 2
+            break;
+        case 11: // SIO 3
+            *halt = 1;
+            break;
+    }
         // halt = 1 when instruction is SIO 0 3
     // Return next instruction index
     return PC + 1;
