@@ -104,12 +104,24 @@ void halt_test() {
     printf("HALT_TEST PASSED\n");
 }
 
-void execute_test() {
+void jump_test() {
+    instruction* IR = malloc(1 * sizeof(instruction));
+    IR->opcode = 7;
+    IR->lex = 0;
+    IR->param = 10;
 
+    int halt = 0;
+    int PC = execute(IR,0,&halt);
+
+    assert( PC == 10);
+    assert( halt == 0);
+
+    printf("JUMP_TEST PASSED\n");
 }
 
 int main() {
     read_test();
     halt_test();
+    jump_test();
     return 0;
 }

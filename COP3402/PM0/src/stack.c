@@ -54,6 +54,8 @@ int execute(instruction* IR, int PC, int* halt) {
 
     // Read Instructions
     int opcode = IR->opcode;
+    int lex = IR->lex;
+    int param =  IR->param;
 
     // Switch statement on opcode
     switch (opcode) {
@@ -70,6 +72,7 @@ int execute(instruction* IR, int PC, int* halt) {
         case 6: // INC
             break;
         case 7: // JMP
+            return param;
             break;
         case 8: // JPC
             break;
@@ -81,7 +84,7 @@ int execute(instruction* IR, int PC, int* halt) {
             *halt = 1;
             break;
     }
-        // halt = 1 when instruction is SIO 0 3
-    // Return next instruction index
+
+    // Increment PC
     return PC + 1;
 }
