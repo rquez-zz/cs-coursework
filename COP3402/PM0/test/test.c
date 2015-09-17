@@ -97,9 +97,15 @@ void halt_test() {
     IR->param = 3;
 
     int halt = 0;
-    execute(IR,0,&halt);
+    int PC = 0;
+    int SP = 0;
+    int BP = 0;
+    int stack[MAX_STACK_HEIGHT];
+    memset(stack, 0, sizeof(int));
 
-    assert( halt == 1);
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+
+    assert( halt == 1 );
 
     printf("HALT_TEST PASSED\n");
 }
@@ -111,10 +117,16 @@ void jump_test() {
     IR->param = 10;
 
     int halt = 0;
-    int PC = execute(IR,0,&halt);
+    int PC = 0;
+    int SP = 0;
+    int BP = 0;
+    int stack[MAX_STACK_HEIGHT];
+    memset(stack, 0, sizeof(int));
 
-    assert( PC == 10);
-    assert( halt == 0);
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+
+    assert( PC == 10 );
+    assert( halt == 0 );
 
     printf("JUMP_TEST PASSED\n");
 }

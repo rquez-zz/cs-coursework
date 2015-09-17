@@ -92,7 +92,7 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
             break;
         case 7: // JMP
             *PC = param;
-            break;
+            return;
         case 8: // JPC
             break;
         case 9: // SIO 1
