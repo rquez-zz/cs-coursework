@@ -62,6 +62,26 @@ void read(FILE* inputPtr, instruction* instructions) {
 
 /* Build string showing all instructions */
 char* buildInstructionsString(instruction* instructions) {
+    char* text = malloc(MAX_CODE_LENGTH);
+
+    // Header
+    sprintf(text, "%s", "LINE\tOP\tL\tM\n ");
+
+    // Concat each instruction to a string
+    int i = 0;
+    while(i != -1) {
+        sprintf(text+strlen(text), "%d\t%s\t%d\t%d\n ",
+                i,
+                getOpcodeName(instructions[i].opcode),
+                instructions[i].lex,
+                instructions[i].param);
+        // Check if last instruction is reached
+        if (instructions[i].opcode == 11 && instructions[i].param == 3)
+            i = -1;
+        else
+            i++;
+    }
+    return text;
 }
 
 /* Returns the 3 letter name of the opcode */
