@@ -89,33 +89,33 @@ char* getOpcodeName(int opcode) {
     char* name;
     switch (opcode) {
         case 1: // LIT
-            name = "LIT";
+            name = "lit";
             break;
         case 2: // OPR
-            name = "OPR";
+            name = "opr";
             break;
         case 3: // LOD
-            name = "LOD";
+            name = "lod";
             break;
         case 4: // STO
-            name = "STO";
+            name = "sto";
             break;
         case 5: // CAL
-            name = "CAL";
+            name = "cal";
             break;
         case 6: // INC
-            name = "INC";
+            name = "inc";
             break;
         case 7: // JMP
-            name = "JMP";
+            name = "jmp";
             break;
         case 8: // JPC
-            name = "JPC";
+            name = "jpc";
             break;
         case 9: // SIO
         case 10:
         case 11:
-            name = "SIO";
+            name = "sio";
             break;
     }
     return name;
