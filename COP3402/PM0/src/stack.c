@@ -64,6 +64,43 @@ void read(FILE* inputPtr, instruction* instructions) {
 char* buildInstructionsString(instruction* instructions) {
 }
 
+/* Returns the 3 letter name of the opcode */
+char* getOpcodeName(int opcode) {
+    char* name;
+    switch (opcode) {
+        case 1: // LIT
+            name = "LIT";
+            break;
+        case 2: // OPR
+            name = "OPR";
+            break;
+        case 3: // LOD
+            name = "LOD";
+            break;
+        case 4: // STO
+            name = "STO";
+            break;
+        case 5: // CAL
+            name = "CAL";
+            break;
+        case 6: // INC
+            name = "INC";
+            break;
+        case 7: // JMP
+            name = "JMP";
+            break;
+        case 8: // JPC
+            name = "JPC";
+            break;
+        case 9: // SIO
+        case 10:
+        case 11:
+            name = "SIO";
+            break;
+    }
+    return name;
+}
+
 /* Build string showing execution trace line */
 char* buildTraceLine(int prevPC, instruction* IR, int PC, int BP, int SP, int* stack) {
 }

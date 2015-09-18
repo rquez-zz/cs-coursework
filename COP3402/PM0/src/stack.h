@@ -14,3 +14,4 @@ char* buildInstructionsString(instruction* instrutions);
 char* buildTraceLine(int prevPC,
         instruction* IR, int PC, int BP, int SP, int* stack);
 void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack);
+char* getOpcodeName(int opcode);
