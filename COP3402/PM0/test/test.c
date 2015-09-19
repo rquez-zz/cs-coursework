@@ -186,11 +186,34 @@ void lit_test() {
     printf("LIT_TEST PASSED\n");
 }
 
+void lod_test() {
+    instruction* IR = malloc(1 * sizeof(instruction));
+    IR->opcode = 3;
+    IR->lex = 0;
+    IR->param = 3;
+
+    int halt = 0;
+    int PC = 0;
+    int SP = 0;
+    int BP = 0;
+    int stack[MAX_STACK_HEIGHT];
+    memset(stack, 0, sizeof(int));
+
+    stack[3] = 4;
+
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+
+    assert( stack[1] = 4);
+
+    printf("LOD_TEST PASSED\n");
+}
+
 int main() {
     read_test();
     halt_test();
     jump_test();
     build_instructions_string_test();
     lit_test();
+    lod_test();
     return 0;
 }

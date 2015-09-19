@@ -123,6 +123,7 @@ char* getOpcodeName(int opcode) {
 
 /* Build string showing execution trace line */
 char* buildTraceLine(int prevPC, instruction* IR, int PC, int BP, int SP, int* stack) {
+
 }
 
 /* Executes the instruction IR and increments the PC */
@@ -142,6 +143,8 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
         case 2: // OPR
             break;
         case 3: // LOD
+            *SP = *SP + 1;
+            stack[*SP] = stack[lex + param];
             break;
         case 4: // STO
             break;
