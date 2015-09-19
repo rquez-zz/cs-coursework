@@ -132,6 +132,7 @@ void jump_test() {
 }
 
 void build_instructions_string_test() {
+
     const char* inputPath = "../input/mcode.txt";
     FILE* filePtr = openFile(inputPath);
     instruction instructions[50];
@@ -164,10 +165,32 @@ void build_instructions_string_test() {
     printf("BULID_INSTRUCTIONS_STRING_TEST PASSED\n");
 }
 
+
+void lit_test() {
+    instruction* IR = malloc(1 * sizeof(instruction));
+    IR->opcode = 1;
+    IR->lex = 0;
+    IR->param = 1;
+
+    int halt = 0;
+    int PC = 0;
+    int SP = 0;
+    int BP = 0;
+    int stack[MAX_STACK_HEIGHT];
+    memset(stack, 0, sizeof(int));
+
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+
+    assert( stack[1] = 1);
+
+    printf("LIT_TEST PASSED\n");
+}
+
 int main() {
     read_test();
     halt_test();
     jump_test();
     build_instructions_string_test();
+    lit_test();
     return 0;
 }

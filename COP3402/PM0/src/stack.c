@@ -136,6 +136,8 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
     // Switch statement on opcode
     switch (opcode) {
         case 1: // LIT
+            *SP = *SP + 1;
+            stack[*SP] = param;
             break;
         case 2: // OPR
             break;
