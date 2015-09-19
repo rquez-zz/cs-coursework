@@ -264,6 +264,29 @@ void sio_1_test() {
 
     printf("SIO_1_TEST PASSED\n");
 }
+
+void sio_2_test() {
+    instruction* IR = malloc(1 * sizeof(instruction));
+    IR->opcode = 10;
+    IR->lex = 0;
+    IR->param = 2;
+
+    int halt = 0;
+    int PC = 0;
+    int SP = 1;
+    int BP = 0;
+    int stack[MAX_STACK_HEIGHT];
+    memset(stack, 0, sizeof(int));
+
+    printf("[SIO_2_TEST] INPUT 101 ON THE NEXT LINE\n");
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+
+    assert( stack[2] == 101 );
+    assert( SP == 2 );
+
+    printf("SIO_2_TEST PASSED\n");
+}
+
 int main() {
     read_test();
     halt_test();
@@ -274,5 +297,6 @@ int main() {
     sto_test();
     inc_test();
     sio_1_test();
+    sio_2_test();
     return 0;
 }

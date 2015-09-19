@@ -196,6 +196,8 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
             *SP = *SP - 1;
             break;
         case 10: // SIO 2
+            *SP = *SP + 1;
+            scanf("%d", &stack[*SP]);
             break;
         case 11: // SIO 3
             *halt = 1;
