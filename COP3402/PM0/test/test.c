@@ -1,20 +1,10 @@
 #include "../src/stack.c"
 #include <assert.h>
 
-/* Opens a file and returns a FILE pointer */
-FILE* openFile(const char* path) {
-    FILE* filePtr;
-    filePtr = fopen(path, "r");
-    if(filePtr == NULL) {
-        perror("Error opening input file.");
-    }
-    return filePtr;
-}
-
 void read_test() {
 
     const char* inputPath = "../input/mcode.txt";
-    FILE* filePtr = openFile(inputPath);
+    FILE* filePtr = openFile(inputPath, "r");
     instruction instructions[50];
     read(filePtr, instructions);
     fclose(filePtr);
@@ -134,7 +124,7 @@ void jump_test() {
 void build_instructions_string_test() {
 
     const char* inputPath = "../input/mcode.txt";
-    FILE* filePtr = openFile(inputPath);
+    FILE* filePtr = openFile(inputPath, "r");
     instruction instructions[50];
     read(filePtr, instructions);
     fclose(filePtr);
@@ -252,6 +242,28 @@ void inc_test() {
     printf("INC_TEST PASSED\n");
 }
 
+void sio_1_test() {
+    instruction* IR = malloc(1 * sizeof(instruction));
+    IR->opcode = 9;
+    IR->lex = 0;
+    IR->param = 1;
+
+    int halt = 0;
+    int PC = 0;
+    int SP = 5;
+    int BP = 0;
+    int stack[MAX_STACK_HEIGHT];
+    memset(stack, 0, sizeof(int));
+
+    stack[5] = 101;
+
+    printf("[SIO_1_TEST] THE NEXT PRINT SHOULD BE 101\n");
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+
+    assert( SP == 4 );
+
+    printf("SIO_1_TEST PASSED\n");
+}
 int main() {
     read_test();
     halt_test();
@@ -261,5 +273,6 @@ int main() {
     lod_test();
     sto_test();
     inc_test();
+    sio_1_test();
     return 0;
 }
