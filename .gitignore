@@ -1,5 +1,6 @@
 .class
 bin/
+output/
 .settings/
 .classpath
 .project
