@@ -287,6 +287,33 @@ void sio_2_test() {
     printf("SIO_2_TEST PASSED\n");
 }
 
+void jpc_test() {
+    instruction* IR = malloc(1 * sizeof(instruction));
+    IR->opcode = 8;
+    IR->lex = 0;
+    IR->param = 2;
+
+    int halt = 0;
+    int PC = 0;
+    int SP = 2;
+    int BP = 0;
+    int stack[MAX_STACK_HEIGHT];
+    memset(stack, 0, MAX_STACK_HEIGHT * sizeof(int));
+    stack[1] = 2;
+
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+
+    assert( PC == 2 );
+    assert( SP == 1 );
+
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+
+    assert( SP == 0 );
+    assert( PC == 3 );
+
+    printf("JPC_TEST PASSED\n");
+}
+
 int main() {
     read_test();
     halt_test();
@@ -298,5 +325,6 @@ int main() {
     inc_test();
     sio_1_test();
     sio_2_test();
+    jpc_test();
     return 0;
 }

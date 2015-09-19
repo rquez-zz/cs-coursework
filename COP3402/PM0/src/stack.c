@@ -167,6 +167,7 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
         case 1: // LIT
             *SP = *SP + 1;
             stack[*SP] = param;
+            *PC = *PC + 1;
             break;
         case 2: // OPR
             // TODO: Implement OPR
@@ -174,36 +175,41 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
         case 3: // LOD
             *SP = *SP + 1;
             stack[*SP] = stack[lex + param];
+            *PC = *PC + 1;
             break;
         case 4: // STO
             stack[lex + param] = stack[*SP];
             *SP = *SP - 1;
+            *PC = *PC + 1;
             break;
         case 5: // CAL
             // TODO: Implement CAL
             break;
         case 6: // INC
             *SP = *SP + param;
+            *PC = *PC + 1;
             break;
         case 7: // JMP
             *PC = param;
-            return;
         case 8: // JPC
-            // TODO: Implement JPC
+            if (stack[*SP] == 0)
+                *PC = param;
+            else
+                *PC = *PC + 1;
+            *SP = *SP - 1;
             break;
         case 9: // SIO 1
             printf("%d\n", stack[*SP]);
             *SP = *SP - 1;
+            *PC = *PC + 1;
             break;
         case 10: // SIO 2
             *SP = *SP + 1;
             scanf("%d", &stack[*SP]);
+            *PC = *PC + 1;
             break;
         case 11: // SIO 3
             *halt = 1;
             break;
     }
-
-    // Increment PC
-    *PC = *PC + 1;
 }
