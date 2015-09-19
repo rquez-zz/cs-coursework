@@ -147,6 +147,8 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
             stack[*SP] = stack[lex + param];
             break;
         case 4: // STO
+            stack[lex + param] = stack[*SP];
+            *SP = *SP - 1;
             break;
         case 5: // CAL
             break;

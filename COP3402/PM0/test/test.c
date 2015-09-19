@@ -165,7 +165,6 @@ void build_instructions_string_test() {
     printf("BULID_INSTRUCTIONS_STRING_TEST PASSED\n");
 }
 
-
 void lit_test() {
     instruction* IR = malloc(1 * sizeof(instruction));
     IR->opcode = 1;
@@ -181,7 +180,8 @@ void lit_test() {
 
     execute(IR,&PC,&SP,&BP,&halt, stack);
 
-    assert( stack[1] = 1);
+    assert( SP == 1);
+    assert( stack[1] == 1);
 
     printf("LIT_TEST PASSED\n");
 }
@@ -203,9 +203,33 @@ void lod_test() {
 
     execute(IR,&PC,&SP,&BP,&halt, stack);
 
+    assert( SP == 1);
     assert( stack[1] = 4);
 
     printf("LOD_TEST PASSED\n");
+}
+
+void sto_test() {
+    instruction* IR = malloc(1 * sizeof(instruction));
+    IR->opcode = 4;
+    IR->lex = 0;
+    IR->param = 3;
+
+    int halt = 0;
+    int PC = 0;
+    int SP = 1;
+    int BP = 0;
+    int stack[MAX_STACK_HEIGHT];
+    memset(stack, 0, sizeof(int));
+
+    stack[1] = 4;
+
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+
+    assert( stack[3] == 4);
+    assert( SP == 0 );
+
+    printf("STO_TEST PASSED\n");
 }
 
 int main() {
@@ -215,5 +239,6 @@ int main() {
     build_instructions_string_test();
     lit_test();
     lod_test();
+    sto_test();
     return 0;
 }
