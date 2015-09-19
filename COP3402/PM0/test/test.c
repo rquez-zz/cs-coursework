@@ -232,6 +232,26 @@ void sto_test() {
     printf("STO_TEST PASSED\n");
 }
 
+void inc_test() {
+    instruction* IR = malloc(1 * sizeof(instruction));
+    IR->opcode = 6;
+    IR->lex = 0;
+    IR->param = 5;
+
+    int halt = 0;
+    int PC = 0;
+    int SP = 5;
+    int BP = 0;
+    int stack[MAX_STACK_HEIGHT];
+    memset(stack, 0, sizeof(int));
+
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+
+    assert( SP == 10 );
+
+    printf("INC_TEST PASSED\n");
+}
+
 int main() {
     read_test();
     halt_test();
@@ -240,5 +260,6 @@ int main() {
     lit_test();
     lod_test();
     sto_test();
+    inc_test();
     return 0;
 }

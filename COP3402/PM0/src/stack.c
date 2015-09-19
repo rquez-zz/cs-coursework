@@ -153,6 +153,7 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
         case 5: // CAL
             break;
         case 6: // INC
+            *SP = *SP + param;
             break;
         case 7: // JMP
             *PC = param;
