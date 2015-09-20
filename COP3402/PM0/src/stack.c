@@ -183,7 +183,12 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
             *PC = *PC + 1;
             break;
         case 5: // CAL
-            // TODO: Implement CAL
+            stack[*SP + 1] = 0;
+            stack[*SP + 2] = lex;
+            stack[*SP + 3] = *BP;
+            stack[*SP + 4] = *PC;
+            *BP = *SP + 1;
+            *PC = param;
             break;
         case 6: // INC
             *SP = *SP + param;

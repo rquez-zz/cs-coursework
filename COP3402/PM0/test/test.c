@@ -314,6 +314,31 @@ void jpc_test() {
     printf("JPC_TEST PASSED\n");
 }
 
+void cal_test() {
+    instruction* IR = malloc(1 * sizeof(instruction));
+    IR->opcode = 5;
+    IR->lex = 0;
+    IR->param = 10;
+
+    int halt = 0;
+    int PC = 1;
+    int SP = 1;
+    int BP = 2;
+    int stack[MAX_STACK_HEIGHT];
+    memset(stack, 0, MAX_STACK_HEIGHT * sizeof(int));
+
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+
+    assert( stack[5] == 1 );
+    assert( stack[4] == 2 );
+    assert( stack[3] == 0 );
+    assert( stack[2] == 0 );
+    assert( BP == 2 );
+    assert( PC == 10 );
+
+    printf("CAL_TEST PASSED\n");
+}
+
 int main() {
     read_test();
     halt_test();
@@ -326,5 +351,6 @@ int main() {
     sio_1_test();
     sio_2_test();
     jpc_test();
+    cal_test();
     return 0;
 }
