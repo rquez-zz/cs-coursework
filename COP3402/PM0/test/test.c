@@ -203,21 +203,39 @@ void sto_test() {
     instruction* IR = malloc(1 * sizeof(instruction));
     IR->opcode = 4;
     IR->lex = 0;
-    IR->param = 3;
+    IR->param = 4;
 
     int halt = 0;
     int PC = 0;
-    int SP = 1;
-    int BP = 0;
+    int SP = 6;
+    int BP = 1;
     int stack[MAX_STACK_HEIGHT];
     memset(stack, 0, sizeof(int));
 
-    stack[1] = 4;
+    stack[6] = 4;
 
     execute(IR,&PC,&SP,&BP,&halt, stack);
 
-    assert( stack[3] == 4);
-    assert( SP == 0 );
+    assert( stack[5] == 4);
+    assert( SP == 5 );
+
+    PC = 12;
+    SP = 13;
+    BP = 7;
+    stack[13] = 8;
+
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+
+    assert( stack[11] == 8);
+
+    PC = 14;
+    SP = 13;
+    IR->lex = 1;
+    stack[13] = 8;
+
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+
+    assert( stack[5] == 8 );
 
     printf("STO_TEST PASSED\n");
 }
@@ -231,7 +249,7 @@ void inc_test() {
     int halt = 0;
     int PC = 0;
     int SP = 5;
-    int BP = 0;
+    int BP = 1;
     int stack[MAX_STACK_HEIGHT];
     memset(stack, 0, sizeof(int));
 
@@ -251,7 +269,7 @@ void sio_1_test() {
     int halt = 0;
     int PC = 0;
     int SP = 5;
-    int BP = 0;
+    int BP = 1;
     int stack[MAX_STACK_HEIGHT];
     memset(stack, 0, sizeof(int));
 
@@ -274,7 +292,7 @@ void sio_2_test() {
     int halt = 0;
     int PC = 0;
     int SP = 1;
-    int BP = 0;
+    int BP = 1;
     int stack[MAX_STACK_HEIGHT];
     memset(stack, 0, sizeof(int));
 
@@ -296,7 +314,7 @@ void jpc_test() {
     int halt = 0;
     int PC = 0;
     int SP = 2;
-    int BP = 0;
+    int BP = 1;
     int stack[MAX_STACK_HEIGHT];
     memset(stack, 0, MAX_STACK_HEIGHT * sizeof(int));
     stack[1] = 2;
@@ -321,19 +339,19 @@ void cal_test() {
     IR->param = 10;
 
     int halt = 0;
-    int PC = 1;
-    int SP = 1;
-    int BP = 2;
+    int PC = 6;
+    int SP = 7;
+    int BP = 1;
     int stack[MAX_STACK_HEIGHT];
     memset(stack, 0, MAX_STACK_HEIGHT * sizeof(int));
 
     execute(IR,&PC,&SP,&BP,&halt, stack);
 
-    assert( stack[5] == 1 );
-    assert( stack[4] == 2 );
-    assert( stack[3] == 0 );
-    assert( stack[2] == 0 );
-    assert( BP == 2 );
+    assert( stack[8] == 0 );
+    assert( stack[9] == 1 );
+    assert( stack[10] == 1 );
+    assert( stack[11] == 6 );
+    assert( BP == 8 );
     assert( PC == 10 );
 
     printf("CAL_TEST PASSED\n");
@@ -346,18 +364,18 @@ void opr_0_test() {
     IR->param = 0;
 
     int halt = 0;
-    int PC = 1;
-    int SP = 1;
-    int BP = 2;
+    int PC = 4;
+    int SP = 13;
+    int BP = 7;
     int stack[MAX_STACK_HEIGHT];
     memset(stack, 0, MAX_STACK_HEIGHT * sizeof(int));
 
-    stack[5] = 10;
-    stack[4] = 20;
+    stack[10] = 10;
+    stack[9] = 20;
 
     execute(IR,&PC,&SP,&BP,&halt, stack);
 
-    assert( SP == 1 );
+    assert( SP == 6 );
     assert( PC == 10 );
     assert( BP == 20 );
 

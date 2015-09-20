@@ -1,5 +1,7 @@
 #include "pm0.h"
 
+#define BASE(l, bp) (bp - l*6)
+
 const int MAX_STACK_HEIGHT = 200;
 const int MAX_CODE_LENGTH = 500;
 const int MAX_LINE_LENGTH = 10;
@@ -209,17 +211,18 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
             break;
         case 3: // LOD
             *SP = *SP + 1;
-            stack[*SP] = stack[lex + param];
+            stack[*SP] = stack[BASE(lex, *BP) + param];
             *PC = *PC + 1;
             break;
         case 4: // STO
-            stack[lex + param] = stack[*SP];
+            stack[BASE(lex, *BP) + param] = stack[*SP];
+            stack[*SP] = 0;
             *SP = *SP - 1;
             *PC = *PC + 1;
             break;
         case 5: // CAL
             stack[*SP + 1] = 0;
-            stack[*SP + 2] = lex;
+            stack[*SP + 2] = BASE(lex, *BP);
             stack[*SP + 3] = *BP;
             stack[*SP + 4] = *PC;
             *BP = *SP + 1;
