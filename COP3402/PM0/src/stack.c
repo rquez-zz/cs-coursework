@@ -170,7 +170,42 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
             *PC = *PC + 1;
             break;
         case 2: // OPR
-            // TODO: Implement OPR
+            if (param == 0) {
+                *SP = *BP - 1;
+                *PC = stack[*SP + 4];
+                *BP = stack[*SP + 3];
+            } else {
+                // TODO: Implement all OPR operations
+                switch (param) {
+                    case 1: // NEG
+                        break;
+                    case 2: // ADD
+                        break;
+                    case 3: // SUB
+                        break;
+                    case 4: // MUL
+                        break;
+                    case 5: // DIV
+                        break;
+                    case 6: // ODD
+                        break;
+                    case 7: // MOD
+                        break;
+                    case 8: // EQL
+                        break;
+                    case 9: // NEQ
+                        break;
+                    case 10: // LSS
+                        break;
+                    case 11: // LEQ
+                        break;
+                    case 12: // GTR
+                        break;
+                    case 13: // GEQ
+                        break;
+                }
+                *PC = *PC + 1;
+            }
             break;
         case 3: // LOD
             *SP = *SP + 1;
