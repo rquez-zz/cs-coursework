@@ -120,7 +120,7 @@ char* buildInstructionsString(instruction* instructions) {
 
 /* Returns the 3 letter name of the opcode */
 char* getOpcodeName(int opcode) {
-    char* name;
+    char* name = "";
     switch (opcode) {
         case 1: // LIT
             name = "lit";
@@ -266,7 +266,11 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
             break;
         case 10: // SIO 2
             *SP = *SP + 1;
-            scanf("%d", &stack[*SP]);
+            int result = scanf("%d", &stack[*SP]);
+            if (result == 1)
+                printf("[LOG] Input read successfully");
+            else
+                printf("[ERROR] Error reading input.");
             *PC = *PC + 1;
             break;
         case 11: // SIO 3
