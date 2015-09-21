@@ -158,19 +158,37 @@ char* getOpcodeName(int opcode) {
 /* Build string showing execution trace line */
 char* buildTraceLine(int prevPC, instruction* IR, int PC, int BP, int SP, int* stack) {
 
-    // TODO: Implement stackframe divisor and stack display
     char* line = malloc(MAX_CODE_LENGTH);
 
-    sprintf(line+strlen(line), "%d\t%s\t%d\t%d\t%d\t%d\t%d\n",
+    sprintf(line+strlen(line), "%d\t%s\t%d\t%d\t%d\t%d\t%d\t%s\n",
             prevPC,
             getOpcodeName(IR->opcode),
             IR->lex,
             IR->param,
             PC,
             BP,
-            SP);
+            SP,
+            stackString(stack, SP, BP));
 
     return line;
+}
+
+/* Build string showing the stack */
+char* stackString(int* stack, int SP, int BP) {
+
+    char* stackString = malloc(MAX_STACK_HEIGHT);
+
+    int i = 1;
+    // Loop through the stack from 1 to SP
+    // When BP that is not 1 is encountered, print a divider
+    while (i <= SP) {
+        if (i == BP && BP != 1)
+            sprintf(stackString+strlen(stackString), "| ");
+        sprintf(stackString+strlen(stackString), "%d ", stack[i]);
+        i++;
+    }
+
+    return stackString;
 }
 
 /* Executes the instruction IR and increments the PC */
