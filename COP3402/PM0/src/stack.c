@@ -197,30 +197,90 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
                 // TODO: Implement all OPR operations
                 switch (param) {
                     case 1: // NEG
+                        stack[*SP] = stack[*SP] * -1;
                         break;
                     case 2: // ADD
+                    {
+                        int sum = stack[*SP] + stack[*SP - 1];
+                        *SP = *SP - 1;
+                        stack[*SP] = sum;
                         break;
+                    }
                     case 3: // SUB
+                    {
+                        int diff = stack[*SP] - stack[*SP - 1];
+                        *SP = *SP - 1;
+                        stack[*SP] = diff;
                         break;
+                    }
                     case 4: // MUL
+                    {
+                        int product = stack[*SP] * stack[*SP - 1];
+                        *SP = *SP - 1;
+                        stack[*SP] = product;
                         break;
+                    }
                     case 5: // DIV
+                    {
+                        int quo = stack[*SP] / stack[*SP - 1];
+                        *SP = *SP - 1;
+                        stack[*SP] = quo;
                         break;
+                    }
                     case 6: // ODD
+                        if (stack[*SP] % 2 == 1)
+                            stack[*SP] = 1;
+                        else
+                            stack[*SP] = 0;
                         break;
                     case 7: // MOD
+                    {
+                        int mod = stack[*SP] % stack[*SP - 1];
+                        *SP = *SP - 1;
+                        stack[*SP] = mod;
                         break;
+                    }
                     case 8: // EQL
+                        if (stack[*SP] == stack[*SP - 1])
+                            stack[*SP - 1] = 1;
+                        else
+                            stack[*SP - 1] = 0;
+                        *SP = *SP - 1;
                         break;
                     case 9: // NEQ
+                        if (stack[*SP] == stack[*SP - 1])
+                            stack[*SP - 1] = 0;
+                        else
+                            stack[*SP - 1] = 1;
+                        *SP = *SP - 1;
                         break;
                     case 10: // LSS
+                        if (stack[*SP - 1] < stack[*SP])
+                            stack[*SP - 1] = 1;
+                        else
+                            stack[*SP - 1] = 0;
+                        *SP = *SP - 1;
                         break;
                     case 11: // LEQ
+                        if (stack[*SP - 1] <= stack[*SP])
+                            stack[*SP - 1] = 1;
+                        else
+                            stack[*SP - 1] = 0;
+                        *SP = *SP - 1;
                         break;
                     case 12: // GTR
+                        if (stack[*SP - 1] > stack[*SP])
+                            stack[*SP - 1] = 1;
+                        else
+                            stack[*SP - 1] = 0;
+                        *SP = *SP - 1;
                         break;
                     case 13: // GEQ
+                        if (stack[*SP - 1] >= stack[*SP])
+                            stack[*SP - 1] = 1;
+                        else
+                            stack[*SP - 1] = 0;
+                        *SP = *SP - 1;
                         break;
                 }
             }

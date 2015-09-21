@@ -378,12 +378,127 @@ void opr_0_test() {
     execute(IR,&PC,&SP,&BP,&halt, stack);
 
     assert( SP == 6 );
-    assert( PC == 10 );
+    printf("%d\n", PC);
+    assert( PC == 11 );
     assert( BP == 20 );
 
     printf("OPR_0_TEST PASSED\n");
 }
 
+void opr_all_test() {
+    instruction* IR = malloc(1 * sizeof(instruction));
+    IR->opcode = 2;
+    IR->lex = 0;
+
+    int halt = 0;
+    int PC = 1;
+    int SP = 5;
+    int BP = 1;
+    int stack[MAX_STACK_HEIGHT];
+    memset(stack, 0, MAX_STACK_HEIGHT * sizeof(int));
+
+    IR->param = 1;
+    stack[5] = 10;
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+    assert( stack[5] == -10 );
+
+    SP = 6;
+    IR->param = 2;
+    stack[5] = 10;
+    stack[6] = 10;
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+    assert( stack[5] == 20 );
+    assert( SP  == 5 );
+
+    SP = 6;
+    IR->param = 3;
+    stack[5] = 10;
+    stack[6] = 20;
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+    assert( stack[5] == 10 );
+    assert( SP  == 5 );
+
+    SP = 6;
+    IR->param = 4;
+    stack[5] = 10;
+    stack[6] = 20;
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+    assert( stack[5] == 200 );
+    assert( SP  == 5 );
+
+    SP = 6;
+    IR->param = 5;
+    stack[5] = 5;
+    stack[6] = 100;
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+    assert( stack[5] == 20 );
+    assert( SP  == 5 );
+
+    SP = 6;
+    IR->param = 6;
+    stack[6] = 5;
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+    assert( stack[6] == 1 );
+    assert( SP  == 6 );
+
+    SP = 6;
+    IR->param = 7;
+    stack[5] = 5;
+    stack[6] = 100;
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+    assert( stack[5] == 0 );
+    assert( SP  == 5 );
+
+    SP = 6;
+    IR->param = 8;
+    stack[5] = 100;
+    stack[6] = 100;
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+    assert( stack[5] == 1 );
+    assert( SP  == 5 );
+
+    SP = 6;
+    IR->param = 9;
+    stack[5] = 99;
+    stack[6] = 100;
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+    assert( stack[5] == 1 );
+    assert( SP  == 5 );
+
+    SP = 6;
+    IR->param = 10;
+    stack[5] = 99;
+    stack[6] = 100;
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+    assert( stack[5] == 1 );
+    assert( SP  == 5 );
+
+    SP = 6;
+    IR->param = 11;
+    stack[5] = 100;
+    stack[6] = 100;
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+    assert( stack[5] == 1 );
+    assert( SP  == 5 );
+
+    SP = 6;
+    IR->param = 12;
+    stack[5] = 199;
+    stack[6] = 100;
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+    assert( stack[5] == 1 );
+    assert( SP  == 5 );
+
+    SP = 6;
+    IR->param = 13;
+    stack[5] = 100;
+    stack[6] = 100;
+    execute(IR,&PC,&SP,&BP,&halt, stack);
+    assert( stack[5] == 1 );
+    assert( SP  == 5 );
+
+    printf("OPR_ALL_TEST PASSED\n");
+}
 int main() {
     read_test();
     halt_test();
@@ -398,5 +513,6 @@ int main() {
     jpc_test();
     cal_test();
     opr_0_test();
+    opr_all_test();
     return 0;
 }
