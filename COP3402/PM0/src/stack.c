@@ -206,8 +206,8 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
                     case 13: // GEQ
                         break;
                 }
-                *PC = *PC + 1;
             }
+            *PC = *PC + 1;
             break;
         case 3: // LOD
             *SP = *SP + 1;
