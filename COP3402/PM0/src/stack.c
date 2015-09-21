@@ -254,6 +254,9 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
             break;
         case 11: // SIO 3
             *halt = 1;
+            *PC = 0;
+            *SP = 0;
+            *BP = 0;
             break;
     }
 }
