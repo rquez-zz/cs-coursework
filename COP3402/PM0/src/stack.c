@@ -283,8 +283,8 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
                         *SP = *SP - 1;
                         break;
                 }
+                *PC = *PC + 1;
             }
-            *PC = *PC + 1;
             break;
         case 3: // LOD
             *SP = *SP + 1;
