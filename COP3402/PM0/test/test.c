@@ -352,7 +352,7 @@ void cal_test() {
     assert( stack[8] == 0 );
     assert( stack[9] == 1 );
     assert( stack[10] == 1 );
-    assert( stack[11] == 6 );
+    assert( stack[11] == 7 );
     assert( BP == 8 );
     assert( PC == 10 );
 
@@ -379,7 +379,7 @@ void opr_0_test() {
 
     assert( SP == 6 );
     printf("%d\n", PC);
-    assert( PC == 11 );
+    assert( PC == 10 );
     assert( BP == 20 );
 
     printf("OPR_0_TEST PASSED\n");
@@ -415,7 +415,7 @@ void opr_all_test() {
     stack[5] = 10;
     stack[6] = 20;
     execute(IR,&PC,&SP,&BP,&halt, stack);
-    assert( stack[5] == 10 );
+    assert( stack[5] == -10 );
     assert( SP  == 5 );
 
     SP = 6;
@@ -428,8 +428,8 @@ void opr_all_test() {
 
     SP = 6;
     IR->param = 5;
-    stack[5] = 5;
-    stack[6] = 100;
+    stack[5] = 100;
+    stack[6] = 5;
     execute(IR,&PC,&SP,&BP,&halt, stack);
     assert( stack[5] == 20 );
     assert( SP  == 5 );
@@ -443,8 +443,8 @@ void opr_all_test() {
 
     SP = 6;
     IR->param = 7;
-    stack[5] = 5;
-    stack[6] = 100;
+    stack[5] = 100;
+    stack[6] = 5;
     execute(IR,&PC,&SP,&BP,&halt, stack);
     assert( stack[5] == 0 );
     assert( SP  == 5 );

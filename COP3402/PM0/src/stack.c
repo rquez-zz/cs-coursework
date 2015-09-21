@@ -226,7 +226,7 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
                     }
                     case 3: // SUB
                     {
-                        int diff = stack[*SP] - stack[*SP - 1];
+                        int diff = stack[*SP - 1] - stack[*SP];
                         *SP = *SP - 1;
                         stack[*SP] = diff;
                         break;
@@ -240,7 +240,7 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
                     }
                     case 5: // DIV
                     {
-                        int quo = stack[*SP] / stack[*SP - 1];
+                        int quo = stack[*SP - 1] / stack[*SP];
                         *SP = *SP - 1;
                         stack[*SP] = quo;
                         break;
@@ -253,7 +253,7 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
                         break;
                     case 7: // MOD
                     {
-                        int mod = stack[*SP] % stack[*SP - 1];
+                        int mod = stack[*SP - 1] % stack[*SP];
                         *SP = *SP - 1;
                         stack[*SP] = mod;
                         break;
