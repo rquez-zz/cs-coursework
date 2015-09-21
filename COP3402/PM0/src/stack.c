@@ -31,7 +31,7 @@ void stack(const char* inputPath, const char* outputPath) {
 
     // Initialize stack
     int stack[MAX_STACK_HEIGHT];
-    memset(stack, 0, sizeof(int));
+    memset(stack, 0, MAX_STACK_HEIGHT * sizeof(int));
     printf("[LOG] Stack of length %d initalized to 0.\n", MAX_STACK_HEIGHT);
 
     // Read instructions
@@ -301,7 +301,7 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
             stack[*SP + 1] = 0;
             stack[*SP + 2] = BASE(lex, *BP);
             stack[*SP + 3] = *BP;
-            stack[*SP + 4] = *PC;
+            stack[*SP + 4] = *PC + 1;
             *BP = *SP + 1;
             *PC = param;
             break;
