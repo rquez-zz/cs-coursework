@@ -7,13 +7,14 @@ OUTPUT = ../output/mcode-stacktrace.txt
 
 stack : $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(PROGRAM)
-	rm *.o
 
 %.o : %.c
 	$(CC) $(CFLAGS) -c $<
 
 clean :
-	rm *.o
+	rm $(OBJECTS)
+	rm $(OUTPUT)
+	rm $(PROGRAM)
 
 run :
 	$(PROGRAM) $(INPUT) $(OUTPUT)
