@@ -100,7 +100,7 @@ void halt_test() {
     printf("HALT_TEST PASSED\n");
 }
 
-void jump_test() {
+void jmp_test() {
     instruction* IR = malloc(1 * sizeof(instruction));
     IR->opcode = 7;
     IR->lex = 0;
@@ -109,7 +109,7 @@ void jump_test() {
     int halt = 0;
     int PC = 0;
     int SP = 0;
-    int BP = 0;
+    int BP = 1;
     int stack[MAX_STACK_HEIGHT];
     memset(stack, 0, sizeof(int));
 
@@ -117,8 +117,10 @@ void jump_test() {
 
     assert( PC == 10 );
     assert( halt == 0 );
+    assert( SP == 0 );
+    assert( BP == 1 );
 
-    printf("JUMP_TEST PASSED\n");
+    printf("JMP_TEST PASSED\n");
 }
 
 void build_instructions_string_test() {
@@ -385,7 +387,7 @@ void opr_0_test() {
 int main() {
     read_test();
     halt_test();
-    jump_test();
+    jmp_test();
     build_instructions_string_test();
     lit_test();
     lod_test();
