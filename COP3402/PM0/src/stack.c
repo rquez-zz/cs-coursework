@@ -21,12 +21,12 @@ void stack(const char* inputPath, const char* outputPath) {
 
     printf("[LOG] Start stack operations\n");
 
-    int SP = 0;
-    int BP = 0;
-    int PC = 0;
-    instruction* IR;
+    // Intialize registers
+    int SP = 0; // Points to the top of the stack
+    int BP = 1; // Points to base of the activation record
+    int PC = 0; // The index of the next instruction
+    instruction* IR; // The current instruction container
     int halt = 0;
-
     printf("[LOG] Registers intialized\n");
 
     // Initialize stack
@@ -50,7 +50,7 @@ void stack(const char* inputPath, const char* outputPath) {
         IR = &instructions[PC];
         printf("[LOG] FETCHED: %d %d %d\n", IR->opcode, IR->lex, IR->param);
 
-        // Execute instruction and return new PC
+        // Execute instruction
         int prevPC = PC;
         execute(IR, &PC, &SP, &BP, &halt, stack);
         printf("[LOG] EXECUTED: PC:%d SP:%d BP:%d HALT:%d\n", PC, SP, BP, halt);
