@@ -44,6 +44,10 @@ void stack(const char* inputPath, const char* outputPath) {
     fprintf(outputPtr, "%s", buildInstructionsString(instructions));
     printf("[LOG] Instructions written to output file.\n");
 
+    // Write header for stacktrace
+    fprintf(outputPtr, "\t\t\t\tpc\tbp\tsp\tstack\n");
+    fprintf(outputPtr, "Initial Values\t\t\t%d\t%d\t%d\n", PC, BP, SP);
+
     // Fetch Cycle
     while(halt == 0) {
         // Fetch instruction
@@ -56,7 +60,7 @@ void stack(const char* inputPath, const char* outputPath) {
         printf("[LOG] EXECUTED: PC:%d SP:%d BP:%d HALT:%d\n", PC, SP, BP, halt);
 
         // Write execution trace line to file
-        //fprintf(outputPtr, "%s", buildTraceLine(prevPC, IR, PC, BP, SP, stack));
+        fprintf(outputPtr, "%s", buildTraceLine(prevPC, IR, PC, BP, SP, stack));
     }
 
     printf("[LOG] Stack operations halted, closing output file..\n");
@@ -154,6 +158,19 @@ char* getOpcodeName(int opcode) {
 /* Build string showing execution trace line */
 char* buildTraceLine(int prevPC, instruction* IR, int PC, int BP, int SP, int* stack) {
 
+    // TODO: Implement stackframe divisor and stack display
+    char* line = malloc(MAX_CODE_LENGTH);
+
+    sprintf(line+strlen(line), "%d\t%s\t%d\t%d\t%d\t%d\t%d\n",
+            prevPC,
+            getOpcodeName(IR->opcode),
+            IR->lex,
+            IR->param,
+            PC,
+            BP,
+            SP);
+
+    return line;
 }
 
 /* Executes the instruction IR and increments the PC */
