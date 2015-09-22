@@ -33,44 +33,48 @@ int stack(const char* inputPath, const char* outputPath) {
     int PC = 0; // The index of the next instruction
     instruction* IR; // The current instruction container
     int halt = 0;
-    printf("[LOG] Registers intialized\n");
+    printf("[STACK-LOG] Registers intialized.\n");
 
     // Initialize stack
     int stack[MAX_STACK_HEIGHT];
     memset(stack, 0, MAX_STACK_HEIGHT * sizeof(int));
-    printf("[LOG] Stack of length %d initalized to 0.\n", MAX_STACK_HEIGHT);
+    printf("[STACK-LOG] Stack of length %d initalized to 0.\n", MAX_STACK_HEIGHT);
 
     // Read instructions
     instruction instructions[MAX_CODE_LENGTH];
     read(inputPtr, instructions);
-    printf("[LOG] Instructions loaded, closing input file.\n");
+    printf("[STACK-LOG] Instructions loaded into memory, closing input file.\n");
     fclose(inputPtr);
 
     // Build and write Instructions string to file
     fprintf(outputPtr, "%s", buildInstructionsString(instructions));
-    printf("[LOG] Instructions written to output file.\n");
+    printf("[STACK-LOG] Instructions written to output file.\n");
 
     // Write header for stacktrace
     fprintf(outputPtr, "\t\t\t\tpc\tbp\tsp\tstack\n");
     fprintf(outputPtr, "Initial Values\t\t\t%d\t%d\t%d\n", PC, BP, SP);
 
+    printf("[STACK-LOG] Begin fetch/execute cycle.\n");
+
     // Fetch Cycle
     while(halt == 0) {
         // Fetch instruction
         IR = &instructions[PC];
-        printf("[LOG] FETCHED: %d %d %d\n", IR->opcode, IR->lex, IR->param);
+        printf("[STACK-LOG] FETCHED: %d %d %d\n", IR->opcode, IR->lex, IR->param);
 
         // Execute instruction
         int prevPC = PC;
         execute(IR, &PC, &SP, &BP, &halt, stack);
-        printf("[LOG] EXECUTED: PC:%d SP:%d BP:%d HALT:%d\n", PC, SP, BP, halt);
+        printf("[STACK-LOG] EXECUTED: PC:%d SP:%d BP:%d HALT:%d\n", PC, SP, BP, halt);
 
         // Write execution trace line to file
         fprintf(outputPtr, "%s", buildTraceLine(prevPC, IR, PC, BP, SP, stack));
     }
 
-    printf("[LOG] Stack operations halted, closing output file..\n");
+    printf("[STACK-LOG] Stack operations halted, closing output file.\n");
     fclose(outputPtr);
+
+    return 0;
 }
 
 /* Opens a file and returns a FILE pointer */
@@ -78,7 +82,8 @@ FILE* openFile(const char* path, const char* op) {
     FILE* filePtr;
     filePtr = fopen(path, op);
     if(filePtr == NULL) {
-        perror("Error opening input file.");
+        perror("[STACK-ERROR] Error opening file.");
+        return NULL;
     }
     return filePtr;
 }
@@ -352,9 +357,9 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
             *SP = *SP + 1;
             int result = scanf("%d", &stack[*SP]);
             if (result == 1)
-                printf("[LOG] Input read successfully");
+                printf("[STACK-LOG] SIO 0 2 input read successfully.\n");
             else
-                printf("[ERROR] Error reading input.");
+                printf("[STACK-ERROR] SIO 0 2 error reading input.\n");
             *PC = *PC + 1;
             break;
         case 11: // SIO 3
