@@ -9,8 +9,8 @@ int main(int argc, char **argv) {
     const char* outputPath = argv[2];
 
     // Perform Stack Operations
-    printf("[LOG] Performing stack operations\n");
-    stack(inputPath, outputPath);
+    printf("[PM0-LOG] Starting stack operations...\n");
+    int rStack = stack(inputPath, outputPath);
 
-    return 0;
+    return rStack;
 }

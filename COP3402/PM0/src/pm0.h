@@ -9,7 +9,7 @@ typedef struct {
 } instruction;
 
 FILE* openFile(const char* path, const char* op);
-void stack(const char* inputPath, const char* outputPath);
+int stack(const char* inputPath, const char* outputPath);
 void read(FILE* inputPtr, instruction* instructions);
 char* buildInstructionsString(instruction* instrutions);
 char* buildTraceLine(int prevPC,

@@ -9,17 +9,23 @@ const int MAX_LEXI_LEVEL = 3;
 const char* WRITE = "w";
 const char* READ = "r";
 
-void stack(const char* inputPath, const char* outputPath) {
+int stack(const char* inputPath, const char* outputPath) {
 
     // Open input file for reading
     FILE* inputPtr= openFile(inputPath, READ);
-    printf("[LOG] %s opened for input.\n", inputPath);
+    if (inputPtr == NULL) {
+        printf("[STACK-ERROR] Error opening \"%s\".\n", inputPath);
+        return 1;
+    }
+    printf("[STACK-LOG] %s opened for input.\n", inputPath);
 
     // Open output file for writing
     FILE* outputPtr = openFile(outputPath, WRITE);
-    printf("[LOG] %s opened for output.\n", outputPath);
-
-    printf("[LOG] Start stack operations\n");
+    if (outputPtr == NULL) {
+        printf("Error opening \"%s\"\n", outputPath);
+        return 1;
+    }
+    printf("[STACK-LOG] %s opened for output.\n", outputPath);
 
     // Intialize registers
     int SP = 0; // Points to the top of the stack
