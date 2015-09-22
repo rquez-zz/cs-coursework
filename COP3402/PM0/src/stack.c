@@ -110,12 +110,12 @@ char* buildInstructionsString(instruction* instructions) {
     char* text = malloc(MAX_CODE_LENGTH);
 
     // Header
-    sprintf(text, "%s", "LINE\tOP\tL\tM\n ");
+    sprintf(text, "%s", "LINE\tOP\tL\tM\n");
 
     // Concat each instruction to a string
     int i = 0;
     while(i != -1) {
-        sprintf(text+strlen(text), "%d\t%s\t%d\t%d\n ",
+        sprintf(text+strlen(text), "%d\t%s\t%d\t%d\n",
                 i,
                 getOpcodeName(instructions[i].opcode),
                 instructions[i].lex,
