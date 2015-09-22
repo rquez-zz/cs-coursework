@@ -6,7 +6,7 @@ make clean -sC ./src
 make -sC ./src
 
 if [[ -n "$input" ]]; then
-    make run INPUT=../input/$input -sC ./src
+    make run INPUT=../$input -sC ./src
 else
     make run -sC ./src
 fi
