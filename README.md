@@ -10,3 +10,7 @@ COP3502 - Computer Science I (Data Structures)
 COP3503 - Computer Science II (Algorithms)
 
 CDA3103 - Computer Logic and Organization
+
+COP3402 - System Software
+
+COT4210 - Discrete Structures II (Theory of Computation)
