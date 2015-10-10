@@ -26,29 +26,55 @@ public class Chomsky {
             String[] tableRow = new String[input.length() - k];
             int i = 0;
 
-            for (Character c : input.toCharArray()) {
+    /**
+     * Checks if an array of symbols is part of the rules
+     *
+     * @param symbols
+     * @return
+     */
+    String getRulesForSymbols(String[] symbols) {
 
-                String set = new String();
+        StringBuilder sb = new StringBuilder();
 
-                for (String[] rule : rules) {
+        for (int i = 0; i < symbols.length; i++) {
 
-                    // j goes through each generated symbol
-                    for (int j = 1; j < rule.length; j++) {
+            for (String[] rule : rules) {
 
-                        if (rule[j].equals(c.toString())) {
+                for (int j = 1; j < rule.length; j++) {
 
-                            set += rule[0];
-                        }
+                    if (rule[j].equals(symbols[i])) {
+
+                        sb.append(rule[0]);
                     }
                 }
-
-                tableRow[i] = set;
-                i++;
             }
-
-            triangeTable[k] = tableRow;
-            k++;
         }
+
+        //Check for duplicates
+        Set<Character> seen = new HashSet<Character>();
+        for (int i = 0; i < sb.length(); i++) {
+            char c = sb.charAt(i);
+            if(!seen.contains(c)) {
+                seen.add(c);
+            } else {
+                sb.deleteCharAt(i);
+                i--;
+            }
+        }
+
+        // Arrange string alphabetically with S as the beginning
+        String result;
+        char[] cArray;
+        if (sb.indexOf("S") != -1) {
+            char s = sb.charAt(sb.indexOf("S"));
+            sb.deleteCharAt(sb.indexOf("S"));
+            result = "S";
+        } else {
+            result = new String();
+        }
+        cArray = sb.toString().toCharArray();
+        Arrays.sort(cArray);
+        result += String.copyValueOf(cArray);
 
         return false;
     }
