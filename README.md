@@ -14,3 +14,5 @@ CDA3103 - Computer Logic and Organization
 COP3402 - System Software
 
 COT4210 - Discrete Structures II (Theory of Computation)
+
+CIS3360 - Security In Computing
