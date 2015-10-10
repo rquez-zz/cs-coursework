@@ -1,3 +1,7 @@
+import java.io.*;
+import java.net.URL;
+import java.util.*;
+
 /**
  * Created by ricardo on 10/8/15.
  */
@@ -15,14 +19,22 @@ public class Chomsky {
 
     boolean isInGrammar(String input) {
 
-        String[][] triangeTable = new String[input.length()][];
 
-        // l creates the table rows
-        // k increments so it shortens the table row
-        // i increments for each element of table row
-        int k = 0;
-        for (int l = 0; l < input.length() - k; l++) {
+    /**
+     * Builds a triangular table where the diagonals going from left to right
+     * are added for each character of the input
+     *
+     * @param input
+     * @return
+     */
+    String[][] buildTriangleTable(String input) {
 
+        String[][] triangleTable = buildFirstDiagonal(input);
+        for (int i = 1; i < triangleTable.length; i++)
+            triangleTable = buildDiagonal(triangleTable, i);
+
+        return triangleTable;
+    }
 
     /**
      * Builds the diagonal in the triangle table that starts at dIndex in the table
