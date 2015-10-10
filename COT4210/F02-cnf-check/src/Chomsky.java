@@ -17,8 +17,21 @@ public class Chomsky {
         this.rules = rules;
     }
 
+    /**
+     * Returns true if S is in the string at the bottom left corner of the table
+     *
+     * @param input
+     * @return
+     */
     boolean isInGrammar(String input) {
 
+        String[][] table = buildTriangleTable(input);
+        if (table[input.length() - 1][0].contains("S")) {
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Builds a triangular table where the diagonals going from left to right
@@ -137,6 +150,92 @@ public class Chomsky {
         Arrays.sort(cArray);
         result += String.copyValueOf(cArray);
 
-        return false;
+        return result;
+    }
+
+    /**
+     * Builds the first diagnonal of the triangle table from input
+     * @param input
+     * @return
+     */
+    String[][] buildFirstDiagonal (String input) {
+
+        int i = 0;
+        String[][] diagonal = new String[input.length()][input.length()];
+
+        for (Character c : input.toCharArray()) {
+
+            String set = new String();
+
+            for (String[] rule : rules) {
+
+                for (int j = 1; j < rule.length; j++) {
+
+                    if (rule[j].equals(c.toString())) {
+
+                        set += rule[0];
+                    }
+                }
+            }
+
+            diagonal[i][i] = set;
+            i++;
+        }
+
+        return diagonal;
+    }
+
+    public static void main(String[] args) {
+
+        Scanner scan = new Scanner(System.in);
+
+        int numCNF = scan.nextInt();
+        boolean[][] results = new boolean[numCNF][];
+        String[][] inputs = new String[numCNF][];
+
+        for (int n = 0; n < numCNF; n++) {
+
+            int numRules = scan.nextInt();
+
+            String[][] rules = new String[numRules][];
+
+            for (int i = 0; i < numRules; i++) {
+
+                int numVariables = scan.nextInt() + 1;
+
+                rules[i] = new String[numVariables];
+
+                for (int j = 0; j < numVariables; j++) {
+
+                    rules[i][j] = scan.next();
+                }
+            }
+
+            int numInputs = scan.nextInt();
+
+            results[n] = new boolean[numInputs];
+            inputs[n] = new String[numInputs];
+
+            for (int k = 0; k < numInputs; k++) {
+
+                inputs[n][k] = scan.next();
+
+                Chomsky cnf = new Chomsky(rules);
+                results[n][k] = cnf.isInGrammar(inputs[n][k]);
+            }
+        }
+
+        for (int l = 0; l < results.length; l++) {
+            int number = l + 1;
+            System.out.println("Grammar #" + number + ":");
+            for (int m = 0; m < results[l].length; m++) {
+                System.out.print(inputs[l][m] + ": ");
+                if (results[l][m])
+                    System.out.println("YES");
+                else
+                    System.out.println("NO");
+            }
+            System.out.println();
+        }
     }
 }
