@@ -25,6 +25,30 @@ public class Chomsky {
 
 
     /**
+     * Builds the diagonal in the triangle table that starts at dIndex in the table
+     *
+     * @param triangleTable
+     * @param dIndex
+     * @return
+     */
+    String[][] buildDiagonal(String[][] triangleTable, int dIndex) {
+
+        int i = 0;
+        int j = dIndex;
+
+        while (triangleTable.length - dIndex > i) {
+            ArrayList<String> list = cartProductRecursive(triangleTable, i, i, j);
+            String[] product = list.toArray(new String[list.size()]);
+            String rules = getRulesForSymbols(product);
+            triangleTable[j][i] = rules;
+            i++;
+            j++;
+        }
+
+        return triangleTable;
+    }
+
+    /**
      * Recursively generates the cartisian product of 2 symbols and then unions together the results
      * @param triangleTable
      * @param i
