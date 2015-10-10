@@ -23,8 +23,33 @@ public class Chomsky {
         int k = 0;
         for (int l = 0; l < input.length() - k; l++) {
 
-            String[] tableRow = new String[input.length() - k];
-            int i = 0;
+
+    /**
+     * Recursively generates the cartisian product of 2 symbols and then unions together the results
+     * @param triangleTable
+     * @param i
+     * @param k
+     * @param j
+     * @return
+     */
+    ArrayList<String> cartProductRecursive(String[][] triangleTable, int i, int k, int j) {
+
+        ArrayList<String> list = new ArrayList<>();
+
+        if (k == j) {
+            return list;
+        }
+
+        for (Character a : triangleTable[k][i].toCharArray()) {
+            for (Character b : triangleTable[j][k+1].toCharArray()) {
+                list.add(a.toString() + b.toString());
+            }
+        }
+
+        list.addAll(cartProductRecursive(triangleTable, i, k+1, j));
+
+        return list;
+    }
 
     /**
      * Checks if an array of symbols is part of the rules
