@@ -1,0 +1,17 @@
+Security professionals have said for years that the only way to make a
+computer truly secure is for it to not be connected to any other computers, a
+method called airgapping. Then, any attack would have to happen physically,
+with the attacker actually entering the room and accessing the computer that
+way, which is incredibly unlikely. In the case of computers containing highly
+sensitive information, additional, physical security can always be added in
+the form of security guards, cameras, and so on.
+Researchers at Georgia Institute of Technology have uncovered a vulnerability
+in all computers, however, which can be exploited regardless of an air gap.
+It’s a vulnerability which you’d never suspect, and it’s one that’s hard to
+fight against. All CPUs emit electromagnetic signals when they are performing
+tasks, and the first thing these researchers discovered was that binary
+ones and zeroes emit different levels. The second thing they discovered is
+that electromagnetic radiation is also emitted by the voltage fluctuations
+and that it can be read from up to six meters away. These signals, by the
+way, are known as side-channels, and they are well-documented in the
+cryptography field.
