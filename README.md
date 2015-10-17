@@ -3,7 +3,7 @@
 ### Members
 
 * Ricardo Vasquez
-* Tyler Mellon
+* Tyler Mellor
 * Joesph Leavitt
 
 ### Compile
