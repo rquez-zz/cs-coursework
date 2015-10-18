@@ -6,10 +6,20 @@
 #define MAX_SYMBOL_SIZE 100
 
 typedef struct symbol {
+
+    // const = 1, var = 2, proc = 3
 	int kind;
+
+    // Name of the Symbol
 	char name[12];
+
+    // Value for constants
 	int val;
+
+    // L Level for variables and procedures
 	int level;
+
+    // M Address for variables and procedures
 	int addr;
 } symbol;
 
