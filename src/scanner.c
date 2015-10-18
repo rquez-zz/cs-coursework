@@ -1,32 +1,8 @@
-//
-//
-//
-//
-
-//tyler mellor skele
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
-#define MAX_SYMBOL_SIZE 100
+#include "scanner.h"
 
 //constants store kind, name, and val
 //variables store kind, name, L, and M
 //procedures store kind, name, L, and M
-
-typedef struct symbol
-{
-	int kind;
-	char name[12];
-	int val;
-	int level;
-	int addr;
-
-	/* data */
-}symbol;
-
 
 int main()
 {
@@ -67,7 +43,7 @@ int main()
 	}
 
 	ch = getchar(); //state four
-	
+
 	if(isdigit(ch))
 	{
 		value = (int)ch;
@@ -99,12 +75,3 @@ int main()
 	return 0;
 }
 
-typedef enum{
-	nulsym = 1, identsym, numbersym, plussym, minussym, multsym,
-	slashsym, oddsym, eqsym, neqsym, lesssym, leqsym, gtrsym,
-	geqsym, lparentsym, rparentsym, commasym, semicolonsym,
-	periodsym, becomessym, beginsym, endsym, ifsym, tnesym,
-	whilesym, dosym, callsym, constsym, varsym, procsym, writesym,
-	redsym, elseym
-	
-}token_type;
