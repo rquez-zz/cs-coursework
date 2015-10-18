@@ -5,7 +5,8 @@ FILE* openFile(const char* path, const char* op) {
     FILE* filePtr;
     filePtr = fopen(path, op);
     if(filePtr == NULL) {
-        perror("[SCANNER-ERROR] Error opening file.");
+        fprintf(stderr, "[SCANNER-ERROR] Error opening %s\n", path);
+        perror("");
         return NULL;
     }
     return filePtr;
