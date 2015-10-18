@@ -58,3 +58,5 @@ typedef enum {
 	redsym, 
     elseym
 } token_type;
+
+FILE* openFile(const char* path, const char* op);

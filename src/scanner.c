@@ -4,6 +4,17 @@
 //variables store kind, name, L, and M
 //procedures store kind, name, L, and M
 
+/* Opens a file and returns a FILE pointer */
+FILE* openFile(const char* path, const char* op) {
+    FILE* filePtr;
+    filePtr = fopen(path, op);
+    if(filePtr == NULL) {
+        perror("[SCANNER-ERROR] Error opening file.");
+        return NULL;
+    }
+    return filePtr;
+}
+
 int main()
 {
 	FILE *ifp;
