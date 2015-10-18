@@ -1,9 +1,5 @@
 #include "scanner.h"
 
-//constants store kind, name, and val
-//variables store kind, name, L, and M
-//procedures store kind, name, L, and M
-
 /* Opens a file and returns a FILE pointer */
 FILE* openFile(const char* path, const char* op) {
     FILE* filePtr;
@@ -23,70 +19,109 @@ void append(char* string, char c) {
 
 int main()
 {
-	FILE *ifp;
-	char ch;
+    // TODO: inputPath should come from arg
+    const char* inputPath = "../input/input.txt";
 
-	int value;
+    // Open input for reading
+    FILE* ifp = openFile(inputPath, "r");
 
-	ifp = fopen("input.txt", "r" );
+    // Loop through input as DFA simulation
+    while(!feof(ifp)) {
 
-	if(ifp == NULL)
-	{
-		printf("unable to open file");
-		return 0;
-	}
+        // Get Character from stream
+        char ch = getc(ifp);
 
-	ch = getchar(); // stateone
+        // Copy character into a temp string
+        char tempToken[12] = "";
 
-	if(isalpha(ch))
-	{
-		while(isalpha(ch) || isdigit(ch)) /* state two */
-		{
-			ch = getchar();
-		}
-		//dfa loop conditional determines if token is a letter or digit
-		ungetc(ch, ifp); //state three
+        // Check if ch is part of an Identifier or Reserved Word
+        if(isalpha(ch)) {
 
-		//create token
-		//accept token
-		// return token
+            // Get the next char while checking if it's alphanumeric
+            while( (isalpha(ch) || isdigit(ch)) && !feof(ifp)) {
 
-	}
-	else
-	{
-		printf("not a identifier");
-		ungetc(ch, ifp);
-		// backup for next character check
-	}
+                // TODO: If it has digits then it's not a reserved word
 
-	ch = getchar(); //state four
+                // Append ch to temp token
+                append(tempToken, ch);
 
-	if(isdigit(ch))
-	{
-		value = (int)ch;
-		//converts character to integer
+                // Get next ch
+                ch = getc(ifp);
+            }
 
-		ch = getchar();
-		while(isdigit(ch)) // state five
-		{
-			value = 10 * value + (int)ch;
-			ch = getchar();
-		}
-		//while ch is digit convert ch to int
+            // Go back 1 char
+            ungetc(ch, ifp);
 
-		ungetc(ch, ifp); //state 
-		//create token
-		//accept
-		//return token
+            // TODO: create and return identifer or reserved word token
 
-	}
-	else
-	{
-		printf("not a number");
-		ungetc(ch, ifp);
-	}
+        } else {
+            // Not alphabetic, go back
+            ungetc(ch, ifp);
+        }
 
-	//check for items other than letters or digits
+        // Get next char
+        ch = getc(ifp);
+
+        // Check if ch is part of a Value
+        if(isdigit(ch)) {
+
+            while(isdigit(ch)) {
+                // Append ch to temp token
+                append(tempToken, ch);
+
+                // Get next ch
+                ch = getc(ifp);
+            }
+
+            // Parse int value
+            int value = atoi(tempToken);
+
+            // Go back 1 char
+            ungetc(ch, ifp);
+
+            // TODO: create and return token
+
+        } else {
+            // Not a digit, go back
+            ungetc(ch, ifp);
+        }
+
+        // Get next ch
+        ch = getc(ifp);
+
+        // TODO: Check for +
+        // TODO: Check for -
+        // TODO: Check for *
+        // TODO: Check for /
+        //
+        // TODO: Check for odd
+        // TODO: Check for =
+        // TODO: Check for <, <=, <>
+        // TODO: Check for >. >=
+        //
+        // TODO: Check for (
+        // TODO: Check for )
+        // TODO: Check for ,
+        // TODO: Check for ;
+        // TODO: Check for :=
+        //
+        // TODO: Check for begin
+        // TODO: Check for end
+        // TODO: Check for if
+        // TODO: Check for then
+        // TODO: Check for while
+        // TODO: Check for do
+        // TODO: Check for call
+        // TODO: Check for const
+        // TODO: Check for var
+        // TODO: Check for procedure
+        // TODO: Check for write
+        // TODO: Check for read
+        // TODO: Check for else
+        // TODO: Check for comments
+    }
+
+    // Close input
 	fclose(ifp);
 
 	return 0;

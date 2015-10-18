@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define MAX_SYMBOL_SIZE 100
+#define MAX_SYMBOL_TABLE_SIZE 100
 
 typedef struct symbol {
 
@@ -25,7 +25,7 @@ typedef struct symbol {
 
 typedef enum {
 	nulsym = 1, 
-    identsym, 
+    identsym,
     numbersym, 
     plussym, 
     minussym, 
