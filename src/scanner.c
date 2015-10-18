@@ -17,13 +17,60 @@ void append(char* string, char c) {
     string[strlen(string) + 1] = '\0';
 }
 
+/* Reads the input file and returns pointer to clean input file */
+FILE* getCleanInput(const char* inputPath, const char* outputPath) {
+    FILE *ifp = openFile(inputPath, "r");
+    FILE* ofp = openFile(outputPath, "w");
+
+    // Read
+    while(!feof(ifp)) {
+        char ch = getc(ifp);
+
+        // Filter out comments
+        if(ch == '/') {
+            ch = getc(ifp);
+            if (ch == '*') {
+                // Start of a Comment
+                while(!feof(ifp)) {
+                    ch = getc(ifp);
+
+                    // End of a Comment
+                    if (ch == '*') {
+                        ch = getc(ifp);
+                        if (ch == '/') {
+                            break;
+                        }
+                    }
+                }
+            } else {
+                // Go back 1 char
+                ungetc(ch, ifp);
+            }
+        } else {
+            // Write ch to file
+            if (!feof(ifp)) {
+                fputc(ch, ofp);
+            }
+        }
+    }
+
+    // Close files
+    fclose(ifp);
+    fclose(ofp);
+
+    // Return ptr to cleanInput.txt
+    return openFile(outputPath, "r");
+}
+
 int main()
 {
     // TODO: inputPath should come from arg
     const char* inputPath = "../input/input.txt";
+    const char* outputPath = "../output/cleanInput.txt";
 
-    // Open input for reading
-    FILE* ifp = openFile(inputPath, "r");
+    // Open clean input for reading
+    FILE* ifp = getCleanInput(inputPath, outputPath);
+
 
     // Loop through input as DFA simulation
     while(!feof(ifp)) {
