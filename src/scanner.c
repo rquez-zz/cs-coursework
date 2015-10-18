@@ -15,6 +15,12 @@ FILE* openFile(const char* path, const char* op) {
     return filePtr;
 }
 
+/* Appends a char to a string */
+void append(char* string, char c) {
+    string[strlen(string)] = c;
+    string[strlen(string) + 1] = '\0';
+}
+
 int main()
 {
 	FILE *ifp;

@@ -60,3 +60,4 @@ typedef enum {
 } token_type;
 
 FILE* openFile(const char* path, const char* op);
+void append(char* string, char c);
