@@ -63,15 +63,59 @@ FILE* getCleanInput(const char* inputPath, const char* outputPath) {
     return openFile(outputPath, "r");
 }
 
+/* Writes tokens as output */
+void writeSymbolTokens(symbol* symbols, FILE* ofp) {
+
+    // Print header
+    fprintf(ofp, "lexeme\ttoken type\n");
+
+    // Traverse through linked list of symbols
+    symbol* helper = symbols;
+    while (helper != NULL) {
+        fprintf(ofp, "%s\t%d\n", helper->lexeme, helper->type);
+        helper = helper->next;
+    }
+}
+
+/* Returns the token type of the lexeme if it matches, return identsym type */
+token_type getReservedType(char* lexeme) {
+
+    const char* const reserved[] = {"begin", "end", "if", "then", "while",
+        "do", "call", "const", "var", "procedure", "write", "read", "else"};
+    token_type type;
+
+    // Loop through reserved words to find a match
+    int i = 0;
+    while(i < 13) {
+        if (strcmp(reserved[i], lexeme) == 0) {
+
+            // Offset to get the right type
+            type = i + 21;
+            i = 13;
+
+        } else {
+            // If it's not a reserved word it is an identifier
+            type = identsym;
+        }
+        i++;
+    }
+
+    return type;
+}
+
 int main()
 {
     // TODO: inputPath should come from arg
     const char* inputPath = "../input/input.txt";
-    const char* outputPath = "../output/cleanInput.txt";
+    const char* cleanInputPath = "../output/cleanInput.txt";
+    const char* lexTablePath = "../output/lexemeTable.txt";
 
     // Open clean input for reading
-    FILE* ifp = getCleanInput(inputPath, outputPath);
+    FILE* ifp = getCleanInput(inputPath, cleanInputPath);
 
+    // Linked list of symbols
+    symbol* firstSymbol = NULL;
+    symbol* symbols = NULL;
 
     // Loop through input as DFA simulation
     while(!feof(ifp)) {
@@ -80,18 +124,23 @@ int main()
         char ch = getc(ifp);
 
         // Copy character into a temp string
-        char tempToken[12] = "";
+        char lexeme[12] = "";
 
         // Check if ch is part of an Identifier or Reserved Word
         if(isalpha(ch)) {
 
+            int couldBeReserved = 1;
+
             // Get the next char while checking if it's alphanumeric
             while( (isalpha(ch) || isdigit(ch)) && !feof(ifp)) {
 
-                // TODO: If it has digits then it's not a reserved word
+                // If token contains a digit then it's not a reserved word
+                if (isdigit(ch)) {
+                    couldBeReserved = 0;
+                }
 
                 // Append ch to temp token
-                append(tempToken, ch);
+                append(lexeme, ch);
 
                 // Get next ch
                 ch = getc(ifp);
@@ -100,7 +149,26 @@ int main()
             // Go back 1 char
             ungetc(ch, ifp);
 
-            // TODO: create and return identifer or reserved word token
+            token_type type;
+            if (couldBeReserved) {
+                type = getReservedType(lexeme);
+            } else {
+                type = identsym;
+            }
+
+            // Create token symbol identifier
+            symbol* newSymbol = malloc(sizeof(symbol));
+            strcpy(newSymbol->lexeme, lexeme);
+            newSymbol->type = type;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
 
         } else {
             // Not alphabetic, go back
@@ -115,20 +183,32 @@ int main()
 
             while(isdigit(ch)) {
                 // Append ch to temp token
-                append(tempToken, ch);
+                append(lexeme, ch);
 
                 // Get next ch
                 ch = getc(ifp);
             }
 
             // Parse int value
-            int value = atoi(tempToken);
+            int value = atoi(lexeme);
 
             // Go back 1 char
             ungetc(ch, ifp);
 
-            // TODO: create and return token
+            // Create token symbol - const
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->value = value;
+            strcpy(newSymbol->lexeme, lexeme);
+            newSymbol->type = numbersym;
 
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
         } else {
             // Not a digit, go back
             ungetc(ch, ifp);
@@ -166,11 +246,14 @@ int main()
         // TODO: Check for write
         // TODO: Check for read
         // TODO: Check for else
-        // TODO: Check for comments
     }
 
     // Close input
 	fclose(ifp);
+
+    // Write lexeme table
+    FILE* ofp = openFile(lexTablePath, "w");
+    writeSymbolTokens(firstSymbol, ofp);
 
 	return 0;
 }
