@@ -29,6 +29,7 @@ FILE* getCleanInput(const char* inputPath, const char* outputPath) {
 
         // Filter out comments
         if(ch == '/') {
+            char slash = ch;
             ch = getc(ifp);
             if (ch == '*') {
                 // Start of a Comment
@@ -44,8 +45,9 @@ FILE* getCleanInput(const char* inputPath, const char* outputPath) {
                     }
                 }
             } else {
-                // Go back 1 char
-                ungetc(ch, ifp);
+                // Write / and next char
+                fputc(slash, ofp);
+                fputc(ch, ofp);
             }
         } else {
             // Write ch to file
@@ -64,16 +66,29 @@ FILE* getCleanInput(const char* inputPath, const char* outputPath) {
 }
 
 /* Writes tokens as output */
-void writeSymbolTokens(symbol* symbols, FILE* ofp, int count) {
+void writeSymbolTokens(symbol* symbols, FILE* lexTblPtr, FILE* tokLstPtr, int count) {
 
     // Print header
-    fprintf(ofp, "lexeme\ttoken type\n");
+    fprintf(lexTblPtr, "lexeme\ttoken type\n");
 
     // Traverse through linked list of symbols
     symbol* helper = symbols;
     int i = 0;
     while (i < count) {
-        fprintf(ofp, "%s\t%d\n", helper->lexeme, helper->type);
+
+        // Write to token list
+        if (helper->type == 3)
+            fprintf(tokLstPtr, "%d %d ", helper->type, helper->value);
+        else if (helper->type == 2)
+            fprintf(tokLstPtr, "%d %s ", helper->type, helper->lexeme);
+        else if (i == count - 1)
+            fprintf(tokLstPtr, "%d", helper->type);
+        else
+            fprintf(tokLstPtr, "%d ", helper->type);
+
+        // Write to lexeme table
+        fprintf(lexTblPtr, "%s\t%d\n", helper->lexeme, helper->type);
+
         helper = helper->next;
         i++;
     }
@@ -117,6 +132,7 @@ int main(int argc, char **argv) {
     const char* inputPath = argv[1];
     const char* cleanInputPath = argv[2];
     const char* lexTablePath = argv[3];
+    const char* tokenListPath = argv[4];
 
     // Open clean input for reading
     FILE* ifp = getCleanInput(inputPath, cleanInputPath);
@@ -126,19 +142,32 @@ int main(int argc, char **argv) {
     symbol* symbols = NULL;
     int countSymbols = 0;
 
+    // Keep track of current line number
+    int lineNumber = 1;
+
     // Loop through input as DFA simulation
-    while(!feof(ifp)) {
+    while(1) {
 
         // Get Character from stream
         char ch = getc(ifp);
 
+        // Break if end of file
+        if (feof(ifp)) {
+            break;
+        }
+
         // Copy character into a temp string
         char lexeme[12] = "";
+
+        // Boolean to check if the current ch has been matched
+        int matched = 0;
 
         // Check if ch is part of an Identifier or Reserved Word
         if(isalpha(ch)) {
 
+            matched = 1;
             int couldBeReserved = 1;
+            int letterCount = 0;
 
             // Get the next char while checking if it's alphanumeric
             while( (isalpha(ch) || isdigit(ch)) && !feof(ifp)) {
@@ -150,6 +179,13 @@ int main(int argc, char **argv) {
 
                 // Append ch to temp token
                 append(lexeme, ch);
+                letterCount++;
+
+                // Identifier can't be longer than 11 characters
+                if (letterCount > 11) {
+                    fprintf(stdout, "[SCANNER-ERROR] Identifiers may not be longer than 11 characters, at line %d.", lineNumber);
+                    return (-1);
+                }
 
                 // Get next ch
                 ch = getc(ifp);
@@ -190,12 +226,28 @@ int main(int argc, char **argv) {
         // Check if ch is part of a Value
         if(isdigit(ch)) {
 
+            matched = 1;
+            int numCount = 0;
+
             while(isdigit(ch)) {
                 // Append ch to temp token
                 append(lexeme, ch);
+                numCount++;
+
+                // Number can't be longer than 5 digits
+                if (numCount > 5) {
+                    fprintf(stdout, "[SCANNER-ERROR] Numbers may not be longer than 5 digits, at line %d.", lineNumber);
+                    return (-1);
+                }
 
                 // Get next ch
                 ch = getc(ifp);
+
+                // Identifiers can't start with numbers, throw error
+                if (isalpha(ch)) {
+                    fprintf(stdout, "[SCANNER-ERROR] Variable doesn't start with a letter, at line %d.", lineNumber);
+                    return (-1);
+                }
             }
 
             // Parse int value
@@ -230,6 +282,7 @@ int main(int argc, char **argv) {
         // Check for :=
         if (ch == ':') {
 
+            matched = 1;
             ch = getc(ifp);
             if (ch == '=') {
                 // Create symbol
@@ -257,6 +310,7 @@ int main(int argc, char **argv) {
         // Check for =
         if(ch == '=') {
 
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = equalsym;
@@ -277,6 +331,7 @@ int main(int argc, char **argv) {
         // Check for > and >=
         if (ch == '>') {
 
+            matched = 1;
             symbol* newSymbol = malloc(sizeof(symbol));
 
             // Check if >=
@@ -306,6 +361,7 @@ int main(int argc, char **argv) {
         // Check for < and <=
         if (ch == '<') {
 
+            matched = 1;
             symbol* newSymbol = malloc(sizeof(symbol));
 
             // Check if <= or <>
@@ -338,6 +394,7 @@ int main(int argc, char **argv) {
         // Check for (
         if (ch == '(') {
 
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = lparentsym;
@@ -357,6 +414,7 @@ int main(int argc, char **argv) {
         // Check for )
         if (ch == ')') {
 
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = rparentsym;
@@ -375,6 +433,7 @@ int main(int argc, char **argv) {
 
         // Check for ,
         if (ch == ',') {
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = commasym;
@@ -393,6 +452,7 @@ int main(int argc, char **argv) {
 
         // Check for ;
         if (ch == ';') {
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = semicolonsym;
@@ -411,6 +471,7 @@ int main(int argc, char **argv) {
 
         // Check for .
         if (ch == '.') {
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = periodsym;
@@ -427,18 +488,104 @@ int main(int argc, char **argv) {
             }
         }
 
-        // TODO: Check for +
-        // TODO: Check for -
-        // TODO: Check for *
-        // TODO: Check for /
+        // Check for +
+        if (ch == '+') {
+            matched = 1;
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = plussym;
+            strcpy(newSymbol->lexeme, "+");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
+
+        // Check for -
+        if (ch == '-') {
+            matched = 1;
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = minussym;
+            strcpy(newSymbol->lexeme, "-");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
+
+        // Check for *
+        if (ch == '*') {
+            matched = 1;
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = multsym;
+            strcpy(newSymbol->lexeme, "*");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
+
+        // Check for /
+        if (ch == '/') {
+            matched = 1;
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = slashsym;
+            strcpy(newSymbol->lexeme, "/");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
+
+        // Increment line number on newline
+        if (ch == '\n')
+            lineNumber++;
+
+        // Throw error for invalid character
+        if (!matched && ch != ' ' && ch != '\n' && ch != '\r') {
+            fprintf(stdout, "[SCANNER-ERROR] Invalid character, at line %d.", lineNumber);
+            return -1;
+        }
     }
 
     // Close input
 	fclose(ifp);
 
     // Write lexeme table
-    FILE* ofp = openFile(lexTablePath, "w");
-    writeSymbolTokens(firstSymbol, ofp, countSymbols);
+    FILE* lexTblPtr = openFile(lexTablePath, "w");
+    FILE* tokLstPtr = openFile(tokenListPath, "w");
+    writeSymbolTokens(firstSymbol, lexTblPtr, tokLstPtr, countSymbols);
+
+    // Close output
+    fclose(lexTblPtr);
+    fclose(tokLstPtr);
 
 	return 0;
 }
