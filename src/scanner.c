@@ -111,12 +111,12 @@ token_type getReservedType(char* lexeme) {
     return type;
 }
 
-int main()
-{
-    // TODO: inputPath should come from arg
-    const char* inputPath = "../input/input.txt";
-    const char* cleanInputPath = "../output/cleanInput.txt";
-    const char* lexTablePath = "../output/lexemeTable.txt";
+int main(int argc, char **argv) {
+
+    // Get paths
+    const char* inputPath = argv[1];
+    const char* cleanInputPath = argv[2];
+    const char* lexTablePath = argv[3];
 
     // Open clean input for reading
     FILE* ifp = getCleanInput(inputPath, cleanInputPath);
