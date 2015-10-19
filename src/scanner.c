@@ -81,10 +81,11 @@ int main()
 {
     // TODO: inputPath should come from arg
     const char* inputPath = "../input/input.txt";
-    const char* outputPath = "../output/cleanInput.txt";
+    const char* cleanInputPath = "../output/cleanInput.txt";
+    const char* lexTablePath = "../output/lexemeTable.txt";
 
     // Open clean input for reading
-    FILE* ifp = getCleanInput(inputPath, outputPath);
+    FILE* ifp = getCleanInput(inputPath, cleanInputPath);
 
 
     // Loop through input as DFA simulation
@@ -180,11 +181,14 @@ int main()
         // TODO: Check for write
         // TODO: Check for read
         // TODO: Check for else
-        // TODO: Check for comments
     }
 
     // Close input
 	fclose(ifp);
+
+    // Write lexeme table
+    FILE* ofp = openFile(lexTablePath, "w");
+    writeSymbolTokens(firstSymbol, ofp);
 
 	return 0;
 }
