@@ -124,6 +124,7 @@ int main()
     // Linked list of symbols
     symbol* firstSymbol = NULL;
     symbol* symbols = NULL;
+    int countSymbols = 0;
 
     // Loop through input as DFA simulation
     while(!feof(ifp)) {
@@ -168,6 +169,7 @@ int main()
             symbol* newSymbol = malloc(sizeof(symbol));
             strcpy(newSymbol->lexeme, lexeme);
             newSymbol->type = type;
+            countSymbols++;
 
             // Add symbol to list
             if (symbols == NULL) {
@@ -177,7 +179,6 @@ int main()
                 symbols->next = newSymbol;
                 symbols = symbols->next;
             }
-
         } else {
             // Not alphabetic, go back
             ungetc(ch, ifp);
@@ -208,6 +209,7 @@ int main()
             newSymbol->value = value;
             strcpy(newSymbol->lexeme, lexeme);
             newSymbol->type = numbersym;
+            countSymbols++;
 
             // Add symbol to list
             if (symbols == NULL) {
