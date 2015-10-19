@@ -245,14 +245,7 @@ int main(int argc, char **argv) {
                 symbols->next = newSymbol;
                 symbols = symbols->next;
             }
-        } else {
-            // Not =, go back
-            ungetc(ch, ifp);
         }
-
-
-        // Get next ch
-        ch = getc(ifp);
 
         // Check for > and >=
         if (ch == '>') {
@@ -281,13 +274,7 @@ int main(int argc, char **argv) {
                 symbols->next = newSymbol;
                 symbols = symbols->next;
             }
-        } else {
-            // Not a digit, go back
-            ungetc(ch, ifp);
         }
-
-        // Get next ch
-        ch = getc(ifp);
 
         // Check for < and <=
         if (ch == '<') {
@@ -320,8 +307,6 @@ int main(int argc, char **argv) {
                 symbols = symbols->next;
             }
         } else {
-            // Not a digit, go back
-            ungetc(ch, ifp);
         }
 
         // Get next ch
