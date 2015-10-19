@@ -18,3 +18,4 @@ You can supply an input file with
 ### Output
 * Clean input file is at `output/cleanInput.txt`
 * Lexeme table is at `output/lexemeTable.txt`
+* Token list is at `output/tokenList.txt`
