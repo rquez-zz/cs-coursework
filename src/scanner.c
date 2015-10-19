@@ -346,6 +346,60 @@ int main(int argc, char **argv) {
             }
         }
 
+        // Check for ,
+        if (ch == ',') {
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = commasym;
+            strcpy(newSymbol->lexeme, ",");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
+
+        // Check for ;
+        if (ch == ';') {
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = semicolonsym;
+            strcpy(newSymbol->lexeme, ";");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
+
+        // Check for .
+        if (ch == '.') {
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = periodsym;
+            strcpy(newSymbol->lexeme, ".");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
+
         } else {
         }
 
