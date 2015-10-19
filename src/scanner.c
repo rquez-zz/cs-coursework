@@ -146,10 +146,15 @@ int main(int argc, char **argv) {
     int lineNumber = 1;
 
     // Loop through input as DFA simulation
-    while(!feof(ifp)) {
+    while(1) {
 
         // Get Character from stream
         char ch = getc(ifp);
+
+        // Break if end of file
+        if (feof(ifp)) {
+            break;
+        }
 
         // Copy character into a temp string
         char lexeme[12] = "";
