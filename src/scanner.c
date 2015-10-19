@@ -83,17 +83,23 @@ void writeSymbolTokens(symbol* symbols, FILE* ofp, int count) {
 token_type getReservedType(char* lexeme) {
 
     const char* const reserved[] = {"begin", "end", "if", "then", "while",
-        "do", "call", "const", "var", "procedure", "write", "read", "else"};
+        "do", "call", "const", "var", "procedure", "write", "read", "else",
+        "odd"};
     token_type type;
 
     // Loop through reserved words to find a match
     int i = 0;
-    while(i < 13) {
+    while(i < 14) {
         if (strcmp(reserved[i], lexeme) == 0) {
 
-            // Offset to get the right type
-            type = i + 21;
-            i = 13;
+            if (i == 13) {
+                // Use "odd" comparison symbol as reserved word
+                type = 8;
+            } else {
+                // Offset to get the right type
+                type = i + 21;
+                i = 13;
+            }
 
         } else {
             // If it's not a reserved word it is an identifier
@@ -255,7 +261,7 @@ int main()
 
     // Write lexeme table
     FILE* ofp = openFile(lexTablePath, "w");
-    writeSymbolTokens(firstSymbol, ofp);
+    writeSymbolTokens(firstSymbol, ofp, countSymbols);
 
 	return 0;
 }
