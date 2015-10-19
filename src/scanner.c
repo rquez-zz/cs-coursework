@@ -306,6 +306,46 @@ int main(int argc, char **argv) {
                 symbols->next = newSymbol;
                 symbols = symbols->next;
             }
+        }
+
+        // Check for (
+        if (ch == '(') {
+
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = lparentsym;
+            strcpy(newSymbol->lexeme, "(");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
+
+        // Check for )
+        if (ch == ')') {
+
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = rparentsym;
+            strcpy(newSymbol->lexeme, ")");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
+
         } else {
         }
 
