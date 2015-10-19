@@ -227,6 +227,33 @@ int main(int argc, char **argv) {
         // Get next ch
         ch = getc(ifp);
 
+        // Check for :=
+        if (ch == ':') {
+
+            ch = getc(ifp);
+            if (ch == '=') {
+                // Create symbol
+                symbol* newSymbol = malloc(sizeof(symbol));
+                newSymbol->type = becomesym;
+                strcpy(newSymbol->lexeme, ":=");
+                countSymbols++;
+
+                // Add symbol to list
+                if (symbols == NULL) {
+                    symbols = newSymbol;
+                    firstSymbol = symbols;
+                } else {
+                    symbols->next = newSymbol;
+                    symbols = symbols->next;
+                }
+
+                ch = getc(ifp);
+            } else {
+                // Not :=, go back
+                ungetc(ch, ifp);
+            }
+        }
+
         // Check for =
         if(ch == '=') {
 
@@ -245,14 +272,7 @@ int main(int argc, char **argv) {
                 symbols->next = newSymbol;
                 symbols = symbols->next;
             }
-        } else {
-            // Not =, go back
-            ungetc(ch, ifp);
         }
-
-
-        // Get next ch
-        ch = getc(ifp);
 
         // Check for > and >=
         if (ch == '>') {
@@ -281,13 +301,7 @@ int main(int argc, char **argv) {
                 symbols->next = newSymbol;
                 symbols = symbols->next;
             }
-        } else {
-            // Not a digit, go back
-            ungetc(ch, ifp);
         }
-
-        // Get next ch
-        ch = getc(ifp);
 
         // Check for < and <=
         if (ch == '<') {
@@ -319,24 +333,104 @@ int main(int argc, char **argv) {
                 symbols->next = newSymbol;
                 symbols = symbols->next;
             }
-        } else {
-            // Not a digit, go back
-            ungetc(ch, ifp);
         }
 
-        // Get next ch
-        ch = getc(ifp);
+        // Check for (
+        if (ch == '(') {
+
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = lparentsym;
+            strcpy(newSymbol->lexeme, "(");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
+
+        // Check for )
+        if (ch == ')') {
+
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = rparentsym;
+            strcpy(newSymbol->lexeme, ")");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
+
+        // Check for ,
+        if (ch == ',') {
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = commasym;
+            strcpy(newSymbol->lexeme, ",");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
+
+        // Check for ;
+        if (ch == ';') {
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = semicolonsym;
+            strcpy(newSymbol->lexeme, ";");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
+
+        // Check for .
+        if (ch == '.') {
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = periodsym;
+            strcpy(newSymbol->lexeme, ".");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
 
         // TODO: Check for +
         // TODO: Check for -
         // TODO: Check for *
         // TODO: Check for /
-        //
-        // TODO: Check for (
-        // TODO: Check for )
-        // TODO: Check for ,
-        // TODO: Check for ;
-        // TODO: Check for :=
     }
 
     // Close input

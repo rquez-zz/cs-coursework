@@ -25,7 +25,7 @@ typedef enum {
     commasym,
     semicolonsym,
     periodsym,
-    becomessym,
+    becomesym,
     beginsym,
     endsym,
     ifsym,
