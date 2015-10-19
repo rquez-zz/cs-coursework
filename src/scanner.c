@@ -227,6 +227,33 @@ int main()
         // Get next ch
         ch = getc(ifp);
 
+        // Check for =
+        if(ch == '=') {
+
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = equalsym;
+            append(lexeme, ch);
+            strcpy(newSymbol->lexeme, lexeme);
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        } else {
+            // Not =, go back
+            ungetc(ch, ifp);
+        }
+
+
+        // Get next ch
+        ch = getc(ifp);
+
         // TODO: Check for +
         // TODO: Check for -
         // TODO: Check for *
