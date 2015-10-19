@@ -11,4 +11,8 @@ begin
     if (y = x)
     /* PLO */
     y, x, z;
+    y + x;
+    y * x;
+    y / x;
+    y - x;
 end.
