@@ -142,6 +142,9 @@ int main(int argc, char **argv) {
     symbol* symbols = NULL;
     int countSymbols = 0;
 
+    // Keep track of current line number
+    int lineNumber = 1;
+
     // Loop through input as DFA simulation
     while(!feof(ifp)) {
 
@@ -514,6 +517,11 @@ int main(int argc, char **argv) {
                 symbols = symbols->next;
             }
         }
+
+        // Increment line number on newline
+        if (ch == '\n')
+            lineNumber++;
+
     }
 
     // Close input
