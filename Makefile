@@ -5,6 +5,7 @@ PROGRAM = bin/scanner
 INPUT = input/input.txt
 CLEANINPUT = output/cleanInput.txt
 LEXEMETABLE = output/lexemeTable.txt
+TOKENLIST = output/tokenList.txt
 
 scanner : $(OBJECTS)
 	@$(CC) $(CFLAGS) $(OBJECTS) -o $(PROGRAM)
@@ -19,4 +20,4 @@ clean :
 	@rm $(LEXEMETABLE)
 
 run :
-	@$(PROGRAM) $(INPUT) $(CLEANINPUT) $(LEXEMETABLE)
+	@$(PROGRAM) $(INPUT) $(CLEANINPUT) $(LEXEMETABLE) $(TOKENLIST)

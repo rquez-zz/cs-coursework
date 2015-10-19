@@ -119,6 +119,7 @@ int main(int argc, char **argv) {
     const char* inputPath = argv[1];
     const char* cleanInputPath = argv[2];
     const char* lexTablePath = argv[3];
+    const char* tokenListPath = argv[4];
 
     // Open clean input for reading
     FILE* ifp = getCleanInput(inputPath, cleanInputPath);
