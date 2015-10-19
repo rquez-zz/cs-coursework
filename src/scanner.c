@@ -167,6 +167,7 @@ int main(int argc, char **argv) {
 
             matched = 1;
             int couldBeReserved = 1;
+            int letterCount = 0;
 
             // Get the next char while checking if it's alphanumeric
             while( (isalpha(ch) || isdigit(ch)) && !feof(ifp)) {
@@ -178,6 +179,13 @@ int main(int argc, char **argv) {
 
                 // Append ch to temp token
                 append(lexeme, ch);
+                letterCount++;
+
+                // Identifier can't be longer than 11 characters
+                if (letterCount > 11) {
+                    fprintf(stdout, "[SCANNER-ERROR] Identifiers may not be longer than 11 characters, at line %d.", lineNumber);
+                    return (-1);
+                }
 
                 // Get next ch
                 ch = getc(ifp);
@@ -218,9 +226,19 @@ int main(int argc, char **argv) {
         // Check if ch is part of a Value
         if(isdigit(ch)) {
 
+            matched = 1;
+            int numCount = 0;
+
             while(isdigit(ch)) {
                 // Append ch to temp token
                 append(lexeme, ch);
+                numCount++;
+
+                // Number can't be longer than 5 digits
+                if (numCount > 5) {
+                    fprintf(stdout, "[SCANNER-ERROR] Numbers may not be longer than 5 digits, at line %d.", lineNumber);
+                    return (-1);
+                }
 
                 // Get next ch
                 ch = getc(ifp);
