@@ -113,6 +113,9 @@ int main()
     // Open clean input for reading
     FILE* ifp = getCleanInput(inputPath, cleanInputPath);
 
+    // Linked list of symbols
+    symbol* firstSymbol = NULL;
+    symbol* symbols = NULL;
 
     // Loop through input as DFA simulation
     while(!feof(ifp)) {
@@ -121,18 +124,23 @@ int main()
         char ch = getc(ifp);
 
         // Copy character into a temp string
-        char tempToken[12] = "";
+        char lexeme[12] = "";
 
         // Check if ch is part of an Identifier or Reserved Word
         if(isalpha(ch)) {
 
+            int couldBeReserved = 1;
+
             // Get the next char while checking if it's alphanumeric
             while( (isalpha(ch) || isdigit(ch)) && !feof(ifp)) {
 
-                // TODO: If it has digits then it's not a reserved word
+                // If token contains a digit then it's not a reserved word
+                if (isdigit(ch)) {
+                    couldBeReserved = 0;
+                }
 
                 // Append ch to temp token
-                append(tempToken, ch);
+                append(lexeme, ch);
 
                 // Get next ch
                 ch = getc(ifp);
@@ -141,7 +149,26 @@ int main()
             // Go back 1 char
             ungetc(ch, ifp);
 
-            // TODO: create and return identifer or reserved word token
+            token_type type;
+            if (couldBeReserved) {
+                type = getReservedType(lexeme);
+            } else {
+                type = identsym;
+            }
+
+            // Create token symbol identifier
+            symbol* newSymbol = malloc(sizeof(symbol));
+            strcpy(newSymbol->lexeme, lexeme);
+            newSymbol->type = type;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
 
         } else {
             // Not alphabetic, go back
@@ -156,20 +183,32 @@ int main()
 
             while(isdigit(ch)) {
                 // Append ch to temp token
-                append(tempToken, ch);
+                append(lexeme, ch);
 
                 // Get next ch
                 ch = getc(ifp);
             }
 
             // Parse int value
-            int value = atoi(tempToken);
+            int value = atoi(lexeme);
 
             // Go back 1 char
             ungetc(ch, ifp);
 
-            // TODO: create and return token
+            // Create token symbol - const
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->value = value;
+            strcpy(newSymbol->lexeme, lexeme);
+            newSymbol->type = numbersym;
 
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
         } else {
             // Not a digit, go back
             ungetc(ch, ifp);
