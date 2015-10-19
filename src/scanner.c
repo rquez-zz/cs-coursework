@@ -288,6 +288,44 @@ int main()
 
         // Get next ch
         ch = getc(ifp);
+
+        // Check for < and <=
+        if (ch == '<') {
+
+            symbol* newSymbol = malloc(sizeof(symbol));
+
+            // Check if <= or <>
+            ch = getc(ifp);
+
+            if (ch == '=') {
+                newSymbol->type = leqsym;
+                strcpy(newSymbol->lexeme, "<=");
+            } else if ( ch == '>') {
+                newSymbol->type = neqsym;
+                strcpy(newSymbol->lexeme, "<>");
+            } else {
+                ungetc(ch, ifp);
+                newSymbol->type = lessym;
+                strcpy(newSymbol->lexeme, "<");
+            }
+
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        } else {
+            // Not a digit, go back
+            ungetc(ch, ifp);
+        }
+
+        // Get next ch
+        ch = getc(ifp);
         // TODO: Check for +
         // TODO: Check for -
         // TODO: Check for *
