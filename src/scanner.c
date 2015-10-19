@@ -242,6 +242,12 @@ int main(int argc, char **argv) {
 
                 // Get next ch
                 ch = getc(ifp);
+
+                // Identifiers can't start with numbers, throw error
+                if (isalpha(ch)) {
+                    fprintf(stdout, "[SCANNER-ERROR] Variable doesn't start with a letter, at line %d.", lineNumber);
+                    return (-1);
+                }
             }
 
             // Parse int value
