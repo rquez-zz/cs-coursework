@@ -64,16 +64,18 @@ FILE* getCleanInput(const char* inputPath, const char* outputPath) {
 }
 
 /* Writes tokens as output */
-void writeSymbolTokens(symbol* symbols, FILE* ofp) {
+void writeSymbolTokens(symbol* symbols, FILE* ofp, int count) {
 
     // Print header
     fprintf(ofp, "lexeme\ttoken type\n");
 
     // Traverse through linked list of symbols
     symbol* helper = symbols;
-    while (helper != NULL) {
+    int i = 0;
+    while (i < count) {
         fprintf(ofp, "%s\t%d\n", helper->lexeme, helper->type);
         helper = helper->next;
+        i++;
     }
 }
 

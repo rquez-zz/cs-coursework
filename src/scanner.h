@@ -67,5 +67,5 @@ typedef struct symbol {
 FILE* openFile(const char* path, const char* op);
 void append(char* string, char c);
 FILE* getCleanInput(const char* inputPath, const char* outputPath);
-void writeSymbolTokens(symbol* symbols, FILE* ofp);
+void writeSymbolTokens(symbol* symbols, FILE* ofp, int count);
 token_type getReservedType(char* lexeme);
