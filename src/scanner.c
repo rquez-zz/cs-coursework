@@ -326,35 +326,17 @@ int main()
 
         // Get next ch
         ch = getc(ifp);
+
         // TODO: Check for +
         // TODO: Check for -
         // TODO: Check for *
         // TODO: Check for /
-        //
-        // TODO: Check for odd
-        // TODO: Check for =
-        // TODO: Check for <, <=, <>
-        // TODO: Check for >. >=
         //
         // TODO: Check for (
         // TODO: Check for )
         // TODO: Check for ,
         // TODO: Check for ;
         // TODO: Check for :=
-        //
-        // TODO: Check for begin
-        // TODO: Check for end
-        // TODO: Check for if
-        // TODO: Check for then
-        // TODO: Check for while
-        // TODO: Check for do
-        // TODO: Check for call
-        // TODO: Check for const
-        // TODO: Check for var
-        // TODO: Check for procedure
-        // TODO: Check for write
-        // TODO: Check for read
-        // TODO: Check for else
     }
 
     // Close input
