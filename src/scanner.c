@@ -29,6 +29,7 @@ FILE* getCleanInput(const char* inputPath, const char* outputPath) {
 
         // Filter out comments
         if(ch == '/') {
+            char slash = ch;
             ch = getc(ifp);
             if (ch == '*') {
                 // Start of a Comment
@@ -44,8 +45,9 @@ FILE* getCleanInput(const char* inputPath, const char* outputPath) {
                     }
                 }
             } else {
-                // Go back 1 char
-                ungetc(ch, ifp);
+                // Write / and next char
+                fputc(slash, ofp);
+                fputc(ch, ofp);
             }
         } else {
             // Write ch to file
