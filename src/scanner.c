@@ -64,16 +64,18 @@ FILE* getCleanInput(const char* inputPath, const char* outputPath) {
 }
 
 /* Writes tokens as output */
-void writeSymbolTokens(symbol* symbols, FILE* ofp) {
+void writeSymbolTokens(symbol* symbols, FILE* ofp, int count) {
 
     // Print header
     fprintf(ofp, "lexeme\ttoken type\n");
 
     // Traverse through linked list of symbols
     symbol* helper = symbols;
-    while (helper != NULL) {
+    int i = 0;
+    while (i < count) {
         fprintf(ofp, "%s\t%d\n", helper->lexeme, helper->type);
         helper = helper->next;
+        i++;
     }
 }
 
@@ -81,17 +83,23 @@ void writeSymbolTokens(symbol* symbols, FILE* ofp) {
 token_type getReservedType(char* lexeme) {
 
     const char* const reserved[] = {"begin", "end", "if", "then", "while",
-        "do", "call", "const", "var", "procedure", "write", "read", "else"};
+        "do", "call", "const", "var", "procedure", "write", "read", "else",
+        "odd"};
     token_type type;
 
     // Loop through reserved words to find a match
     int i = 0;
-    while(i < 13) {
+    while(i < 14) {
         if (strcmp(reserved[i], lexeme) == 0) {
 
-            // Offset to get the right type
-            type = i + 21;
-            i = 13;
+            if (i == 13) {
+                // Use "odd" comparison symbol as reserved word
+                type = 8;
+            } else {
+                // Offset to get the right type
+                type = i + 21;
+                i = 13;
+            }
 
         } else {
             // If it's not a reserved word it is an identifier
@@ -103,12 +111,12 @@ token_type getReservedType(char* lexeme) {
     return type;
 }
 
-int main()
-{
-    // TODO: inputPath should come from arg
-    const char* inputPath = "../input/input.txt";
-    const char* cleanInputPath = "../output/cleanInput.txt";
-    const char* lexTablePath = "../output/lexemeTable.txt";
+int main(int argc, char **argv) {
+
+    // Get paths
+    const char* inputPath = argv[1];
+    const char* cleanInputPath = argv[2];
+    const char* lexTablePath = argv[3];
 
     // Open clean input for reading
     FILE* ifp = getCleanInput(inputPath, cleanInputPath);
@@ -116,6 +124,7 @@ int main()
     // Linked list of symbols
     symbol* firstSymbol = NULL;
     symbol* symbols = NULL;
+    int countSymbols = 0;
 
     // Loop through input as DFA simulation
     while(!feof(ifp)) {
@@ -160,6 +169,7 @@ int main()
             symbol* newSymbol = malloc(sizeof(symbol));
             strcpy(newSymbol->lexeme, lexeme);
             newSymbol->type = type;
+            countSymbols++;
 
             // Add symbol to list
             if (symbols == NULL) {
@@ -169,7 +179,6 @@ int main()
                 symbols->next = newSymbol;
                 symbols = symbols->next;
             }
-
         } else {
             // Not alphabetic, go back
             ungetc(ch, ifp);
@@ -200,6 +209,107 @@ int main()
             newSymbol->value = value;
             strcpy(newSymbol->lexeme, lexeme);
             newSymbol->type = numbersym;
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        } else {
+            // Not a digit, go back
+            ungetc(ch, ifp);
+        }
+
+        // Get next ch
+        ch = getc(ifp);
+
+        // Check for =
+        if(ch == '=') {
+
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = equalsym;
+            append(lexeme, ch);
+            strcpy(newSymbol->lexeme, lexeme);
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        } else {
+            // Not =, go back
+            ungetc(ch, ifp);
+        }
+
+
+        // Get next ch
+        ch = getc(ifp);
+
+        // Check for > and >=
+        if (ch == '>') {
+
+            symbol* newSymbol = malloc(sizeof(symbol));
+
+            // Check if >=
+            ch = getc(ifp);
+
+            if (ch == '=') {
+                newSymbol->type = geqsym;
+                strcpy(newSymbol->lexeme, ">=");
+            } else {
+                ungetc(ch, ifp);
+                newSymbol->type = gtrsym;
+                strcpy(newSymbol->lexeme, ">");
+            }
+
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        } else {
+            // Not a digit, go back
+            ungetc(ch, ifp);
+        }
+
+        // Get next ch
+        ch = getc(ifp);
+
+        // Check for < and <=
+        if (ch == '<') {
+
+            symbol* newSymbol = malloc(sizeof(symbol));
+
+            // Check if <= or <>
+            ch = getc(ifp);
+
+            if (ch == '=') {
+                newSymbol->type = leqsym;
+                strcpy(newSymbol->lexeme, "<=");
+            } else if ( ch == '>') {
+                newSymbol->type = neqsym;
+                strcpy(newSymbol->lexeme, "<>");
+            } else {
+                ungetc(ch, ifp);
+                newSymbol->type = lessym;
+                strcpy(newSymbol->lexeme, "<");
+            }
+
+            countSymbols++;
 
             // Add symbol to list
             if (symbols == NULL) {
@@ -222,30 +332,11 @@ int main()
         // TODO: Check for *
         // TODO: Check for /
         //
-        // TODO: Check for odd
-        // TODO: Check for =
-        // TODO: Check for <, <=, <>
-        // TODO: Check for >. >=
-        //
         // TODO: Check for (
         // TODO: Check for )
         // TODO: Check for ,
         // TODO: Check for ;
         // TODO: Check for :=
-        //
-        // TODO: Check for begin
-        // TODO: Check for end
-        // TODO: Check for if
-        // TODO: Check for then
-        // TODO: Check for while
-        // TODO: Check for do
-        // TODO: Check for call
-        // TODO: Check for const
-        // TODO: Check for var
-        // TODO: Check for procedure
-        // TODO: Check for write
-        // TODO: Check for read
-        // TODO: Check for else
     }
 
     // Close input
@@ -253,7 +344,7 @@ int main()
 
     // Write lexeme table
     FILE* ofp = openFile(lexTablePath, "w");
-    writeSymbolTokens(firstSymbol, ofp);
+    writeSymbolTokens(firstSymbol, ofp, countSymbols);
 
 	return 0;
 }

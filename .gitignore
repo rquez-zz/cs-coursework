@@ -1,2 +1,2 @@
-src/scanner
+bin/*
 output/*.txt
