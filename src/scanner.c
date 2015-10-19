@@ -465,6 +465,41 @@ int main(int argc, char **argv) {
             }
         }
 
+        // Check for *
+        if (ch == '*') {
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = multsym;
+            strcpy(newSymbol->lexeme, "*");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
+
+        // Check for /
+        if (ch == '/') {
+            // Create symbol
+            symbol* newSymbol = malloc(sizeof(symbol));
+            newSymbol->type = slashsym;
+            strcpy(newSymbol->lexeme, "/");
+            countSymbols++;
+
+            // Add symbol to list
+            if (symbols == NULL) {
+                symbols = newSymbol;
+                firstSymbol = symbols;
+            } else {
+                symbols->next = newSymbol;
+                symbols = symbols->next;
+            }
+        }
     }
 
     // Close input
