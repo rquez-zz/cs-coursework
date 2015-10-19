@@ -77,6 +77,32 @@ void writeSymbolTokens(symbol* symbols, FILE* ofp) {
     }
 }
 
+/* Returns the token type of the lexeme if it matches, return identsym type */
+token_type getReservedType(char* lexeme) {
+
+    const char* const reserved[] = {"begin", "end", "if", "then", "while",
+        "do", "call", "const", "var", "procedure", "write", "read", "else"};
+    token_type type;
+
+    // Loop through reserved words to find a match
+    int i = 0;
+    while(i < 13) {
+        if (strcmp(reserved[i], lexeme) == 0) {
+
+            // Offset to get the right type
+            type = i + 21;
+            i = 13;
+
+        } else {
+            // If it's not a reserved word it is an identifier
+            type = identsym;
+        }
+        i++;
+    }
+
+    return type;
+}
+
 int main()
 {
     // TODO: inputPath should come from arg
