@@ -8,5 +8,7 @@ begin
     y < x;
     y odd x
     y = x;
+    if (y = x)
     /* PLO */
+    y, x, z;
 end.
