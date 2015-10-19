@@ -63,6 +63,20 @@ FILE* getCleanInput(const char* inputPath, const char* outputPath) {
     return openFile(outputPath, "r");
 }
 
+/* Writes tokens as output */
+void writeSymbolTokens(symbol* symbols, FILE* ofp) {
+
+    // Print header
+    fprintf(ofp, "lexeme\ttoken type\n");
+
+    // Traverse through linked list of symbols
+    symbol* helper = symbols;
+    while (helper != NULL) {
+        fprintf(ofp, "%s\t%d\n", helper->lexeme, helper->type);
+        helper = helper->next;
+    }
+}
+
 int main()
 {
     // TODO: inputPath should come from arg
