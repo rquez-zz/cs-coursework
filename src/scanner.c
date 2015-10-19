@@ -66,16 +66,29 @@ FILE* getCleanInput(const char* inputPath, const char* outputPath) {
 }
 
 /* Writes tokens as output */
-void writeSymbolTokens(symbol* symbols, FILE* ofp, int count) {
+void writeSymbolTokens(symbol* symbols, FILE* lexTblPtr, FILE* tokLstPtr, int count) {
 
     // Print header
-    fprintf(ofp, "lexeme\ttoken type\n");
+    fprintf(lexTblPtr, "lexeme\ttoken type\n");
 
     // Traverse through linked list of symbols
     symbol* helper = symbols;
     int i = 0;
     while (i < count) {
-        fprintf(ofp, "%s\t%d\n", helper->lexeme, helper->type);
+
+        // Write to token list
+        if (helper->type == 3)
+            fprintf(tokLstPtr, "%d %d ", helper->type, helper->value);
+        else if (helper->type == 2)
+            fprintf(tokLstPtr, "%d %s ", helper->type, helper->lexeme);
+        else if (i == count - 1)
+            fprintf(tokLstPtr, "%d", helper->type);
+        else
+            fprintf(tokLstPtr, "%d ", helper->type);
+
+        // Write to lexeme table
+        fprintf(lexTblPtr, "%s\t%d\n", helper->lexeme, helper->type);
+
         helper = helper->next;
         i++;
     }
@@ -507,8 +520,13 @@ int main(int argc, char **argv) {
 	fclose(ifp);
 
     // Write lexeme table
-    FILE* ofp = openFile(lexTablePath, "w");
-    writeSymbolTokens(firstSymbol, ofp, countSymbols);
+    FILE* lexTblPtr = openFile(lexTablePath, "w");
+    FILE* tokLstPtr = openFile(tokenListPath, "w");
+    writeSymbolTokens(firstSymbol, lexTblPtr, tokLstPtr, countSymbols);
+
+    // Close output
+    fclose(lexTblPtr);
+    fclose(tokLstPtr);
 
 	return 0;
 }
