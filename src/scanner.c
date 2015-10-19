@@ -159,9 +159,13 @@ int main(int argc, char **argv) {
         // Copy character into a temp string
         char lexeme[12] = "";
 
+        // Boolean to check if the current ch has been matched
+        int matched = 0;
+
         // Check if ch is part of an Identifier or Reserved Word
         if(isalpha(ch)) {
 
+            matched = 1;
             int couldBeReserved = 1;
 
             // Get the next char while checking if it's alphanumeric
@@ -254,6 +258,7 @@ int main(int argc, char **argv) {
         // Check for :=
         if (ch == ':') {
 
+            matched = 1;
             ch = getc(ifp);
             if (ch == '=') {
                 // Create symbol
@@ -281,6 +286,7 @@ int main(int argc, char **argv) {
         // Check for =
         if(ch == '=') {
 
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = equalsym;
@@ -301,6 +307,7 @@ int main(int argc, char **argv) {
         // Check for > and >=
         if (ch == '>') {
 
+            matched = 1;
             symbol* newSymbol = malloc(sizeof(symbol));
 
             // Check if >=
@@ -330,6 +337,7 @@ int main(int argc, char **argv) {
         // Check for < and <=
         if (ch == '<') {
 
+            matched = 1;
             symbol* newSymbol = malloc(sizeof(symbol));
 
             // Check if <= or <>
@@ -362,6 +370,7 @@ int main(int argc, char **argv) {
         // Check for (
         if (ch == '(') {
 
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = lparentsym;
@@ -381,6 +390,7 @@ int main(int argc, char **argv) {
         // Check for )
         if (ch == ')') {
 
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = rparentsym;
@@ -399,6 +409,7 @@ int main(int argc, char **argv) {
 
         // Check for ,
         if (ch == ',') {
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = commasym;
@@ -417,6 +428,7 @@ int main(int argc, char **argv) {
 
         // Check for ;
         if (ch == ';') {
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = semicolonsym;
@@ -435,6 +447,7 @@ int main(int argc, char **argv) {
 
         // Check for .
         if (ch == '.') {
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = periodsym;
@@ -453,6 +466,7 @@ int main(int argc, char **argv) {
 
         // Check for +
         if (ch == '+') {
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = plussym;
@@ -471,6 +485,7 @@ int main(int argc, char **argv) {
 
         // Check for -
         if (ch == '-') {
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = minussym;
@@ -489,6 +504,7 @@ int main(int argc, char **argv) {
 
         // Check for *
         if (ch == '*') {
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = multsym;
@@ -507,6 +523,7 @@ int main(int argc, char **argv) {
 
         // Check for /
         if (ch == '/') {
+            matched = 1;
             // Create symbol
             symbol* newSymbol = malloc(sizeof(symbol));
             newSymbol->type = slashsym;
@@ -527,6 +544,11 @@ int main(int argc, char **argv) {
         if (ch == '\n')
             lineNumber++;
 
+        // Throw error for invalid character
+        if (!matched && ch != ' ' && ch != '\n' && ch != '\r') {
+            fprintf(stdout, "[SCANNER-ERROR] Invalid character, at line %d.", lineNumber);
+            return -1;
+        }
     }
 
     // Close input
