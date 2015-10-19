@@ -5,24 +5,6 @@
 
 #define MAX_SYMBOL_TABLE_SIZE 100
 
-typedef struct symbol {
-
-    // const = 1, var = 2, proc = 3
-	int kind;
-
-    // Name of the Symbol
-	char name[12];
-
-    // Value for constants
-	int val;
-
-    // L Level for variables and procedures
-	int level;
-
-    // M Address for variables and procedures
-	int addr;
-} symbol;
-
 typedef enum {
 	nulsym = 1, 
     identsym,
@@ -58,6 +40,29 @@ typedef enum {
 	redsym, 
     elseym
 } token_type;
+
+typedef struct symbol {
+
+    // const = 1, var = 2, proc = 3
+	int kind;
+
+    // Name of the Symbol
+	char lexeme[12];
+
+    // Value for constants
+	int value;
+
+    // L Level for variables and procedures
+	int level;
+
+    // M Address for variables and procedures
+	int addr;
+
+    token_type type;
+
+    struct symbol* next;
+
+} symbol;
 
 FILE* openFile(const char* path, const char* op);
 void append(char* string, char c);
