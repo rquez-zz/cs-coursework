@@ -1,0 +1,12 @@
+var x, y;
+begin
+    y := 3; /* Comment */
+    x := y + 56;
+    x >= y;
+    x > y;
+    y <= x;
+    y < x;
+    y odd x
+    y = x;
+    /* PLO */
+end.
