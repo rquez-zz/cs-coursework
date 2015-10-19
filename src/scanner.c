@@ -227,6 +227,33 @@ int main(int argc, char **argv) {
         // Get next ch
         ch = getc(ifp);
 
+        // Check for :=
+        if (ch == ':') {
+
+            ch = getc(ifp);
+            if (ch == '=') {
+                // Create symbol
+                symbol* newSymbol = malloc(sizeof(symbol));
+                newSymbol->type = becomesym;
+                strcpy(newSymbol->lexeme, ":=");
+                countSymbols++;
+
+                // Add symbol to list
+                if (symbols == NULL) {
+                    symbols = newSymbol;
+                    firstSymbol = symbols;
+                } else {
+                    symbols->next = newSymbol;
+                    symbols = symbols->next;
+                }
+
+                ch = getc(ifp);
+            } else {
+                // Not :=, go back
+                ungetc(ch, ifp);
+            }
+        }
+
         // Check for =
         if(ch == '=') {
 
@@ -400,22 +427,10 @@ int main(int argc, char **argv) {
             }
         }
 
-        } else {
-        }
-
-        // Get next ch
-        ch = getc(ifp);
-
         // TODO: Check for +
         // TODO: Check for -
         // TODO: Check for *
         // TODO: Check for /
-        //
-        // TODO: Check for (
-        // TODO: Check for )
-        // TODO: Check for ,
-        // TODO: Check for ;
-        // TODO: Check for :=
     }
 
     // Close input
