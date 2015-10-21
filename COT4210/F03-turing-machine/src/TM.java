@@ -88,6 +88,24 @@ public class TM {
         this.maxSteps = maxSteps;
     }
 
+    /**
+     * Returns array of usable rules from a given state
+     * @param state
+     * @return
+     */
+    private Rule[] getAvaliableRules(int state) {
+        ArrayList<Rule> ruleList = new ArrayList();
+
+        for (Rule rule : rules) {
+            if (rule.getInputState() == state) {
+                ruleList.add(rule);
+            }
+        }
+
+        return ruleList.toArray(new Rule[ruleList.size()]);
+    }
+
+
     public static void main(String[] args) {
 
     }
