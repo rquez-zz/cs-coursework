@@ -105,6 +105,19 @@ public class TM {
         return ruleList.toArray(new Rule[ruleList.size()]);
     }
 
+    /**
+     * Creates an ArrayList of characters from a string
+     * @param input
+     * @return
+     */
+    private ArrayList<Character> buildTape(String input) {
+        ArrayList<Character> tape = new ArrayList();
+        for (Character c : input.toCharArray()) {
+           tape.add(c);
+        }
+        return tape;
+    }
+
 
     public static void main(String[] args) {
 
