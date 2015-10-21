@@ -63,6 +63,31 @@ class Rule {
     }
 }
 public class TM {
+
+    private Rule rules[];
+    private int maxSteps;
+
+    public TM(Rule rules[], int maxSteps) {
+        this.rules = rules;
+        this.maxSteps = maxSteps;
+    }
+
+    public Rule[] getRules() {
+        return rules;
+    }
+
+    public void setRules(Rule[] rules) {
+        this.rules = rules;
+    }
+
+    public int getMaxSteps() {
+        return maxSteps;
+    }
+
+    public void setMaxSteps(int maxSteps) {
+        this.maxSteps = maxSteps;
+    }
+
     public static void main(String[] args) {
 
     }
