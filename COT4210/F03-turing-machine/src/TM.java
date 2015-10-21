@@ -118,6 +118,61 @@ public class TM {
         return tape;
     }
 
+    /**
+     * Returns 0 if accepts, 1 if rejects, -1 if does not halt in n steps
+     * @param input
+     * @return 0, 1, or -1
+     */
+    public int run(String input) {
+
+        ArrayList<Character> tape = buildTape(input);
+        int currentState = 0;
+        int head = 0;
+        int steps = 0;
+
+        // If loop ends, TM does not halt
+        while(steps < maxSteps) {
+
+            // Get applicable rules from current state
+            Rule[] currentRules = getAvaliableRules(currentState);
+
+            // Look for matching input read
+            for (Rule rule : currentRules) {
+
+                // Check for end of input blanks
+                if (head >= tape.size()) {
+                    tape.add('B');
+                }
+
+                if (tape.get(head) == rule.getCharToRead()) {
+
+                   // Move to next state
+                   currentState = rule.getOutputState();
+                   tape.remove(head);
+                   tape.add(head, rule.getCharToWrite());
+                   head += rule.getDirection();
+
+                   // Make sure tape head doesn't go off left edge
+                   if (head < 0)
+                       head = 0;
+
+                   steps++;
+                   break;
+               }
+            }
+
+            if (currentState == 1) {
+                // Accept
+                return 0;
+            } else if (currentState == 2) {
+                // Reject
+                return 1;
+            }
+        }
+
+        // Does not halt after maxSteps
+        return -1;
+    }
 
     public static void main(String[] args) {
 
