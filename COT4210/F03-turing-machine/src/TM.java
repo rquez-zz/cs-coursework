@@ -67,6 +67,9 @@ public class TM {
     private Rule rules[];
     private int maxSteps;
 
+    private final char BLANK = 'B';
+    private final char SPECIAL = '#';
+
     public TM(Rule rules[], int maxSteps) {
         this.rules = rules;
         this.maxSteps = maxSteps;
