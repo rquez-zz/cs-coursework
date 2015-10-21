@@ -1,5 +1,6 @@
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * COT4210 Assignment 3
@@ -179,5 +180,60 @@ public class TM {
 
     public static void main(String[] args) {
 
+        Scanner scan = new Scanner(System.in);
+        int numTM = scan.nextInt();
+        TM[] tms = new TM[numTM];
+        String[][] totalInputs = new String[numTM][];
+
+        for (int i = 0; i < tms.length; i++) {
+            int numStates = scan.nextInt();
+            int numRules = scan.nextInt();
+
+            Rule[] rules = new Rule[numRules];
+            for (int j = 0; j < rules.length; j++) {
+
+                int inputState = scan.nextInt();
+                char readChar = scan.next().charAt(0);
+                int outputState = scan.nextInt();
+                char writeChar = scan.next().charAt(0);
+                int direction;
+                if (scan.next().charAt(0) == 'L') {
+                   direction = -1;
+                } else {
+                   direction = 1;
+                }
+
+                rules[j] = new Rule(inputState, readChar, outputState, writeChar, direction);
+            }
+
+            int numInput = scan.nextInt();
+            int maxSteps = scan.nextInt();
+
+            tms[i] = new TM(rules, maxSteps);
+
+            totalInputs[i] = new String[numInput];
+            for (int j = 0; j < totalInputs[i].length; j++) {
+                totalInputs[i][j] = scan.next();
+            }
+
+        }
+
+        for (int i = 0; i < totalInputs.length; i++) {
+            System.out.println("Machine #" + (i + 1) + ":");
+
+            for (int j = 0; j < totalInputs[i].length; j++) {
+                int result = tms[i].run(totalInputs[i][j]);
+                String msg;
+                if (result == 0) {
+                    msg = "YES";
+                } else if (result == 1) {
+                    msg = "NO";
+                } else {
+                    msg = "DOES NOT HALT IN " + tms[i].getMaxSteps() + " STEPS";
+                }
+
+                System.out.println(totalInputs[i][j] + ": " + msg);
+            }
+        }
     }
 }
