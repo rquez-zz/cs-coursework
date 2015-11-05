@@ -126,13 +126,9 @@ token_type getReservedType(char* lexeme) {
     return type;
 }
 
-int main(int argc, char **argv) {
-
-    // Get paths
-    const char* inputPath = argv[1];
-    const char* cleanInputPath = argv[2];
-    const char* lexTablePath = argv[3];
-    const char* tokenListPath = argv[4];
+/* clean and scan input into lex table and token list */
+int scan(const char* inputPath, const char* cleanInputPath,
+        const char* lexTablePath, const char* tokenListPath, token* tokens) {
 
     // Open clean input for reading
     FILE* ifp = getCleanInput(inputPath, cleanInputPath);
