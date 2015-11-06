@@ -66,13 +66,13 @@ FILE* getCleanInput(const char* inputPath, const char* outputPath) {
 }
 
 /* Writes tokens as output */
-void writeSymbolTokens(symbol* symbols, FILE* lexTblPtr, FILE* tokLstPtr, int count) {
+void writeTokens(token* tokens, FILE* lexTblPtr, FILE* tokLstPtr, int count) {
 
     // Print header
     fprintf(lexTblPtr, "lexeme\ttoken type\n");
 
-    // Traverse through linked list of symbols
-    symbol* helper = symbols;
+    // Traverse through linked list of tokens
+    token* helper = tokens;
     int i = 0;
     while (i < count) {
 
@@ -108,7 +108,7 @@ token_type getReservedType(char* lexeme) {
         if (strcmp(reserved[i], lexeme) == 0) {
 
             if (i == 13) {
-                // Use "odd" comparison symbol as reserved word
+                // Use "odd" comparison token as reserved word
                 type = 8;
             } else {
                 // Offset to get the right type
@@ -133,10 +133,10 @@ int scan(const char* inputPath, const char* cleanInputPath,
     // Open clean input for reading
     FILE* ifp = getCleanInput(inputPath, cleanInputPath);
 
-    // Linked list of symbols
-    symbol* firstSymbol = NULL;
-    symbol* symbols = NULL;
-    int countSymbols = 0;
+    // Linked list of tokens
+    token* firstToken = NULL;
+    tokens = NULL;
+    int countTokens = 0;
 
     // Keep track of current line number
     int lineNumber = 1;
@@ -197,19 +197,19 @@ int scan(const char* inputPath, const char* cleanInputPath,
                 type = identsym;
             }
 
-            // Create token symbol identifier
-            symbol* newSymbol = malloc(sizeof(symbol));
-            strcpy(newSymbol->lexeme, lexeme);
-            newSymbol->type = type;
-            countSymbols++;
+            // Create token identifier
+            token* newToken = malloc(sizeof(token));
+            strcpy(newToken->lexeme, lexeme);
+            newToken->type = type;
+            countTokens++;
 
-            // Add symbol to list
-            if (symbols == NULL) {
-                symbols = newSymbol;
-                firstSymbol = symbols;
+            // Add token to list
+            if (tokens == NULL) {
+                tokens = newToken;
+                firstToken = tokens;
             } else {
-                symbols->next = newSymbol;
-                symbols = symbols->next;
+                tokens->next = newToken;
+                tokens = tokens->next;
             }
         } else {
             // Not alphabetic, go back
@@ -252,20 +252,20 @@ int scan(const char* inputPath, const char* cleanInputPath,
             // Go back 1 char
             ungetc(ch, ifp);
 
-            // Create token symbol - const
-            symbol* newSymbol = malloc(sizeof(symbol));
-            newSymbol->value = value;
-            strcpy(newSymbol->lexeme, lexeme);
-            newSymbol->type = numbersym;
-            countSymbols++;
+            // Create token - const
+            token* newToken = malloc(sizeof(token));
+            newToken->value = value;
+            strcpy(newToken->lexeme, lexeme);
+            newToken->type = numbersym;
+            countTokens++;
 
-            // Add symbol to list
-            if (symbols == NULL) {
-                symbols = newSymbol;
-                firstSymbol = symbols;
+            // Add token to list
+            if (tokens == NULL) {
+                tokens = newToken;
+                firstToken = tokens;
             } else {
-                symbols->next = newSymbol;
-                symbols = symbols->next;
+                tokens->next = newToken;
+                tokens = tokens->next;
             }
         } else {
             // Not a digit, go back
@@ -281,19 +281,19 @@ int scan(const char* inputPath, const char* cleanInputPath,
             matched = 1;
             ch = getc(ifp);
             if (ch == '=') {
-                // Create symbol
-                symbol* newSymbol = malloc(sizeof(symbol));
-                newSymbol->type = becomesym;
-                strcpy(newSymbol->lexeme, ":=");
-                countSymbols++;
+                // Create token
+                token* newToken = malloc(sizeof(token));
+                newToken->type = becomesym;
+                strcpy(newToken->lexeme, ":=");
+                countTokens++;
 
-                // Add symbol to list
-                if (symbols == NULL) {
-                    symbols = newSymbol;
-                    firstSymbol = symbols;
+                // Add token to list
+                if (tokens == NULL) {
+                    tokens = newToken;
+                    firstToken = tokens;
                 } else {
-                    symbols->next = newSymbol;
-                    symbols = symbols->next;
+                    tokens->next = newToken;
+                    tokens = tokens->next;
                 }
 
                 ch = getc(ifp);
@@ -307,20 +307,20 @@ int scan(const char* inputPath, const char* cleanInputPath,
         if(ch == '=') {
 
             matched = 1;
-            // Create symbol
-            symbol* newSymbol = malloc(sizeof(symbol));
-            newSymbol->type = equalsym;
+            // Create token
+            token* newToken = malloc(sizeof(token));
+            newToken->type = equalsym;
             append(lexeme, ch);
-            strcpy(newSymbol->lexeme, lexeme);
-            countSymbols++;
+            strcpy(newToken->lexeme, lexeme);
+            countTokens++;
 
-            // Add symbol to list
-            if (symbols == NULL) {
-                symbols = newSymbol;
-                firstSymbol = symbols;
+            // Add token to list
+            if (tokens == NULL) {
+                tokens = newToken;
+                firstToken = tokens;
             } else {
-                symbols->next = newSymbol;
-                symbols = symbols->next;
+                tokens->next = newToken;
+                tokens = tokens->next;
             }
         }
 
@@ -328,29 +328,29 @@ int scan(const char* inputPath, const char* cleanInputPath,
         if (ch == '>') {
 
             matched = 1;
-            symbol* newSymbol = malloc(sizeof(symbol));
+            token* newToken = malloc(sizeof(token));
 
             // Check if >=
             ch = getc(ifp);
 
             if (ch == '=') {
-                newSymbol->type = geqsym;
-                strcpy(newSymbol->lexeme, ">=");
+                newToken->type = geqsym;
+                strcpy(newToken->lexeme, ">=");
             } else {
                 ungetc(ch, ifp);
-                newSymbol->type = gtrsym;
-                strcpy(newSymbol->lexeme, ">");
+                newToken->type = gtrsym;
+                strcpy(newToken->lexeme, ">");
             }
 
-            countSymbols++;
+            countTokens++;
 
-            // Add symbol to list
-            if (symbols == NULL) {
-                symbols = newSymbol;
-                firstSymbol = symbols;
+            // Add token to list
+            if (tokens == NULL) {
+                tokens = newToken;
+                firstToken = tokens;
             } else {
-                symbols->next = newSymbol;
-                symbols = symbols->next;
+                tokens->next = newToken;
+                tokens = tokens->next;
             }
         }
 
@@ -358,32 +358,32 @@ int scan(const char* inputPath, const char* cleanInputPath,
         if (ch == '<') {
 
             matched = 1;
-            symbol* newSymbol = malloc(sizeof(symbol));
+            token* newToken = malloc(sizeof(token));
 
             // Check if <= or <>
             ch = getc(ifp);
 
             if (ch == '=') {
-                newSymbol->type = leqsym;
-                strcpy(newSymbol->lexeme, "<=");
+                newToken->type = leqsym;
+                strcpy(newToken->lexeme, "<=");
             } else if ( ch == '>') {
-                newSymbol->type = neqsym;
-                strcpy(newSymbol->lexeme, "<>");
+                newToken->type = neqsym;
+                strcpy(newToken->lexeme, "<>");
             } else {
                 ungetc(ch, ifp);
-                newSymbol->type = lessym;
-                strcpy(newSymbol->lexeme, "<");
+                newToken->type = lessym;
+                strcpy(newToken->lexeme, "<");
             }
 
-            countSymbols++;
+            countTokens++;
 
-            // Add symbol to list
-            if (symbols == NULL) {
-                symbols = newSymbol;
-                firstSymbol = symbols;
+            // Add token to list
+            if (tokens == NULL) {
+                tokens = newToken;
+                firstToken = tokens;
             } else {
-                symbols->next = newSymbol;
-                symbols = symbols->next;
+                tokens->next = newToken;
+                tokens = tokens->next;
             }
         }
 
@@ -391,19 +391,19 @@ int scan(const char* inputPath, const char* cleanInputPath,
         if (ch == '(') {
 
             matched = 1;
-            // Create symbol
-            symbol* newSymbol = malloc(sizeof(symbol));
-            newSymbol->type = lparentsym;
-            strcpy(newSymbol->lexeme, "(");
-            countSymbols++;
+            // Create token
+            token* newToken = malloc(sizeof(token));
+            newToken->type = lparentsym;
+            strcpy(newToken->lexeme, "(");
+            countTokens++;
 
-            // Add symbol to list
-            if (symbols == NULL) {
-                symbols = newSymbol;
-                firstSymbol = symbols;
+            // Add token to list
+            if (tokens == NULL) {
+                tokens = newToken;
+                firstToken = tokens;
             } else {
-                symbols->next = newSymbol;
-                symbols = symbols->next;
+                tokens->next = newToken;
+                tokens = tokens->next;
             }
         }
 
@@ -411,152 +411,152 @@ int scan(const char* inputPath, const char* cleanInputPath,
         if (ch == ')') {
 
             matched = 1;
-            // Create symbol
-            symbol* newSymbol = malloc(sizeof(symbol));
-            newSymbol->type = rparentsym;
-            strcpy(newSymbol->lexeme, ")");
-            countSymbols++;
+            // Create token
+            token* newToken = malloc(sizeof(token));
+            newToken->type = rparentsym;
+            strcpy(newToken->lexeme, ")");
+            countTokens++;
 
-            // Add symbol to list
-            if (symbols == NULL) {
-                symbols = newSymbol;
-                firstSymbol = symbols;
+            // Add token to list
+            if (tokens == NULL) {
+                tokens = newToken;
+                firstToken = tokens;
             } else {
-                symbols->next = newSymbol;
-                symbols = symbols->next;
+                tokens->next = newToken;
+                tokens = tokens->next;
             }
         }
 
         // Check for ,
         if (ch == ',') {
             matched = 1;
-            // Create symbol
-            symbol* newSymbol = malloc(sizeof(symbol));
-            newSymbol->type = commasym;
-            strcpy(newSymbol->lexeme, ",");
-            countSymbols++;
+            // Create token
+            token* newToken = malloc(sizeof(token));
+            newToken->type = commasym;
+            strcpy(newToken->lexeme, ",");
+            countTokens++;
 
-            // Add symbol to list
-            if (symbols == NULL) {
-                symbols = newSymbol;
-                firstSymbol = symbols;
+            // Add token to list
+            if (tokens == NULL) {
+                tokens = newToken;
+                firstToken = tokens;
             } else {
-                symbols->next = newSymbol;
-                symbols = symbols->next;
+                tokens->next = newToken;
+                tokens = tokens->next;
             }
         }
 
         // Check for ;
         if (ch == ';') {
             matched = 1;
-            // Create symbol
-            symbol* newSymbol = malloc(sizeof(symbol));
-            newSymbol->type = semicolonsym;
-            strcpy(newSymbol->lexeme, ";");
-            countSymbols++;
+            // Create token
+            token* newToken = malloc(sizeof(token));
+            newToken->type = semicolonsym;
+            strcpy(newToken->lexeme, ";");
+            countTokens++;
 
-            // Add symbol to list
-            if (symbols == NULL) {
-                symbols = newSymbol;
-                firstSymbol = symbols;
+            // Add token to list
+            if (tokens == NULL) {
+                tokens = newToken;
+                firstToken = tokens;
             } else {
-                symbols->next = newSymbol;
-                symbols = symbols->next;
+                tokens->next = newToken;
+                tokens = tokens->next;
             }
         }
 
         // Check for .
         if (ch == '.') {
             matched = 1;
-            // Create symbol
-            symbol* newSymbol = malloc(sizeof(symbol));
-            newSymbol->type = periodsym;
-            strcpy(newSymbol->lexeme, ".");
-            countSymbols++;
+            // Create token
+            token* newToken = malloc(sizeof(token));
+            newToken->type = periodsym;
+            strcpy(newToken->lexeme, ".");
+            countTokens++;
 
-            // Add symbol to list
-            if (symbols == NULL) {
-                symbols = newSymbol;
-                firstSymbol = symbols;
+            // Add token to list
+            if (tokens == NULL) {
+                tokens = newToken;
+                firstToken = tokens;
             } else {
-                symbols->next = newSymbol;
-                symbols = symbols->next;
+                tokens->next = newToken;
+                tokens = tokens->next;
             }
         }
 
         // Check for +
         if (ch == '+') {
             matched = 1;
-            // Create symbol
-            symbol* newSymbol = malloc(sizeof(symbol));
-            newSymbol->type = plussym;
-            strcpy(newSymbol->lexeme, "+");
-            countSymbols++;
+            // Create token
+            token* newToken = malloc(sizeof(token));
+            newToken->type = plussym;
+            strcpy(newToken->lexeme, "+");
+            countTokens++;
 
-            // Add symbol to list
-            if (symbols == NULL) {
-                symbols = newSymbol;
-                firstSymbol = symbols;
+            // Add token to list
+            if (tokens == NULL) {
+                tokens = newToken;
+                firstToken = tokens;
             } else {
-                symbols->next = newSymbol;
-                symbols = symbols->next;
+                tokens->next = newToken;
+                tokens = tokens->next;
             }
         }
 
         // Check for -
         if (ch == '-') {
             matched = 1;
-            // Create symbol
-            symbol* newSymbol = malloc(sizeof(symbol));
-            newSymbol->type = minussym;
-            strcpy(newSymbol->lexeme, "-");
-            countSymbols++;
+            // Create token
+            token* newToken = malloc(sizeof(token));
+            newToken->type = minussym;
+            strcpy(newToken->lexeme, "-");
+            countTokens++;
 
-            // Add symbol to list
-            if (symbols == NULL) {
-                symbols = newSymbol;
-                firstSymbol = symbols;
+            // Add token to list
+            if (tokens == NULL) {
+                tokens = newToken;
+                firstToken = tokens;
             } else {
-                symbols->next = newSymbol;
-                symbols = symbols->next;
+                tokens->next = newToken;
+                tokens = tokens->next;
             }
         }
 
         // Check for *
         if (ch == '*') {
             matched = 1;
-            // Create symbol
-            symbol* newSymbol = malloc(sizeof(symbol));
-            newSymbol->type = multsym;
-            strcpy(newSymbol->lexeme, "*");
-            countSymbols++;
+            // Create token
+            token* newToken = malloc(sizeof(token));
+            newToken->type = multsym;
+            strcpy(newToken->lexeme, "*");
+            countTokens++;
 
-            // Add symbol to list
-            if (symbols == NULL) {
-                symbols = newSymbol;
-                firstSymbol = symbols;
+            // Add token to list
+            if (tokens == NULL) {
+                tokens = newToken;
+                firstToken = tokens;
             } else {
-                symbols->next = newSymbol;
-                symbols = symbols->next;
+                tokens->next = newToken;
+                tokens = tokens->next;
             }
         }
 
         // Check for /
         if (ch == '/') {
             matched = 1;
-            // Create symbol
-            symbol* newSymbol = malloc(sizeof(symbol));
-            newSymbol->type = slashsym;
-            strcpy(newSymbol->lexeme, "/");
-            countSymbols++;
+            // Create token
+            token* newToken = malloc(sizeof(token));
+            newToken->type = slashsym;
+            strcpy(newToken->lexeme, "/");
+            countTokens++;
 
-            // Add symbol to list
-            if (symbols == NULL) {
-                symbols = newSymbol;
-                firstSymbol = symbols;
+            // Add token to list
+            if (tokens == NULL) {
+                tokens = newToken;
+                firstToken = tokens;
             } else {
-                symbols->next = newSymbol;
-                symbols = symbols->next;
+                tokens->next = newToken;
+                tokens = tokens->next;
             }
         }
 
@@ -577,7 +577,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
     // Write lexeme table
     FILE* lexTblPtr = openFile(lexTablePath, "w");
     FILE* tokLstPtr = openFile(tokenListPath, "w");
-    writeSymbolTokens(firstSymbol, lexTblPtr, tokLstPtr, countSymbols);
+    writeTokens(firstToken, lexTblPtr, tokLstPtr, countTokens);
 
     // Close output
     fclose(lexTblPtr);
