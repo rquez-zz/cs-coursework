@@ -126,6 +126,18 @@ token_type getReservedType(char* lexeme) {
     return type;
 }
 
+/* add token to linked list */
+void addToList(token** tokens, char* lexeme, int value, int type, int* countTokens) {
+    token* nextToken = malloc(sizeof(token));
+    strcpy(nextToken->lexeme, lexeme);
+    nextToken->value = value;
+    nextToken->type = type;
+
+    (*tokens)->next = nextToken;
+    *tokens = (*tokens)->next;
+    *countTokens += 1;
+}
+
 /* clean and scan input into lex table and token list */
 int scan(const char* inputPath, const char* cleanInputPath,
         const char* lexTablePath, const char* tokenListPath, token* tokens) {
