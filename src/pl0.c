@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     }
 
     fprintf(stdout, "[PARSER] Starting...\n");
-    symbol symbolTable[MAX_SYMBOLS] = { { 0 } };
+    symbol symbolTable[MAX_SYMBOL_TABLE_SIZE];
     if (parse(symbolTablePath, &tokens, symbolTable) != 0) {
         return -1;
     }
