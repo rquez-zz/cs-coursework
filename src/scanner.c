@@ -177,6 +177,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
         if(isalpha(ch)) {
             int couldBeReserved = 1;
             int letterCount = 0;
+            matched = 1;
 
             // Get the next char while checking if it's alphanumeric
             while( (isalpha(ch) || isdigit(ch)) && !feof(ifp)) {
@@ -222,6 +223,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
         // Check if ch is part of a Value
         if(isdigit(ch)) {
 
+            matched = 1;
             int numCount = 0;
 
             while(isdigit(ch)) {
@@ -264,7 +266,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
         if (ch == ':') {
             ch = getc(ifp);
             if (ch == '=') {
-
+                matched = 1;
                 addToList(&tokens, ":=", 0, becomesym, &countTokens);
                 ch = getc(ifp);
             } else {
@@ -275,12 +277,14 @@ int scan(const char* inputPath, const char* cleanInputPath,
 
         // Check for =
         if(ch == '=') {
-            // Create token
+            matched = 1;
             addToList(&tokens, ":=", 0, equalsym, &countTokens);
         }
 
         // Check for > and >=
         if (ch == '>') {
+            matched = 1;
+
             // Check if >=
             ch = getc(ifp);
 
@@ -294,6 +298,8 @@ int scan(const char* inputPath, const char* cleanInputPath,
 
         // Check for < and <=
         if (ch == '<') {
+            matched = 1;
+
             // Check if <= or <>
             ch = getc(ifp);
 
@@ -309,55 +315,55 @@ int scan(const char* inputPath, const char* cleanInputPath,
 
         // Check for (
         if (ch == '(') {
-            // Create token
+            matched = 1;
             addToList(&tokens, "(", 0, lparentsym, &countTokens);
         }
 
         // Check for )
         if (ch == ')') {
-            // Create token
+            matched = 1;
             addToList(&tokens, ")", 0, rparentsym, &countTokens);
         }
 
         // Check for ,
         if (ch == ',') {
-            // Create token
+            matched = 1;
             addToList(&tokens, ",", 0, commasym, &countTokens);
         }
 
         // Check for ;
         if (ch == ';') {
-            // Create token
+            matched = 1;
             addToList(&tokens, ";", 0, semicolonsym, &countTokens);
         }
 
         // Check for .
         if (ch == '.') {
-            // Create token
+            matched = 1;
             addToList(&tokens, ".", 0, periodsym, &countTokens);
         }
 
         // Check for +
         if (ch == '+') {
-            // Create token
+            matched = 1;
             addToList(&tokens, "+", 0, plussym, &countTokens);
         }
 
         // Check for -
         if (ch == '-') {
-            // Create token
+            matched = 1;
             addToList(&tokens, "-", 0, minussym, &countTokens);
         }
 
         // Check for *
         if (ch == '*') {
-            // Create token
+            matched = 1;
             addToList(&tokens, "*", 0, multsym, &countTokens);
         }
 
         // Check for /
         if (ch == '/') {
-            // Create token
+            matched = 1;
             addToList(&tokens, "/", 0, slashsym, &countTokens);
         }
 
@@ -366,8 +372,8 @@ int scan(const char* inputPath, const char* cleanInputPath,
             lineNumber++;
 
         // Throw error for invalid character
-        if (matched && ch != ' ' && ch != '\n' && ch != '\r') {
-            fprintf(stdout, "[SCANNER-ERROR] Invalid character, at line %d.", lineNumber);
+        if (!matched && ch != ' ' && ch != '\n' && ch != '\r' && ch != -1) {
+            fprintf(stdout, "[SCANNER-ERROR] Invalid character %c, at line %d.", ch, lineNumber);
             return -1;
         }
     }
