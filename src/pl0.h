@@ -6,4 +6,3 @@
 #include "parser.h"
 #include "generator.h"
 
-#define MAX_SYMBOL_TABLE_SIZE (100)
