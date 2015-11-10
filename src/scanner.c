@@ -128,13 +128,21 @@ token_type getReservedType(char* lexeme) {
 
 /* add token to linked list */
 void addToList(token** tokens, char* lexeme, int value, int type, int* countTokens) {
-    token* nextToken = malloc(sizeof(token));
-    strcpy(nextToken->lexeme, lexeme);
-    nextToken->value = value;
-    nextToken->type = type;
 
-    (*tokens)->next = nextToken;
-    *tokens = (*tokens)->next;
+    // If type is -1 then token already exists
+    if ((*tokens)->type != -1){ 
+        token* nextToken = malloc(sizeof(token));
+        strcpy(nextToken->lexeme, lexeme);
+        nextToken->value = value;
+        nextToken->type = type;
+        (*tokens)->next = nextToken;
+        *tokens = (*tokens)->next;
+    } else {
+        strcpy((*tokens)->lexeme, lexeme);
+        (*tokens)->value = value;
+        (*tokens)->type = type;
+    }
+
     *countTokens += 1;
 }
 
@@ -147,6 +155,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
 
     // Linked list of tokens
     token* firstToken = tokens;
+    tokens->type = -1;
     int countTokens = 0;
 
     // Keep track of current line number
@@ -369,7 +378,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
     // Write lexeme table
     FILE* lexTblPtr = openFile(lexTablePath, "w");
     FILE* tokLstPtr = openFile(tokenListPath, "w");
-    writeTokens(firstToken->next, lexTblPtr, tokLstPtr, countTokens);
+    writeTokens(firstToken, lexTblPtr, tokLstPtr, countTokens);
 
     // Close output
     fclose(lexTblPtr);
