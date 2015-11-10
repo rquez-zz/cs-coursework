@@ -12,19 +12,19 @@ int main(int argc, char* argv[]) {
     fprintf(stdout, "[PL0] Starting...\n");
 
     fprintf(stdout, "[SCANNER] Starting...\n");
-    token* tokens;
-    if (scan(inputPath, cleanInputPath, lexTablePath, tokenListPath, tokens) != 0) {
+    token tokens;
+    if (scan(inputPath, cleanInputPath, lexTablePath, tokenListPath, &tokens) != 0) {
         return -1;
     }
 
     fprintf(stdout, "[PARSER] Starting...\n");
-    symbol symbolTable[MAX_SYMBOLS];
-    if (parse(symbolTablePath, tokens, symbolTable) != 0) {
+    symbol symbolTable[MAX_SYMBOLS] = { { 0 } };
+    if (parse(symbolTablePath, &tokens, symbolTable) != 0) {
         return -1;
     }
 
     fprintf(stdout, "[GENERATOR] Starting...\n");
-    if (generate(mcodePath, tokens, symbolTable) != 0) {
+    if (generate(mcodePath, &tokens, symbolTable) != 0) {
         return -1;
     }
 

@@ -126,6 +126,26 @@ token_type getReservedType(char* lexeme) {
     return type;
 }
 
+/* add token to linked list */
+void addToList(token** tokens, char* lexeme, int value, int type, int* countTokens) {
+
+    // If type is -1 then token already exists
+    if ((*tokens)->type != -1){ 
+        token* nextToken = malloc(sizeof(token));
+        strcpy(nextToken->lexeme, lexeme);
+        nextToken->value = value;
+        nextToken->type = type;
+        (*tokens)->next = nextToken;
+        *tokens = (*tokens)->next;
+    } else {
+        strcpy((*tokens)->lexeme, lexeme);
+        (*tokens)->value = value;
+        (*tokens)->type = type;
+    }
+
+    *countTokens += 1;
+}
+
 /* clean and scan input into lex table and token list */
 int scan(const char* inputPath, const char* cleanInputPath,
         const char* lexTablePath, const char* tokenListPath, token* tokens) {
@@ -134,23 +154,18 @@ int scan(const char* inputPath, const char* cleanInputPath,
     FILE* ifp = getCleanInput(inputPath, cleanInputPath);
 
     // Linked list of tokens
-    token* firstToken = NULL;
-    tokens = NULL;
+    token* firstToken = tokens;
+    tokens->type = -1;
     int countTokens = 0;
 
     // Keep track of current line number
     int lineNumber = 1;
 
     // Loop through input as DFA simulation
-    while(1) {
+    while(!feof(ifp)) {
 
         // Get Character from stream
         char ch = getc(ifp);
-
-        // Break if end of file
-        if (feof(ifp)) {
-            break;
-        }
 
         // Copy character into a temp string
         char lexeme[12] = "";
@@ -160,10 +175,9 @@ int scan(const char* inputPath, const char* cleanInputPath,
 
         // Check if ch is part of an Identifier or Reserved Word
         if(isalpha(ch)) {
-
-            matched = 1;
             int couldBeReserved = 1;
             int letterCount = 0;
+            matched = 1;
 
             // Get the next char while checking if it's alphanumeric
             while( (isalpha(ch) || isdigit(ch)) && !feof(ifp)) {
@@ -197,20 +211,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
                 type = identsym;
             }
 
-            // Create token identifier
-            token* newToken = malloc(sizeof(token));
-            strcpy(newToken->lexeme, lexeme);
-            newToken->type = type;
-            countTokens++;
-
-            // Add token to list
-            if (tokens == NULL) {
-                tokens = newToken;
-                firstToken = tokens;
-            } else {
-                tokens->next = newToken;
-                tokens = tokens->next;
-            }
+            addToList(&tokens, lexeme, 0, type, &countTokens);
         } else {
             // Not alphabetic, go back
             ungetc(ch, ifp);
@@ -252,21 +253,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
             // Go back 1 char
             ungetc(ch, ifp);
 
-            // Create token - const
-            token* newToken = malloc(sizeof(token));
-            newToken->value = value;
-            strcpy(newToken->lexeme, lexeme);
-            newToken->type = numbersym;
-            countTokens++;
-
-            // Add token to list
-            if (tokens == NULL) {
-                tokens = newToken;
-                firstToken = tokens;
-            } else {
-                tokens->next = newToken;
-                tokens = tokens->next;
-            }
+            addToList(&tokens, lexeme, value, numbersym, &countTokens);
         } else {
             // Not a digit, go back
             ungetc(ch, ifp);
@@ -277,25 +264,10 @@ int scan(const char* inputPath, const char* cleanInputPath,
 
         // Check for :=
         if (ch == ':') {
-
-            matched = 1;
             ch = getc(ifp);
             if (ch == '=') {
-                // Create token
-                token* newToken = malloc(sizeof(token));
-                newToken->type = becomesym;
-                strcpy(newToken->lexeme, ":=");
-                countTokens++;
-
-                // Add token to list
-                if (tokens == NULL) {
-                    tokens = newToken;
-                    firstToken = tokens;
-                } else {
-                    tokens->next = newToken;
-                    tokens = tokens->next;
-                }
-
+                matched = 1;
+                addToList(&tokens, ":=", 0, becomesym, &countTokens);
                 ch = getc(ifp);
             } else {
                 // Not :=, go back
@@ -305,259 +277,94 @@ int scan(const char* inputPath, const char* cleanInputPath,
 
         // Check for =
         if(ch == '=') {
-
             matched = 1;
-            // Create token
-            token* newToken = malloc(sizeof(token));
-            newToken->type = equalsym;
-            append(lexeme, ch);
-            strcpy(newToken->lexeme, lexeme);
-            countTokens++;
-
-            // Add token to list
-            if (tokens == NULL) {
-                tokens = newToken;
-                firstToken = tokens;
-            } else {
-                tokens->next = newToken;
-                tokens = tokens->next;
-            }
+            addToList(&tokens, ":=", 0, equalsym, &countTokens);
         }
 
         // Check for > and >=
         if (ch == '>') {
-
             matched = 1;
-            token* newToken = malloc(sizeof(token));
 
             // Check if >=
             ch = getc(ifp);
 
             if (ch == '=') {
-                newToken->type = geqsym;
-                strcpy(newToken->lexeme, ">=");
+                addToList(&tokens, ">=", 0, geqsym, &countTokens);
             } else {
                 ungetc(ch, ifp);
-                newToken->type = gtrsym;
-                strcpy(newToken->lexeme, ">");
-            }
-
-            countTokens++;
-
-            // Add token to list
-            if (tokens == NULL) {
-                tokens = newToken;
-                firstToken = tokens;
-            } else {
-                tokens->next = newToken;
-                tokens = tokens->next;
+                addToList(&tokens, ">", 0, gtrsym, &countTokens);
             }
         }
 
         // Check for < and <=
         if (ch == '<') {
-
             matched = 1;
-            token* newToken = malloc(sizeof(token));
 
             // Check if <= or <>
             ch = getc(ifp);
 
             if (ch == '=') {
-                newToken->type = leqsym;
-                strcpy(newToken->lexeme, "<=");
+                addToList(&tokens, "<=", 0, leqsym, &countTokens);
             } else if ( ch == '>') {
-                newToken->type = neqsym;
-                strcpy(newToken->lexeme, "<>");
+                addToList(&tokens, "<>", 0, neqsym, &countTokens);
             } else {
                 ungetc(ch, ifp);
-                newToken->type = lessym;
-                strcpy(newToken->lexeme, "<");
-            }
-
-            countTokens++;
-
-            // Add token to list
-            if (tokens == NULL) {
-                tokens = newToken;
-                firstToken = tokens;
-            } else {
-                tokens->next = newToken;
-                tokens = tokens->next;
+                addToList(&tokens, "<", 0, lessym, &countTokens);
             }
         }
 
         // Check for (
         if (ch == '(') {
-
             matched = 1;
-            // Create token
-            token* newToken = malloc(sizeof(token));
-            newToken->type = lparentsym;
-            strcpy(newToken->lexeme, "(");
-            countTokens++;
-
-            // Add token to list
-            if (tokens == NULL) {
-                tokens = newToken;
-                firstToken = tokens;
-            } else {
-                tokens->next = newToken;
-                tokens = tokens->next;
-            }
+            addToList(&tokens, "(", 0, lparentsym, &countTokens);
         }
 
         // Check for )
         if (ch == ')') {
-
             matched = 1;
-            // Create token
-            token* newToken = malloc(sizeof(token));
-            newToken->type = rparentsym;
-            strcpy(newToken->lexeme, ")");
-            countTokens++;
-
-            // Add token to list
-            if (tokens == NULL) {
-                tokens = newToken;
-                firstToken = tokens;
-            } else {
-                tokens->next = newToken;
-                tokens = tokens->next;
-            }
+            addToList(&tokens, ")", 0, rparentsym, &countTokens);
         }
 
         // Check for ,
         if (ch == ',') {
             matched = 1;
-            // Create token
-            token* newToken = malloc(sizeof(token));
-            newToken->type = commasym;
-            strcpy(newToken->lexeme, ",");
-            countTokens++;
-
-            // Add token to list
-            if (tokens == NULL) {
-                tokens = newToken;
-                firstToken = tokens;
-            } else {
-                tokens->next = newToken;
-                tokens = tokens->next;
-            }
+            addToList(&tokens, ",", 0, commasym, &countTokens);
         }
 
         // Check for ;
         if (ch == ';') {
             matched = 1;
-            // Create token
-            token* newToken = malloc(sizeof(token));
-            newToken->type = semicolonsym;
-            strcpy(newToken->lexeme, ";");
-            countTokens++;
-
-            // Add token to list
-            if (tokens == NULL) {
-                tokens = newToken;
-                firstToken = tokens;
-            } else {
-                tokens->next = newToken;
-                tokens = tokens->next;
-            }
+            addToList(&tokens, ";", 0, semicolonsym, &countTokens);
         }
 
         // Check for .
         if (ch == '.') {
             matched = 1;
-            // Create token
-            token* newToken = malloc(sizeof(token));
-            newToken->type = periodsym;
-            strcpy(newToken->lexeme, ".");
-            countTokens++;
-
-            // Add token to list
-            if (tokens == NULL) {
-                tokens = newToken;
-                firstToken = tokens;
-            } else {
-                tokens->next = newToken;
-                tokens = tokens->next;
-            }
+            addToList(&tokens, ".", 0, periodsym, &countTokens);
         }
 
         // Check for +
         if (ch == '+') {
             matched = 1;
-            // Create token
-            token* newToken = malloc(sizeof(token));
-            newToken->type = plussym;
-            strcpy(newToken->lexeme, "+");
-            countTokens++;
-
-            // Add token to list
-            if (tokens == NULL) {
-                tokens = newToken;
-                firstToken = tokens;
-            } else {
-                tokens->next = newToken;
-                tokens = tokens->next;
-            }
+            addToList(&tokens, "+", 0, plussym, &countTokens);
         }
 
         // Check for -
         if (ch == '-') {
             matched = 1;
-            // Create token
-            token* newToken = malloc(sizeof(token));
-            newToken->type = minussym;
-            strcpy(newToken->lexeme, "-");
-            countTokens++;
-
-            // Add token to list
-            if (tokens == NULL) {
-                tokens = newToken;
-                firstToken = tokens;
-            } else {
-                tokens->next = newToken;
-                tokens = tokens->next;
-            }
+            addToList(&tokens, "-", 0, minussym, &countTokens);
         }
 
         // Check for *
         if (ch == '*') {
             matched = 1;
-            // Create token
-            token* newToken = malloc(sizeof(token));
-            newToken->type = multsym;
-            strcpy(newToken->lexeme, "*");
-            countTokens++;
-
-            // Add token to list
-            if (tokens == NULL) {
-                tokens = newToken;
-                firstToken = tokens;
-            } else {
-                tokens->next = newToken;
-                tokens = tokens->next;
-            }
+            addToList(&tokens, "*", 0, multsym, &countTokens);
         }
 
         // Check for /
         if (ch == '/') {
             matched = 1;
-            // Create token
-            token* newToken = malloc(sizeof(token));
-            newToken->type = slashsym;
-            strcpy(newToken->lexeme, "/");
-            countTokens++;
-
-            // Add token to list
-            if (tokens == NULL) {
-                tokens = newToken;
-                firstToken = tokens;
-            } else {
-                tokens->next = newToken;
-                tokens = tokens->next;
-            }
+            addToList(&tokens, "/", 0, slashsym, &countTokens);
         }
 
         // Increment line number on newline
@@ -565,8 +372,8 @@ int scan(const char* inputPath, const char* cleanInputPath,
             lineNumber++;
 
         // Throw error for invalid character
-        if (!matched && ch != ' ' && ch != '\n' && ch != '\r') {
-            fprintf(stdout, "[SCANNER-ERROR] Invalid character, at line %d.", lineNumber);
+        if (!matched && ch != ' ' && ch != '\n' && ch != '\r' && ch != -1) {
+            fprintf(stdout, "[SCANNER-ERROR] Invalid character %c, at line %d.", ch, lineNumber);
             return -1;
         }
     }
