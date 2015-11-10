@@ -214,6 +214,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
             addToList(&tokens, lexeme, 0, type, &countTokens);
         } else {
             // Not alphabetic, go back
+            matched = 0;
             ungetc(ch, ifp);
         }
 
@@ -256,6 +257,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
             addToList(&tokens, lexeme, value, numbersym, &countTokens);
         } else {
             // Not a digit, go back
+            matched = 0;
             ungetc(ch, ifp);
         }
 
@@ -264,13 +266,15 @@ int scan(const char* inputPath, const char* cleanInputPath,
 
         // Check for :=
         if (ch == ':') {
-            ch = getc(ifp);
-            if (ch == '=') {
+            char cha = getc(ifp);
+            if (cha == '=') {
                 matched = 1;
                 addToList(&tokens, ":=", 0, becomesym, &countTokens);
-                ch = getc(ifp);
+                cha = getc(ifp);
+                ch = cha;
             } else {
                 // Not :=, go back
+                matched = 0;
                 ungetc(ch, ifp);
             }
         }
@@ -278,7 +282,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
         // Check for =
         if(ch == '=') {
             matched = 1;
-            addToList(&tokens, ":=", 0, equalsym, &countTokens);
+            addToList(&tokens, "=", 0, equalsym, &countTokens);
         }
 
         // Check for > and >=
