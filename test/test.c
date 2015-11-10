@@ -22,8 +22,8 @@ void testScan() {
     int type;
     FILE* ifp = fopen("test/testTokenList.txt", "r");
     while (helper != NULL) {
-        int f = fscanf(ifp, "%s\t%d\t%d", lexeme, &value, &type);
-        assert(f == 3);
+        int count = fscanf(ifp, "%s\t%d\t%d", lexeme, &value, &type);
+        assert(count == 3);
         assert(type == helper->type);
         assert(value == helper->value);
         int result = strcmp(lexeme, helper->lexeme);
