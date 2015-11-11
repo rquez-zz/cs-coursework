@@ -2,11 +2,19 @@
 
 int parse(const char* symbolTablePath, token* tokens, symbol* symbolTablePtr) {
 
-    // Get Token
-    // Parse Token
-    // Enter Token into Symbol Table
+    program(tokens, symbolTablePtr);
+    FILE* symTblPtr = openFileParser(symbolTablePath, "w");
+    writeSymbolTable(symbolTablePtr, symTblPtr);
 
     return 0;
+}
+
+/* Opens a file and returns a FILE pointer */
+FILE* openFileParser(const char* path, const char* op) {
+}
+
+/* Writes symbol table to file */
+void writeSymbolTable(symbol* symbolTable, FILE* symTblPtr) {
 }
 
 /* program := block periodsym */
