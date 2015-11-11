@@ -1,0 +1,17 @@
+const m = 8;
+var a, b, c;
+procedure ratio;
+var x, y;
+begin
+    x = a; y = b;
+    if b > a then begin
+        x = b;
+        y = a;
+    end
+    c = x / y;
+end;
+begin
+    a = m;
+    b = 4;
+    call ratio;
+end.
