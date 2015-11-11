@@ -19,6 +19,14 @@ int main(int argc, char* argv[]) {
 
     fprintf(stdout, "[PARSER] Starting...\n");
     symbol symbolTable[MAX_SYMBOL_TABLE_SIZE];
+    int j = 0;
+    for (j = 0; j < MAX_SYMBOL_TABLE_SIZE; j++) {
+        strcpy(symbolTable[j].name, "*");
+        symbolTable[j].kind = 0;
+        symbolTable[j].value = 0;
+        symbolTable[j].level = 0;
+        symbolTable[j].address = 0;
+    }
     if (parse(symbolTablePath, &tokens, symbolTable) != 0) {
         return -1;
     }
