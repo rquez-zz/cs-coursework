@@ -1,0 +1,30 @@
+/* arithmetic operators */
+y + 56;
+y * 100;
+y / 20;
+y - 11;
+/* comparisons */
+y odd x
+y = x;
+x <> y;
+y < x;
+y <= x;
+x > y;
+x >= y;
+/* syntax and assignment */
+z := x;
+x.do(y, z);
+/* reserved words */
+procedure A
+    while x = y
+        do(x);
+end
+begin
+    var h, i;
+    if (h = i) then
+        do(h);
+    call A;
+    var const b;
+    write b;
+    read b;
+end.

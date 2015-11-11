@@ -15,6 +15,9 @@
 You can supply an input file with
 `make run INPUT=input/input2.txt`
 
+### Test
+`make test`
+
 ### Output
 * Clean input file is at `output/cleanInput.txt`
 * Lexeme table is at `output/lexemeTable.txt`
