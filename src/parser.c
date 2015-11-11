@@ -11,6 +11,14 @@ int parse(const char* symbolTablePath, token* tokens, symbol* symbolTablePtr) {
 
 /* Opens a file and returns a FILE pointer */
 FILE* openFileParser(const char* path, const char* op) {
+    FILE* filePtr;
+    filePtr = fopen(path, op);
+    if(filePtr == NULL) {
+        fprintf(stderr, "[PARSER-ERROR] Error opening %s\n", path);
+        perror("");
+        return NULL;
+    }
+    return filePtr;
 }
 
 /* Writes symbol table to file */
