@@ -1,7 +1,7 @@
 #include "scanner.h"
 
 /* Opens a file and returns a FILE pointer */
-FILE* openFile(const char* path, const char* op) {
+FILE* openFileScanner(const char* path, const char* op) {
     FILE* filePtr;
     filePtr = fopen(path, op);
     if(filePtr == NULL) {
@@ -20,8 +20,8 @@ void append(char* string, char c) {
 
 /* Reads the input file and returns pointer to clean input file */
 FILE* getCleanInput(const char* inputPath, const char* outputPath) {
-    FILE *ifp = openFile(inputPath, "r");
-    FILE* ofp = openFile(outputPath, "w");
+    FILE *ifp = openFileScanner(inputPath, "r");
+    FILE* ofp = openFileScanner(outputPath, "w");
 
     // Read
     while(!feof(ifp)) {
@@ -62,7 +62,7 @@ FILE* getCleanInput(const char* inputPath, const char* outputPath) {
     fclose(ofp);
 
     // Return ptr to cleanInput.txt
-    return openFile(outputPath, "r");
+    return openFileScanner(outputPath, "r");
 }
 
 /* Writes tokens as output */
@@ -386,8 +386,8 @@ int scan(const char* inputPath, const char* cleanInputPath,
 	fclose(ifp);
 
     // Write lexeme table
-    FILE* lexTblPtr = openFile(lexTablePath, "w");
-    FILE* tokLstPtr = openFile(tokenListPath, "w");
+    FILE* lexTblPtr = openFileScanner(lexTablePath, "w");
+    FILE* tokLstPtr = openFileScanner(tokenListPath, "w");
     writeTokens(firstToken, lexTblPtr, tokLstPtr, countTokens);
 
     // Close output
