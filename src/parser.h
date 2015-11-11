@@ -8,6 +8,9 @@
 
 int parse(const char* symbolTablePath, token* tokens, symbol* symbolTable);
 FILE* openFileParser(const char* path, const char* op);
+void addToSymbolTable(symbol** symbolTable, char* name, int kind, int value, int level, int address);
+int hashToken(char* name, int kind);
+void linearProbe(int* index, symbol** symbolTable);
 void program(token* tokens, symbol* symbolTable);
 void block(token* tokens, symbol* symbolTable);
 void constant(token* tokens, symbol* symbolTable);
