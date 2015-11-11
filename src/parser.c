@@ -23,6 +23,10 @@ FILE* openFileParser(const char* path, const char* op) {
 
 /* Writes symbol table to file */
 void writeSymbolTable(symbol* symbolTable, FILE* symTblPtr) {
+    int i = 0;
+    for (i = 0; i < MAX_SYMBOL_TABLE_SIZE; i++) {
+        fprintf(symTblPtr, "%s\t%d\t%d\t%d\t%d\n", symbolTable[i].name, symbolTable[i].kind, symbolTable[i].value, symbolTable[i].level, symbolTable[i].address);
+    }
 }
 
 /* Adds token to symbol table */
