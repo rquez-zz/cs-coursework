@@ -318,4 +318,41 @@ void expression(token** tokens, symbol* symbolTable) {
     }
 }
 
+/* term := factor { (multsym | slashsym) factor } */
+void term(token** tokens, symbol* symbolTable) {
+
+    factor(tokens, symbolTable);
+
+    while ((*tokens)->type == multsym || (*tokens)->type == slashsym) {
+        (*tokens) = (*tokens)->next;
+        factor(tokens, symbolTable);
+    }
+}
+
+/* factor := identsym | numbersym | lparentsym expression rparentsym */
+void factor(token** tokens, symbol* symbolTable) {
+
+    switch((*tokens)->type) {
+
+        case identsym:
+            (*tokens) = (*tokens)->next;
+            break;
+
+        case numbersym:
+            (*tokens) = (*tokens)->next;
+            break;
+
+        case lparentsym:
+            (*tokens) = (*tokens)->next;
+            expression(tokens, symbolTable);
+            if ((*tokens)->type != rparentsym) {
+                fprintf(stderr, "[PARSER-ERROR] ')' expected \n");
+            }
+            (*tokens) = (*tokens)->next;
+            break;
+
+        default:
+            fprintf(stderr, "[PARSER-ERROR] unexpected token %s\n", (*tokens)->lexeme);
+            break;
+    }
 }
