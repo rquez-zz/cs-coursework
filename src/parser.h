@@ -18,3 +18,7 @@ void constant(token** tokens, symbol* symbolTable, int level);
 void variable(token** tokens, symbol* symbolTable, int level);
 void procedure(token** tokens, symbol* symbolTable, int level);
 void statement(token** tokens, symbol* symbolTable);
+void condition(token** tokens, symbol* symbolTable);
+void expression(token** tokens, symbol* symbolTable);
+void term(token** tokens, symbol* symbolTable);
+void factor(token** tokens, symbol* symbolTable);
