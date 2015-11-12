@@ -8,9 +8,9 @@ typedef struct symbol {
     char name[12];
 
     /*
-     * 0 for constant 
-     * 1 for variable 
-     * 2 for procedure
+     * 1 for constant
+     * 2 for variable
+     * 3 for procedure
      */
     int kind;
 
