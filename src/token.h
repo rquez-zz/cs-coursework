@@ -33,8 +33,8 @@ typedef enum {
     varsym,
     procsym,
     writesym,
-    redsym,
-    elseym
+    readsym,
+    elsesym
 } token_type;
 
 typedef struct token {
