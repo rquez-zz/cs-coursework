@@ -123,8 +123,27 @@ void constant(token* tokens, symbol* symbolTable) {
 
 }
 
+/* variable := varsym identsym {commasym identsym} semicolonsym */
 void variable(token* tokens, symbol* symbolTable) {
 
+    if (tokens->type != varsym) {
+        // TODO: throw error
+    }
+
+    tokens = tokens->next;
+    do {
+        if (tokens->type != identsym) {
+            // TODO: throw error
+        }
+
+        addToSymbolTable(&symbolTable, tokens->lexeme, 2, 0, 0, 0);
+
+        tokens = tokens->next;
+    } while (tokens->type != commasym);
+
+    if (tokens->type != semicolonsym) {
+        // TODO: throw error
+    }
 }
 
 void procedure(token* tokens, symbol* symbolTable) {
