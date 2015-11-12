@@ -33,9 +33,12 @@ void writeSymbolTable(symbol* symbolTable, FILE* symTblPtr) {
 void addToSymbolTable(symbol** symbolTable, char* name, int kind, int value, int level, int address) {
     int index = hashToken(name, kind) % MAX_SYMBOL_TABLE_SIZE;
 
+    printf("Adding symbol to index %d from name:%s kind:%d value:%d level:%d address:%d\n", index, name, kind, value, level, address);
     // Detect collision
     if ((*symbolTable)[index].kind != 0) {
+        printf("Collision adding symbol\n");
         linearProbe(&index, symbolTable);
+        printf("Collision resolved with index at %d\n", index);
     }
 
     strcpy((*symbolTable)[index].name,name);
@@ -74,14 +77,14 @@ void program(token* tokens, symbol* symbolTable, int level) {
 /* block := [constant] [variable] {procedure} [statement] */
 void block(token** tokens, symbol* symbolTable, int level) {
 
-    printf("In block, curr token is %d %s\n", (*tokens)->type, (*tokens)->lexeme);
+    printf("In block, curr token is %d %s level:%d\n", (*tokens)->type, (*tokens)->lexeme, level);
 
     if ((*tokens)->type == constsym) {
-        constant(tokens, symbolTable);
+        constant(tokens, symbolTable, level);
     }
 
     if ((*tokens)->type == varsym) {
-        variable(tokens, symbolTable);
+        variable(tokens, symbolTable, level);
     }
 
     if((*tokens)->type == procsym) {
@@ -92,7 +95,7 @@ void block(token** tokens, symbol* symbolTable, int level) {
 }
 
 /* constant := constsym identsym equalsym numbersym {commasym identsym equalsym numbersym} semicolonsym*/
-void constant(token** tokens, symbol* symbolTable) {
+void constant(token** tokens, symbol* symbolTable, int level) {
 
     printf("In constant, curr token is %d %s\n", (*tokens)->type, (*tokens)->lexeme);
     if ((*tokens)->type != constsym) {
@@ -104,6 +107,7 @@ void constant(token** tokens, symbol* symbolTable) {
         if ((*tokens)->type != identsym) {
             // TODO: throw error
         }
+        char* lexeme = (*tokens)->lexeme;
 
         *tokens = (*tokens)->next;
         if ((*tokens)->type != equalsym) {
@@ -115,7 +119,7 @@ void constant(token** tokens, symbol* symbolTable) {
             // TODO: throw error
         }
 
-        addToSymbolTable(&symbolTable, (*tokens)->lexeme, 1, (*tokens)->value, 0, 0);
+        addToSymbolTable(&symbolTable, lexeme, 1, (*tokens)->value, level, 0);
 
         *tokens = (*tokens)->next;
 
@@ -129,7 +133,7 @@ void constant(token** tokens, symbol* symbolTable) {
 }
 
 /* variable := varsym identsym {commasym identsym} semicolonsym */
-void variable(token** tokens, symbol* symbolTable) {
+void variable(token** tokens, symbol* symbolTable, int level) {
 
     printf("In variable, curr token is %d %s\n", (*tokens)->type, (*tokens)->lexeme);
     if ((*tokens)->type != varsym) {
@@ -143,7 +147,7 @@ void variable(token** tokens, symbol* symbolTable) {
         }
 
         printf("Adding token %d %s\n", (*tokens)->type, (*tokens)->lexeme);
-        addToSymbolTable(&symbolTable, (*tokens)->lexeme, 2, 0, 0, 0);
+        addToSymbolTable(&symbolTable, (*tokens)->lexeme, 2, 0, level, 0);
 
         *tokens = (*tokens)->next;
     } while ((*tokens)->type == commasym);
@@ -158,7 +162,7 @@ void variable(token** tokens, symbol* symbolTable) {
 /* procedure := procsym identsym semicolonsym block semicolonsym */
 void procedure(token** tokens, symbol* symbolTable, int level) {
 
-    printf("In procedure, curr token is %d %s\n", (*tokens)->type, (*tokens)->lexeme);
+    printf("In procedure, curr token is %d %s level:%d\n", (*tokens)->type, (*tokens)->lexeme, level);
     if ((*tokens)->type != procsym) {
         // TODO: throw error
     }
@@ -168,7 +172,7 @@ void procedure(token** tokens, symbol* symbolTable, int level) {
         // TODO: throw error
     }
 
-    addToSymbolTable(&symbolTable, (*tokens)->lexeme, 3, 0, 0, 0);
+    addToSymbolTable(&symbolTable, (*tokens)->lexeme, 3, 0, level, 0);
 
     *tokens = (*tokens)->next;
     if ((*tokens)->type != semicolonsym) {
@@ -176,7 +180,7 @@ void procedure(token** tokens, symbol* symbolTable, int level) {
     }
 
     *tokens = (*tokens)->next;
-    block(tokens, symbolTable, level+1);
+    block(tokens, symbolTable, ++level);
 
     if ((*tokens)->type != semicolonsym) {
         // TODO: throw error
