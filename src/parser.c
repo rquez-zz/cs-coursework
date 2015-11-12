@@ -303,4 +303,19 @@ void condition(token** tokens, symbol* symbolTable) {
     }
 }
 
+/* expression := [plussym | minussym] term { (plussym | minussym) term } */
+void expression(token** tokens, symbol* symbolTable) {
+
+    if ((*tokens)->type == plussym || (*tokens)->type == minussym) {
+        (*tokens) = (*tokens)->next;
+    }
+
+    term(tokens, symbolTable);
+
+    while ((*tokens)->type == plussym || (*tokens)->type == minussym) {
+        (*tokens) = (*tokens)->next;
+        term(tokens, symbolTable);
+    }
+}
+
 }
