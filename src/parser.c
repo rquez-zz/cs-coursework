@@ -64,112 +64,125 @@ void linearProbe(int* index, symbol** symbolTable) {
 
 /* program := block periodsym */
 void program(token* tokens, symbol* symbolTable, int level) {
-    block(tokens, symbolTable, level);
+    printf("In program, curr token is %d %s\n", tokens->type, tokens->lexeme);
+    block(&tokens, symbolTable, level);
     if (tokens->type != periodsym) {
         // TODO: throw error
     }
 }
 
 /* block := [constant] [variable] {procedure} [statement] */
-void block(token* tokens, symbol* symbolTable, int level) {
+void block(token** tokens, symbol* symbolTable, int level) {
 
-    if (tokens->type == constsym) {
+    printf("In block, curr token is %d %s\n", (*tokens)->type, (*tokens)->lexeme);
+
+    if ((*tokens)->type == constsym) {
         constant(tokens, symbolTable);
-    } else if (tokens->type == varsym) {
+    }
+
+    if ((*tokens)->type == varsym) {
         variable(tokens, symbolTable);
-    } else if(tokens->type == procsym) {
+    }
+
+    if((*tokens)->type == procsym) {
         procedure(tokens, symbolTable, level);
-    } else {
-        // TODO: throw error
     }
 
     statement(tokens, symbolTable);
 }
 
 /* constant := constsym identsym equalsym numbersym {commasym identsym equalsym numbersym} semicolonsym*/
-void constant(token* tokens, symbol* symbolTable) {
+void constant(token** tokens, symbol* symbolTable) {
 
-    if (tokens->type != constsym) {
+    printf("In constant, curr token is %d %s\n", (*tokens)->type, (*tokens)->lexeme);
+    if ((*tokens)->type != constsym) {
         // TODO: throw error
     }
 
     do {
-        tokens = tokens->next;
-        if (tokens->type != identsym) {
-            // TODO: throw error
-        }
-        char* name = tokens->lexeme;
-
-        tokens = tokens->next;
-        if (tokens->type != equalsym) {
+        *tokens = (*tokens)->next;
+        if ((*tokens)->type != identsym) {
             // TODO: throw error
         }
 
-        tokens = tokens->next;
-        if (tokens->type != numbersym) {
+        *tokens = (*tokens)->next;
+        if ((*tokens)->type != equalsym) {
             // TODO: throw error
         }
-        int value = tokens->value;
 
-        addToSymbolTable(&symbolTable, name, 1, value, 0, 0);
+        *tokens = (*tokens)->next;
+        if ((*tokens)->type != numbersym) {
+            // TODO: throw error
+        }
 
-        tokens = tokens->next;
+        addToSymbolTable(&symbolTable, (*tokens)->lexeme, 1, (*tokens)->value, 0, 0);
 
-    } while(tokens->type == commasym);
+        *tokens = (*tokens)->next;
 
-    if (tokens->type != semicolonsym) {
+    } while((*tokens)->type == commasym);
+
+    if ((*tokens)->type != semicolonsym) {
         // TODO: throw error
     }
+
+    *tokens = (*tokens)->next;
 }
 
 /* variable := varsym identsym {commasym identsym} semicolonsym */
-void variable(token* tokens, symbol* symbolTable) {
+void variable(token** tokens, symbol* symbolTable) {
 
-    if (tokens->type != varsym) {
+    printf("In variable, curr token is %d %s\n", (*tokens)->type, (*tokens)->lexeme);
+    if ((*tokens)->type != varsym) {
         // TODO: throw error
     }
 
-    tokens = tokens->next;
     do {
-        if (tokens->type != identsym) {
+        *tokens = (*tokens)->next;
+        if ((*tokens)->type != identsym) {
             // TODO: throw error
         }
 
-        addToSymbolTable(&symbolTable, tokens->lexeme, 2, 0, 0, 0);
+        printf("Adding token %d %s\n", (*tokens)->type, (*tokens)->lexeme);
+        addToSymbolTable(&symbolTable, (*tokens)->lexeme, 2, 0, 0, 0);
 
-        tokens = tokens->next;
-    } while (tokens->type != commasym);
+        *tokens = (*tokens)->next;
+    } while ((*tokens)->type == commasym);
 
-    if (tokens->type != semicolonsym) {
+    if ((*tokens)->type != semicolonsym) {
         // TODO: throw error
     }
+
+    *tokens = (*tokens)->next;
 }
 
 /* procedure := procsym identsym semicolonsym block semicolonsym */
-void procedure(token* tokens, symbol* symbolTable, int level) {
+void procedure(token** tokens, symbol* symbolTable, int level) {
 
-    if (tokens->type != procsym) {
+    printf("In procedure, curr token is %d %s\n", (*tokens)->type, (*tokens)->lexeme);
+    if ((*tokens)->type != procsym) {
         // TODO: throw error
     }
 
-    tokens = tokens->next;
-    if (tokens->type != identsym) {
+    *tokens = (*tokens)->next;
+    if ((*tokens)->type != identsym) {
         // TODO: throw error
     }
 
-    addToSymbolTable(&symbolTable, tokens->lexeme, 3, 0, 0, 0);
+    addToSymbolTable(&symbolTable, (*tokens)->lexeme, 3, 0, 0, 0);
 
-    tokens = tokens->next;
-    if (tokens->type != semicolonsym) {
+    *tokens = (*tokens)->next;
+    if ((*tokens)->type != semicolonsym) {
         // TODO: throw error
     }
-    tokens = tokens->next;
 
+    *tokens = (*tokens)->next;
     block(tokens, symbolTable, level+1);
 
-    if (tokens->type != semicolonsym) {
+    if ((*tokens)->type != semicolonsym) {
         // TODO: throw error
     }
+
+    *tokens = (*tokens)->next;
 }
 
 void statement(token* tokens, symbol* symbolTable) {

@@ -13,8 +13,8 @@ void addToSymbolTable(symbol** symbolTable, char* name, int kind, int value, int
 int hashToken(char* name, int kind);
 void linearProbe(int* index, symbol** symbolTable);
 void program(token* tokens, symbol* symbolTable, int level);
-void block(token* tokens, symbol* symbolTable, int level);
-void constant(token* tokens, symbol* symbolTable);
-void variable(token* tokens, symbol* symbolTable);
-void procedure(token* tokens, symbol* symbolTable, int level);
-void statement(token* tokens, symbol* symbolTable);
+void block(token** tokens, symbol* symbolTable, int level);
+void constant(token** tokens, symbol* symbolTable);
+void variable(token** tokens, symbol* symbolTable);
+void procedure(token** tokens, symbol* symbolTable, int level);
+void statement(token** tokens, symbol* symbolTable);
