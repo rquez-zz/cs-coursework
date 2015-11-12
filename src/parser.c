@@ -275,4 +275,32 @@ void statement(token** tokens, symbol* symbolTable) {
         default:
             break;
 
+    }
+
+}
+
+/* condition :=     oddsym expression
+ *              |   expression rel-op expression
+ */
+void condition(token** tokens, symbol* symbolTable) {
+
+    if ((*tokens)->type == oddsym) {
+
+        (*tokens) = (*tokens)->next;
+        expression(tokens, symbolTable);
+
+    } else {
+
+        expression(tokens, symbolTable);
+
+        // relational operations between [9-14]
+        if ((*tokens)->type < 9 || (*tokens)->type > 14) {
+            fprintf(stderr, "[PARSER-ERROR] relational operator expected\n");
+        }
+        (*tokens) = (*tokens)->next;
+
+        expression(tokens, symbolTable);
+    }
+}
+
 }
