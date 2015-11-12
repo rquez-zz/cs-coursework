@@ -66,7 +66,7 @@ void linearProbe(int* index, symbol** symbolTable) {
 void program(token* tokens, symbol* symbolTable, int level) {
     block(&tokens, symbolTable, level);
     if (tokens->type != periodsym) {
-        // TODO: throw error
+        fprintf(stderr, "[PARSER-ERROR] '.' expected \n");
     }
 }
 
@@ -94,18 +94,18 @@ void constant(token** tokens, symbol* symbolTable, int level) {
     do {
         *tokens = (*tokens)->next;
         if ((*tokens)->type != identsym) {
-            // TODO: throw error
+            fprintf(stderr, "[PARSER-ERROR] identifier expected \n");
         }
         char* lexeme = (*tokens)->lexeme;
 
         *tokens = (*tokens)->next;
         if ((*tokens)->type != equalsym) {
-            // TODO: throw error
+            fprintf(stderr, "[PARSER-ERROR] '=' expected \n");
         }
 
         *tokens = (*tokens)->next;
         if ((*tokens)->type != numbersym) {
-            // TODO: throw error
+            fprintf(stderr, "[PARSER-ERROR] number expected \n");
         }
 
         addToSymbolTable(&symbolTable, lexeme, 1, (*tokens)->value, level, 0);
@@ -115,7 +115,7 @@ void constant(token** tokens, symbol* symbolTable, int level) {
     } while((*tokens)->type == commasym);
 
     if ((*tokens)->type != semicolonsym) {
-        // TODO: throw error
+        fprintf(stderr, "[PARSER-ERROR] ';' expected \n");
     }
 
     *tokens = (*tokens)->next;
@@ -127,7 +127,7 @@ void variable(token** tokens, symbol* symbolTable, int level) {
     do {
         *tokens = (*tokens)->next;
         if ((*tokens)->type != identsym) {
-            // TODO: throw error
+            fprintf(stderr, "[PARSER-ERROR] identifier expected \n");
         }
 
         addToSymbolTable(&symbolTable, (*tokens)->lexeme, 2, 0, level, 0);
@@ -136,7 +136,7 @@ void variable(token** tokens, symbol* symbolTable, int level) {
     } while ((*tokens)->type == commasym);
 
     if ((*tokens)->type != semicolonsym) {
-        // TODO: throw error
+        fprintf(stderr, "[PARSER-ERROR] ';' expected \n");
     }
 
     *tokens = (*tokens)->next;
@@ -147,21 +147,21 @@ void procedure(token** tokens, symbol* symbolTable, int level) {
 
     *tokens = (*tokens)->next;
     if ((*tokens)->type != identsym) {
-        // TODO: throw error
+        fprintf(stderr, "[PARSER-ERROR] identifier expected \n");
     }
 
     addToSymbolTable(&symbolTable, (*tokens)->lexeme, 3, 0, level, 0);
 
     *tokens = (*tokens)->next;
     if ((*tokens)->type != semicolonsym) {
-        // TODO: throw error
+        fprintf(stderr, "[PARSER-ERROR] ';' expected \n");
     }
 
     *tokens = (*tokens)->next;
     block(tokens, symbolTable, ++level);
 
     if ((*tokens)->type != semicolonsym) {
-        // TODO: throw error
+        fprintf(stderr, "[PARSER-ERROR] ';' expected \n");
     }
 
     *tokens = (*tokens)->next;
