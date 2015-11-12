@@ -167,6 +167,112 @@ void procedure(token** tokens, symbol* symbolTable, int level) {
     *tokens = (*tokens)->next;
 }
 
-void statement(token* tokens, symbol* symbolTable) {
+/*
+ * statement :=     ident becomesym expression
+ *              |   callsym identsym
+ *              |   beginsym statement {semicolonsym statement} endsym
+ *              |   ifsym condition thensym statement [elsesym statement]
+ *              |   whilesym condition dosym statement
+ *              |   readsym identsym
+ *              |   writesym identsym
+ *              |   e
+ */
+void statement(token** tokens, symbol* symbolTable) {
+
+    switch((*tokens)->type) {
+
+        // ident becomesym expression
+        case identsym:
+            *tokens = (*tokens)->next;
+            if ((*tokens)->type != becomesym) {
+                fprintf(stderr, "[PARSER-ERROR] ':=' expected\n");
+            }
+            *tokens = (*tokens)->next;
+
+            expression(tokens, symbolTable);
+
+            break;
+
+        // callsym identsym
+        case callsym:
+            *tokens = (*tokens)->next;
+            if ((*tokens)->type != identsym) {
+                fprintf(stderr, "[PARSER-ERROR] 'identifier' expected\n");
+            }
+            *tokens = (*tokens)->next;
+            break;
+
+        // beginsym statement {semicolonsym statement} endsym
+        case beginsym:
+            *tokens = (*tokens)->next;
+
+            statement(tokens, symbolTable);
+
+            while ((*tokens)->type == semicolonsym) {
+                *tokens = (*tokens)->next;
+                statement(tokens,symbolTable);
+            }
+
+            if ((*tokens)->type != endsym) {
+                fprintf(stderr, "[PARSER-ERROR] 'end' expected\n");
+            }
+            *tokens = (*tokens)->next;
+            break;
+
+        // ifsym condition thensym statement [elsesym statement]
+        case ifsym:
+            *tokens = (*tokens)->next;
+
+            condition(tokens, symbolTable);
+
+            if ((*tokens)->type != thensym) {
+                fprintf(stderr, "[PARSER-ERROR] 'then' expected\n");
+            }
+            *tokens = (*tokens)->next;
+
+            statement(tokens,symbolTable);
+
+            if ((*tokens)->type == elsesym) {
+                *tokens = (*tokens)->next;
+                statement(tokens,symbolTable);
+            }
+            break;
+
+        // whilesym condition dosym statement
+        case whilesym:
+            *tokens = (*tokens)->next;
+
+            condition(tokens, symbolTable);
+
+            if ((*tokens)->type != dosym) {
+                fprintf(stderr, "[PARSER-ERROR] 'do' expected\n");
+            }
+            *tokens = (*tokens)->next;
+
+            statement(tokens,symbolTable);
+
+            break;
+
+        // readsym identsym
+        case readsym:
+            *tokens = (*tokens)->next;
+            if ((*tokens)->type != identsym) {
+                fprintf(stderr, "[PARSER-ERROR] 'identifier' expected\n");
+            }
+            *tokens = (*tokens)->next;
+            break;
+
+        // writesym identsym
+        case writesym:
+            *tokens = (*tokens)->next;
+            if ((*tokens)->type != identsym) {
+                fprintf(stderr, "[PARSER-ERROR] 'identifier' expected\n");
+            }
+            *tokens = (*tokens)->next;
+            break;
+
+        // empty string case
+        default:
+            break;
 
 }
