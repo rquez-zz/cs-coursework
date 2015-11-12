@@ -2,7 +2,7 @@
 
 int parse(const char* symbolTablePath, token* tokens, symbol* symbolTablePtr) {
 
-    program(tokens, symbolTablePtr);
+    program(tokens, symbolTablePtr, 0);
     FILE* symTblPtr = openFileParser(symbolTablePath, "w");
     writeSymbolTable(symbolTablePtr, symTblPtr);
 
@@ -63,22 +63,22 @@ void linearProbe(int* index, symbol** symbolTable) {
 }
 
 /* program := block periodsym */
-void program(token* tokens, symbol* symbolTable) {
-    block(tokens, symbolTable);
+void program(token* tokens, symbol* symbolTable, int level) {
+    block(tokens, symbolTable, level);
     if (tokens->type != periodsym) {
         // TODO: throw error
     }
 }
 
 /* block := [constant] [variable] {procedure} [statement] */
-void block(token* tokens, symbol* symbolTable) {
+void block(token* tokens, symbol* symbolTable, int level) {
 
     if (tokens->type == constsym) {
         constant(tokens, symbolTable);
     } else if (tokens->type == varsym) {
         variable(tokens, symbolTable);
     } else if(tokens->type == procsym) {
-        procedure(tokens, symbolTable);
+        procedure(tokens, symbolTable, level);
     } else {
         // TODO: throw error
     }
@@ -146,7 +146,7 @@ void variable(token* tokens, symbol* symbolTable) {
 }
 
 /* procedure := procsym identsym semicolonsym block semicolonsym */
-void procedure(token* tokens, symbol* symbolTable) {
+void procedure(token* tokens, symbol* symbolTable, int level) {
 
     if (tokens->type != procsym) {
         // TODO: throw error
@@ -165,8 +165,7 @@ void procedure(token* tokens, symbol* symbolTable) {
     }
     tokens = tokens->next;
 
-    block(tokens, symbolTable);
-    //block(tokens, symbolTable, level+1);
+    block(tokens, symbolTable, level+1);
 
     if (tokens->type != semicolonsym) {
         // TODO: throw error
