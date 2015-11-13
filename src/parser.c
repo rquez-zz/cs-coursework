@@ -497,10 +497,6 @@ void factor(token** tokens, symbol* symbolTable, int level) {
             break;
 
         case numbersym:
-            if ((*tokens)->value > 9999) {
-                fprintf(stderr, "[PARSER-ERROR] This number is too large. line %d\n", (*tokens)->lineNumber);
-                exit(EXIT_FAILURE);
-            }
             (*tokens) = (*tokens)->next;
             break;
 
