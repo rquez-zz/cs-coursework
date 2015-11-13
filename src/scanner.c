@@ -375,8 +375,8 @@ int scan(const char* inputPath, const char* cleanInputPath,
             lineNumber++;
 
         // Throw error for invalid character
-        if (!matched && ch != ' ' && ch != '\n' && ch != '\r' && ch != -1) {
-            fprintf(stdout, "[SCANNER-ERROR] Invalid character %c, at line %d.", ch, lineNumber);
+        if (!matched && ch != ' ' && ch != '\n' && ch != '\r' && ch != -1 && ch != 9) {
+            fprintf(stdout, "[SCANNER-ERROR] Invalid character HEY '%c' value:%d, at line %d.", ch, ch, lineNumber);
             exit(EXIT_FAILURE);
         }
     }
