@@ -8,10 +8,10 @@ void setup() {
 }
 
 void testScan() {
-    const char* testInputAll = "input/input-test-all.txt";
-    const char* testCleanOutput = "output/input-test-all-clean.txt";
-    const char* testLexTable = "output/input-test-all-lex-table.txt";
-    const char* testTokenListPath = "output/input-test-all-token-list.txt";
+    const char* testInputAll = "test/input/input-test-all.txt";
+    const char* testCleanOutput = "output/cleanInput-test-all-txt";
+    const char* testLexTable = "output/lexTable-test-all.txt";
+    const char* testTokenListPath = "output/tokenList-test-all.txt";
     token tokens;
 
     scan(testInputAll, testCleanOutput, testLexTable, testTokenListPath, &tokens);
@@ -34,11 +34,11 @@ void testScan() {
 
 
 void testParse() {
-    const char* testInputAll = "input/input-test-parser.txt";
-    const char* testCleanOutput = "output/input-test-parser-clean.txt";
-    const char* testLexTable = "output/input-test-parser-lex-table.txt";
-    const char* testTokenListPath = "output/input-test-parser-token-list.txt";
-    const char* testSymbolTablePath = "output/input-test-all-symbol-table.txt";
+    const char* testInputAll = "test/input/input-test-parser.txt";
+    const char* testCleanOutput = "output/cleanInput-test-parser-txt";
+    const char* testLexTable = "output/lexTable-test-parser.txt";
+    const char* testTokenListPath = "output/tokenList-test-parser.txt";
+    const char* testSymbolTablePath = "output/symbolTable-test-parser.txt";
 
     token tokens;
     scan(testInputAll, testCleanOutput, testLexTable, testTokenListPath, &tokens);

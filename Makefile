@@ -36,3 +36,4 @@ run :
 test : test.o
 	$(CC) $(CFLAGS) $(TEST_OBJECTS) -o $(TEST_PROGRAM)
 	$(TEST_PROGRAM)
+	@rm output/*test*
