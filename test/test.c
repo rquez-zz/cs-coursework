@@ -39,6 +39,7 @@ void testParse() {
     const char* testLexTable = "output/lexTable-test-parser.txt";
     const char* testTokenListPath = "output/tokenList-test-parser.txt";
     const char* testSymbolTablePath = "output/symbolTable-test-parser.txt";
+    const char* testMcodePath = "output/mcode-test-parser.txt";
 
     token tokens;
     scan(testInputAll, testCleanOutput, testLexTable, testTokenListPath, &tokens);
@@ -52,7 +53,7 @@ void testParse() {
         symbolTable[j].level = 0;
         symbolTable[j].address = 0;
     }
-    parse(testSymbolTablePath, &tokens, symbolTable);
+    parse(testMcodePath, testSymbolTablePath, &tokens, symbolTable);
 
     FILE* ifp = fopen("test/output/symbolTable-test-parser.txt", "r");
     char name[12];

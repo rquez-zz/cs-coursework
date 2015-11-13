@@ -1,12 +1,12 @@
 #include "parser.h"
+#include "generator.h"
 
-int parse(const char* symbolTablePath, token* tokens, symbol* symbolTablePtr) {
+void parse(const char* symbolTablePath, const char* mcodePath, token* tokens, symbol* symbolTablePtr) {
 
     program(tokens, symbolTablePtr, 0);
     FILE* symTblPtr = openFileParser(symbolTablePath, "w");
     writeSymbolTable(symbolTablePtr, symTblPtr);
-
-    return 0;
+    FILE* mcodePtr = openFileParser(symbolTablePath, "w");
 }
 
 /* Opens a file and returns a FILE pointer */

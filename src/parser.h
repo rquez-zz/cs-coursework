@@ -6,7 +6,7 @@
 #include "symbol.h"
 #include "token.h"
 
-int parse(const char* symbolTablePath, token* tokens, symbol* symbolTable);
+void parse(const char* symbolTablePath, const char* mcodePath, token* tokens, symbol* symbolTable);
 FILE* openFileParser(const char* path, const char* op);
 void writeSymbolTable(symbol* symbolTable, FILE* symTblPtr);
 void addToSymbolTable(symbol** symbolTable, char* name, int kind, int value, int level, int address);

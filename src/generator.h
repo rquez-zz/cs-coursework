@@ -2,5 +2,4 @@
 #include "symbol.h"
 #include "token.h"
 
-int generate(const char* mcodePath, token* tokens, symbol* symbolTable);
-int buildCode(char* instruction, int level, int address);
+void generate(FILE* mcodePtr, char* op, int level, int address);

@@ -4,4 +4,3 @@
 
 #include "scanner.h"
 #include "parser.h"
-#include "generator.h"

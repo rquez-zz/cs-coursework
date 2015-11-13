@@ -25,10 +25,7 @@ int main(int argc, char* argv[]) {
         symbolTable[j].level = 0;
         symbolTable[j].address = 0;
     }
-    parse(symbolTablePath, &tokens, symbolTable);
-
-    fprintf(stdout, "[GENERATOR] Starting...\n");
-    generate(mcodePath, &tokens, symbolTable);
+    parse(mcodePath, symbolTablePath, &tokens, symbolTable);
 
     return 0;
 }
