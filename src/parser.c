@@ -78,11 +78,11 @@ int lookupIdentifier(char* name, symbol** symbolTable, int level) {
     int indexVar = hashToken(name, 2) % MAX_SYMBOL_TABLE_SIZE;
     int indexPro = hashToken(name, 3) % MAX_SYMBOL_TABLE_SIZE;
 
-    if (strcmp((*symbolTable)[indexCon].name, name) == 0 && (*symbolTable)[indexCon].level == level)
+    if (strcmp((*symbolTable)[indexCon].name, name) == 0 && (*symbolTable)[indexCon].level <= level)
         return 1;
-    if (strcmp((*symbolTable)[indexVar].name, name) == 0 && (*symbolTable)[indexVar].level == level)
+    if (strcmp((*symbolTable)[indexVar].name, name) == 0 && (*symbolTable)[indexVar].level <= level)
         return 2;
-    if (strcmp((*symbolTable)[indexPro].name, name) == 0 && (*symbolTable)[indexPro].level == level)
+    if (strcmp((*symbolTable)[indexPro].name, name) == 0 && (*symbolTable)[indexPro].level <= level)
         return 3;
 
     return 0;
