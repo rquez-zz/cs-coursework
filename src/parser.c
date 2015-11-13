@@ -88,6 +88,7 @@ void program(token* tokens, symbol* symbolTable, int level) {
     block(&tokens, symbolTable, level);
     if (tokens->type != periodsym) {
         fprintf(stderr, "[PARSER-ERROR] '.' expected \n");
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -107,6 +108,11 @@ void block(token** tokens, symbol* symbolTable, int level) {
     }
 
     statement(tokens, symbolTable);
+
+    if ((*tokens)->type != semicolonsym && (*tokens)->type != periodsym) {
+        fprintf(stderr, "[PARSER-ERROR] Incorrect symbol after statement part in block.\n");
+        exit(EXIT_FAILURE);
+    }
 }
 
 /* constant := constsym identsym equalsym numbersym {commasym identsym equalsym numbersym} semicolonsym*/
@@ -116,6 +122,7 @@ void constant(token** tokens, symbol* symbolTable, int level) {
         *tokens = (*tokens)->next;
         if ((*tokens)->type != identsym) {
             fprintf(stderr, "[PARSER-ERROR] 'const' must be followed by an identifier.\n");
+            exit(EXIT_FAILURE);
         }
         char* lexeme = (*tokens)->lexeme;
 
@@ -126,11 +133,13 @@ void constant(token** tokens, symbol* symbolTable, int level) {
             } else {
                 fprintf(stderr, "[PARSER-ERROR] '=' expected \n");
             }
+            exit(EXIT_FAILURE);
         }
 
         *tokens = (*tokens)->next;
         if ((*tokens)->type != numbersym) {
             fprintf(stderr, "[PARSER-ERROR] '=' must be followed by a number.\n");
+            exit(EXIT_FAILURE);
         }
 
         addToSymbolTable(&symbolTable, lexeme, 1, (*tokens)->value, level, 0);
@@ -141,6 +150,7 @@ void constant(token** tokens, symbol* symbolTable, int level) {
 
     if ((*tokens)->type != semicolonsym) {
         fprintf(stderr, "[PARSER-ERROR] ';' missing.\n");
+        exit(EXIT_FAILURE);
     }
 
     *tokens = (*tokens)->next;
@@ -153,6 +163,7 @@ void variable(token** tokens, symbol* symbolTable, int level) {
         *tokens = (*tokens)->next;
         if ((*tokens)->type != identsym) {
             fprintf(stderr, "[PARSER-ERROR] 'var' must be followed by an identifier.\n");
+            exit(EXIT_FAILURE);
         }
 
         addToSymbolTable(&symbolTable, (*tokens)->lexeme, 2, 0, level, 0);
@@ -162,6 +173,7 @@ void variable(token** tokens, symbol* symbolTable, int level) {
 
     if ((*tokens)->type != semicolonsym) {
         fprintf(stderr, "[PARSER-ERROR] ';' missing.\n");
+        exit(EXIT_FAILURE);
     }
 
     *tokens = (*tokens)->next;
@@ -172,7 +184,8 @@ void procedure(token** tokens, symbol* symbolTable, int level) {
 
     *tokens = (*tokens)->next;
     if ((*tokens)->type != identsym) {
-        fprintf(stderr, "[PARSER-ERROR] 'procedure' must be followed by an identifier. Incorrect symbol after procedure declaration.\n");
+        fprintf(stderr, "[PARSER-ERROR] 'procedure' must be followed by an identifier.\n");
+        exit(EXIT_FAILURE);
     }
 
     addToSymbolTable(&symbolTable, (*tokens)->lexeme, 3, 0, level, 0);
@@ -180,20 +193,37 @@ void procedure(token** tokens, symbol* symbolTable, int level) {
     *tokens = (*tokens)->next;
     if ((*tokens)->type != semicolonsym) {
         fprintf(stderr, "[PARSER-ERROR] ';' missing.\n");
+        exit(EXIT_FAILURE);
     }
 
     *tokens = (*tokens)->next;
+    if (
+            (*tokens)->type != constsym &&
+            (*tokens)->type != varsym &&
+            (*tokens)->type != procsym &&
+            (*tokens)->type != identsym &&
+            (*tokens)->type != callsym &&
+            (*tokens)->type != beginsym &&
+            (*tokens)->type != ifsym &&
+            (*tokens)->type != whilesym &&
+            (*tokens)->type != readsym &&
+            (*tokens)->type != writesym) {
+
+        fprintf(stderr, "[PARSER-ERROR] Incorrect symbol after procedure declaration.\n");
+        exit(EXIT_FAILURE);
+    }
     block(tokens, symbolTable, ++level);
 
     if ((*tokens)->type != semicolonsym) {
         fprintf(stderr, "[PARSER-ERROR] ';' missing.\n");
+        exit(EXIT_FAILURE);
     }
 
     *tokens = (*tokens)->next;
 }
 
 /*
- * statement :=     ident becomesym expression
+ * statement :=     identsym becomesym expression
  *              |   callsym identsym
  *              |   beginsym statement {semicolonsym statement} endsym
  *              |   ifsym condition thensym statement [elsesym statement]
@@ -224,79 +254,26 @@ void statement(token** tokens, symbol* symbolTable) {
 
             *tokens = (*tokens)->next;
             if ((*tokens)->type != becomesym) {
-                fprintf(stderr, "[PARSER-ERROR] Identifier must be followed by ':='.\n");
+                fprintf(stderr, "[PARSER-ERROR] Assignment operator expected.\n");
+                exit(EXIT_FAILURE);
             }
-            *tokens = (*tokens)->next;
 
+            *tokens = (*tokens)->next;
             expression(tokens, symbolTable);
+
+            if ((*tokens)->type != semicolonsym) {
+                fprintf(stderr, "[PARSER-ERROR] ';' missing.\n");
+                exit(EXIT_FAILURE);
+            }
 
             break;
 
         // callsym identsym
         case callsym:
+
             *tokens = (*tokens)->next;
             if ((*tokens)->type != identsym) {
-                fprintf(stderr, "[PARSER-ERROR] 'identifier' expected\n");
-            }
-            *tokens = (*tokens)->next;
-            break;
-
-        // beginsym statement {semicolonsym statement} endsym
-        case beginsym:
-            *tokens = (*tokens)->next;
-
-            statement(tokens, symbolTable);
-
-            while ((*tokens)->type == semicolonsym) {
-                *tokens = (*tokens)->next;
-                statement(tokens,symbolTable);
-            }
-
-            if ((*tokens)->type != endsym) {
-                fprintf(stderr, "[PARSER-ERROR] 'end' expected\n");
-            }
-            *tokens = (*tokens)->next;
-            break;
-
-        // ifsym condition thensym statement [elsesym statement]
-        case ifsym:
-            *tokens = (*tokens)->next;
-
-            condition(tokens, symbolTable);
-
-            if ((*tokens)->type != thensym) {
-                fprintf(stderr, "[PARSER-ERROR] 'then' expected\n");
-            }
-            *tokens = (*tokens)->next;
-
-            statement(tokens,symbolTable);
-
-            if ((*tokens)->type == elsesym) {
-                *tokens = (*tokens)->next;
-                statement(tokens,symbolTable);
-            }
-            break;
-
-        // whilesym condition dosym statement
-        case whilesym:
-            *tokens = (*tokens)->next;
-
-            condition(tokens, symbolTable);
-
-            if ((*tokens)->type != dosym) {
-                fprintf(stderr, "[PARSER-ERROR] 'do' expected\n");
-            }
-            *tokens = (*tokens)->next;
-
-            statement(tokens,symbolTable);
-
-            break;
-
-        // readsym identsym
-        case readsym:
-            *tokens = (*tokens)->next;
-            if ((*tokens)->type != identsym) {
-                fprintf(stderr, "[PARSER-ERROR] Identifier must be followed by 'call'. expected\n");
+                fprintf(stderr, "[PARSER-ERROR] Identifier must be followed by 'call'.\n");
                 exit(EXIT_FAILURE);
             }
 
@@ -312,6 +289,105 @@ void statement(token** tokens, symbol* symbolTable) {
                     fprintf(stderr, "[PARSER-ERROR] Call of a variable is meaningless\n");
                     exit(EXIT_FAILURE);
             }
+
+            *tokens = (*tokens)->next;
+
+            break;
+
+        // beginsym statement {semicolonsym statement} endsym
+        case beginsym:
+            *tokens = (*tokens)->next;
+
+            if ((*tokens)->type != identsym &&
+                    (*tokens)->type != callsym &&
+                    (*tokens)->type != beginsym &&
+                    (*tokens)->type != ifsym &&
+                    (*tokens)->type != whilesym &&
+                    (*tokens)->type != readsym &&
+                    (*tokens)->type != writesym) {
+
+                fprintf(stderr, "[PARSER-ERROR] Statement expected.\n");
+                exit(EXIT_FAILURE);
+            }
+            statement(tokens, symbolTable);
+
+            while ((*tokens)->type == semicolonsym) {
+                *tokens = (*tokens)->next;
+                statement(tokens,symbolTable);
+            }
+
+            if ((*tokens)->type != endsym) {
+                fprintf(stderr, "[PARSER-ERROR] 'end' expected.\n");
+                exit(EXIT_FAILURE);
+            }
+            *tokens = (*tokens)->next;
+            break;
+
+        // ifsym condition thensym statement [elsesym statement]
+        case ifsym:
+            *tokens = (*tokens)->next;
+
+            condition(tokens, symbolTable);
+
+            if ((*tokens)->type != thensym) {
+                fprintf(stderr, "[PARSER-ERROR] 'then' expected.\n");
+                exit(EXIT_FAILURE);
+            }
+            *tokens = (*tokens)->next;
+
+            if ((*tokens)->type != identsym &&
+                    (*tokens)->type != callsym &&
+                    (*tokens)->type != beginsym &&
+                    (*tokens)->type != ifsym &&
+                    (*tokens)->type != whilesym &&
+                    (*tokens)->type != readsym &&
+                    (*tokens)->type != writesym) {
+
+                fprintf(stderr, "[PARSER-ERROR] Statement expected.\n");
+                exit(EXIT_FAILURE);
+            }
+            statement(tokens,symbolTable);
+
+            if ((*tokens)->type == elsesym) {
+                *tokens = (*tokens)->next;
+                statement(tokens,symbolTable);
+            }
+            break;
+
+        // whilesym condition dosym statement
+        case whilesym:
+            *tokens = (*tokens)->next;
+
+            condition(tokens, symbolTable);
+
+            if ((*tokens)->type != dosym) {
+                fprintf(stderr, "[PARSER-ERROR] 'do' expected.\n");
+                exit(EXIT_FAILURE);
+            }
+            *tokens = (*tokens)->next;
+
+            if ((*tokens)->type != identsym &&
+                    (*tokens)->type != callsym &&
+                    (*tokens)->type != beginsym &&
+                    (*tokens)->type != ifsym &&
+                    (*tokens)->type != whilesym &&
+                    (*tokens)->type != readsym &&
+                    (*tokens)->type != writesym) {
+
+                fprintf(stderr, "[PARSER-ERROR] Statement expected.\n");
+                exit(EXIT_FAILURE);
+            }
+            statement(tokens,symbolTable);
+
+            break;
+
+        // readsym identsym
+        case readsym:
+            *tokens = (*tokens)->next;
+            if ((*tokens)->type != identsym) {
+                fprintf(stderr, "[PARSER-ERROR] An identifier must follow 'read'.\n");
+                exit(EXIT_FAILURE);
+            }
             *tokens = (*tokens)->next;
             break;
 
@@ -319,7 +395,8 @@ void statement(token** tokens, symbol* symbolTable) {
         case writesym:
             *tokens = (*tokens)->next;
             if ((*tokens)->type != identsym) {
-                fprintf(stderr, "[PARSER-ERROR] 'identifier' expected\n");
+                fprintf(stderr, "[PARSER-ERROR] An identifier must follow 'write'.\n");
+                exit(EXIT_FAILURE);
             }
             *tokens = (*tokens)->next;
             break;
@@ -329,7 +406,6 @@ void statement(token** tokens, symbol* symbolTable) {
             break;
 
     }
-
 }
 
 /* condition :=     oddsym expression
@@ -349,6 +425,7 @@ void condition(token** tokens, symbol* symbolTable) {
         // relational operations between [9-14]
         if ((*tokens)->type < 9 || (*tokens)->type > 14) {
             fprintf(stderr, "[PARSER-ERROR] relational operator expected\n");
+            exit(EXIT_FAILURE);
         }
         (*tokens) = (*tokens)->next;
 
@@ -361,6 +438,11 @@ void expression(token** tokens, symbol* symbolTable) {
 
     if ((*tokens)->type == plussym || (*tokens)->type == minussym) {
         (*tokens) = (*tokens)->next;
+    }
+
+    if ((*tokens)->type != identsym && (*tokens)->type != numbersym && (*tokens)->type != lparentsym) {
+        fprintf(stderr, "[PARSER-ERROR] An expression cannot begin with '%s'.\n", (*tokens)->lexeme);
+        exit(EXIT_FAILURE);
     }
 
     term(tokens, symbolTable);
@@ -402,6 +484,10 @@ void factor(token** tokens, symbol* symbolTable) {
             break;
 
         case numbersym:
+            if ((*tokens)->value > 9999) {
+                fprintf(stderr, "[PARSER-ERROR] This number is too large.\n");
+                exit(EXIT_FAILURE);
+            }
             (*tokens) = (*tokens)->next;
             break;
 
@@ -409,13 +495,14 @@ void factor(token** tokens, symbol* symbolTable) {
             (*tokens) = (*tokens)->next;
             expression(tokens, symbolTable);
             if ((*tokens)->type != rparentsym) {
-                fprintf(stderr, "[PARSER-ERROR] ')' expected \n");
+                fprintf(stderr, "[PARSER-ERROR] ')' is missing.\n");
+                exit(EXIT_FAILURE);
             }
             (*tokens) = (*tokens)->next;
             break;
 
         default:
-            fprintf(stderr, "[PARSER-ERROR] unexpected token %s\n", (*tokens)->lexeme);
-            break;
+            fprintf(stderr, "[PARSER-ERROR] The preceding factor cannot begin with '%s'.\n", (*tokens)->lexeme);
+            exit(EXIT_FAILURE);
     }
 }
