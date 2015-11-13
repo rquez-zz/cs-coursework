@@ -269,8 +269,6 @@ int scan(const char* inputPath, const char* cleanInputPath,
             if (cha == '=') {
                 matched = 1;
                 addToList(&tokens, ":=", 0, becomesym, &countTokens);
-                cha = getc(ifp);
-                ch = cha;
             } else {
                 // Not :=, go back
                 matched = 0;
