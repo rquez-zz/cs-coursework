@@ -94,18 +94,22 @@ void constant(token** tokens, symbol* symbolTable, int level) {
     do {
         *tokens = (*tokens)->next;
         if ((*tokens)->type != identsym) {
-            fprintf(stderr, "[PARSER-ERROR] identifier expected \n");
+            fprintf(stderr, "[PARSER-ERROR] 'const' must be followed by an identifier.\n");
         }
         char* lexeme = (*tokens)->lexeme;
 
         *tokens = (*tokens)->next;
         if ((*tokens)->type != equalsym) {
-            fprintf(stderr, "[PARSER-ERROR] '=' expected \n");
+            if ((*tokens)->type == becomesym) {
+                fprintf(stderr, "[PARSER-ERROR] Use = instead of ':='.\n");
+            } else {
+                fprintf(stderr, "[PARSER-ERROR] '=' expected \n");
+            }
         }
 
         *tokens = (*tokens)->next;
         if ((*tokens)->type != numbersym) {
-            fprintf(stderr, "[PARSER-ERROR] number expected \n");
+            fprintf(stderr, "[PARSER-ERROR] '=' must be followed by a number.\n");
         }
 
         addToSymbolTable(&symbolTable, lexeme, 1, (*tokens)->value, level, 0);
@@ -115,7 +119,7 @@ void constant(token** tokens, symbol* symbolTable, int level) {
     } while((*tokens)->type == commasym);
 
     if ((*tokens)->type != semicolonsym) {
-        fprintf(stderr, "[PARSER-ERROR] ';' expected \n");
+        fprintf(stderr, "[PARSER-ERROR] ';' missing.\n");
     }
 
     *tokens = (*tokens)->next;
@@ -127,7 +131,7 @@ void variable(token** tokens, symbol* symbolTable, int level) {
     do {
         *tokens = (*tokens)->next;
         if ((*tokens)->type != identsym) {
-            fprintf(stderr, "[PARSER-ERROR] identifier expected \n");
+            fprintf(stderr, "[PARSER-ERROR] 'var' must be followed by an identifier.\n");
         }
 
         addToSymbolTable(&symbolTable, (*tokens)->lexeme, 2, 0, level, 0);
@@ -136,7 +140,7 @@ void variable(token** tokens, symbol* symbolTable, int level) {
     } while ((*tokens)->type == commasym);
 
     if ((*tokens)->type != semicolonsym) {
-        fprintf(stderr, "[PARSER-ERROR] ';' expected \n");
+        fprintf(stderr, "[PARSER-ERROR] ';' missing.\n");
     }
 
     *tokens = (*tokens)->next;
@@ -147,21 +151,21 @@ void procedure(token** tokens, symbol* symbolTable, int level) {
 
     *tokens = (*tokens)->next;
     if ((*tokens)->type != identsym) {
-        fprintf(stderr, "[PARSER-ERROR] identifier expected \n");
+        fprintf(stderr, "[PARSER-ERROR] 'procedure' must be followed by an identifier. Incorrect symbol after procedure declaration.\n");
     }
 
     addToSymbolTable(&symbolTable, (*tokens)->lexeme, 3, 0, level, 0);
 
     *tokens = (*tokens)->next;
     if ((*tokens)->type != semicolonsym) {
-        fprintf(stderr, "[PARSER-ERROR] ';' expected \n");
+        fprintf(stderr, "[PARSER-ERROR] ';' missing.\n");
     }
 
     *tokens = (*tokens)->next;
     block(tokens, symbolTable, ++level);
 
     if ((*tokens)->type != semicolonsym) {
-        fprintf(stderr, "[PARSER-ERROR] ';' expected \n");
+        fprintf(stderr, "[PARSER-ERROR] ';' missing.\n");
     }
 
     *tokens = (*tokens)->next;
@@ -185,7 +189,7 @@ void statement(token** tokens, symbol* symbolTable) {
         case identsym:
             *tokens = (*tokens)->next;
             if ((*tokens)->type != becomesym) {
-                fprintf(stderr, "[PARSER-ERROR] ':=' expected\n");
+                fprintf(stderr, "[PARSER-ERROR] Identifier must be followed by ':='.\n");
             }
             *tokens = (*tokens)->next;
 
