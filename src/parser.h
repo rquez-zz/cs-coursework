@@ -22,3 +22,4 @@ void condition(token** tokens, symbol* symbolTable);
 void expression(token** tokens, symbol* symbolTable);
 void term(token** tokens, symbol* symbolTable);
 void factor(token** tokens, symbol* symbolTable);
+int lookupIdentifier(char* name, symbol** symbolTable);

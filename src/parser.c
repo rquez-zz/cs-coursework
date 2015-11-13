@@ -54,6 +54,27 @@ int hashToken(char* name, int kind) {
     return (sum + kind) * 71;
 }
 
+/* Returns 1 if ident is a const
+ * Returns 2 if ident is a var
+ * Returns 3 if ident is a proc
+ * Returns 0 if ident is not in symbol table
+ */
+int lookupIdentifier(char* name, symbol** symbolTable) {
+
+    int indexCon = hashToken(name, 1) % MAX_SYMBOL_TABLE_SIZE;
+    int indexVar = hashToken(name, 2) % MAX_SYMBOL_TABLE_SIZE;
+    int indexPro = hashToken(name, 3) % MAX_SYMBOL_TABLE_SIZE;
+
+    if (strcmp((*symbolTable)[indexCon].name, name) == 0)
+        return 1;
+    if (strcmp((*symbolTable)[indexVar].name, name) == 0)
+        return 2;
+    if (strcmp((*symbolTable)[indexPro].name, name) == 0)
+        return 3;
+
+    return 0;
+}
+
 /* Linear probing collision resolution */
 void linearProbe(int* index, symbol** symbolTable) {
     // symbol's kind field will either be 1, 2 or 3
