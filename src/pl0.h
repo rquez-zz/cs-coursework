@@ -4,6 +4,3 @@
 
 #include "scanner.h"
 #include "parser.h"
-#include "generator.h"
-
-#define MAX_SYMBOLS (100)

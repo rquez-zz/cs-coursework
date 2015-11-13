@@ -5,7 +5,7 @@
 
 #include "token.h"
 
-FILE* openFile(const char* path, const char* op);
+FILE* openFileScanner(const char* path, const char* op);
 void append(char* string, char c);
 FILE* getCleanInput(const char* inputPath, const char* outputPath);
 void writeTokens(token* tokens, FILE* lexTblPtr, FILE* tokLstPtr, int count);

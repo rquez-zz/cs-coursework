@@ -13,20 +13,19 @@ int main(int argc, char* argv[]) {
 
     fprintf(stdout, "[SCANNER] Starting...\n");
     token tokens;
-    if (scan(inputPath, cleanInputPath, lexTablePath, tokenListPath, &tokens) != 0) {
-        return -1;
-    }
+    scan(inputPath, cleanInputPath, lexTablePath, tokenListPath, &tokens);
 
     fprintf(stdout, "[PARSER] Starting...\n");
-    symbol symbolTable[MAX_SYMBOLS] = { { 0 } };
-    if (parse(symbolTablePath, &tokens, symbolTable) != 0) {
-        return -1;
+    symbol symbolTable[MAX_SYMBOL_TABLE_SIZE];
+    int j = 0;
+    for (j = 0; j < MAX_SYMBOL_TABLE_SIZE; j++) {
+        strcpy(symbolTable[j].name, "*");
+        symbolTable[j].kind = 0;
+        symbolTable[j].value = 0;
+        symbolTable[j].level = 0;
+        symbolTable[j].address = 0;
     }
-
-    fprintf(stdout, "[GENERATOR] Starting...\n");
-    if (generate(mcodePath, &tokens, symbolTable) != 0) {
-        return -1;
-    }
+    parse(mcodePath, symbolTablePath, &tokens, symbolTable);
 
     return 0;
 }

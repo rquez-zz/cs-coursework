@@ -33,13 +33,13 @@ typedef enum {
     varsym,
     procsym,
     writesym,
-    redsym,
-    elseym
+    readsym,
+    elsesym
 } token_type;
 
 typedef struct token {
 
-    // Name of the token 
+    // Name of the token
 	char lexeme[12];
 
     // Value for constants
@@ -47,6 +47,8 @@ typedef struct token {
 
     // type from enum
     token_type type;
+
+    int lineNumber;
 
     struct token* next;
 

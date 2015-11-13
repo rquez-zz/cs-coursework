@@ -1,16 +1,20 @@
 #ifndef SYMBOL_H 
 #define SYMBOL_H 
 
+#define MAX_SYMBOL_TABLE_SIZE (100)
+
 typedef struct symbol {
 
-    char symbol;
+    char name[12];
 
     /*
-     * 0 for constant 
-     * 1 for variable 
-     * 2 for procedure
+     * 1 for constant
+     * 2 for variable
+     * 3 for procedure
      */
-    int type;
+    int kind;
+
+    int value;
 
     // L Level
     int level;
