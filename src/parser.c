@@ -208,6 +208,20 @@ void statement(token** tokens, symbol* symbolTable) {
 
         // ident becomesym expression
         case identsym:
+
+            // This identifier can only be a variable
+            switch(lookupIdentifier((*tokens)->lexeme, &symbolTable)) {
+                case 0:
+                    fprintf(stderr, "[PARSER-ERROR] '%s' Undeclared identifier.\n", (*tokens)->lexeme);
+                    exit(EXIT_FAILURE);
+                case 1:
+                    fprintf(stderr, "[PARSER-ERROR] '%s' is a constant, assignment is not allowed.\n", (*tokens)->lexeme);
+                    exit(EXIT_FAILURE);
+                case 3:
+                    fprintf(stderr, "[PARSER-ERROR] '%s' is a procedure, assignment is not allowed.\n", (*tokens)->lexeme);
+                    exit(EXIT_FAILURE);
+            }
+
             *tokens = (*tokens)->next;
             if ((*tokens)->type != becomesym) {
                 fprintf(stderr, "[PARSER-ERROR] Identifier must be followed by ':='.\n");
@@ -282,7 +296,21 @@ void statement(token** tokens, symbol* symbolTable) {
         case readsym:
             *tokens = (*tokens)->next;
             if ((*tokens)->type != identsym) {
-                fprintf(stderr, "[PARSER-ERROR] 'identifier' expected\n");
+                fprintf(stderr, "[PARSER-ERROR] Identifier must be followed by 'call'. expected\n");
+                exit(EXIT_FAILURE);
+            }
+
+            // This identifier can only be a variable
+            switch(lookupIdentifier((*tokens)->lexeme, &symbolTable)) {
+                case 0:
+                    fprintf(stderr, "[PARSER-ERROR] '%s' Undeclared identifier.\n", (*tokens)->lexeme);
+                    exit(EXIT_FAILURE);
+                case 1:
+                    fprintf(stderr, "[PARSER-ERROR] Call of a constant is meaningless\n");
+                    exit(EXIT_FAILURE);
+                case 2:
+                    fprintf(stderr, "[PARSER-ERROR] Call of a variable is meaningless\n");
+                    exit(EXIT_FAILURE);
             }
             *tokens = (*tokens)->next;
             break;
@@ -360,6 +388,16 @@ void factor(token** tokens, symbol* symbolTable) {
     switch((*tokens)->type) {
 
         case identsym:
+            // This identifier can only be a variable or constant
+            switch(lookupIdentifier((*tokens)->lexeme, &symbolTable)) {
+                case 0:
+                    fprintf(stderr, "[PARSER-ERROR] '%s' Undeclared identifier.\n", (*tokens)->lexeme);
+                    exit(EXIT_FAILURE);
+                case 3:
+                    fprintf(stderr, "[PARSER-ERROR] '%s' is a procedure and can't be used in an expression.\n", (*tokens)->lexeme);
+                    exit(EXIT_FAILURE);
+            }
+
             (*tokens) = (*tokens)->next;
             break;
 
