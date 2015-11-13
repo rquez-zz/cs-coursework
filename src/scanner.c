@@ -68,7 +68,7 @@ FILE* getCleanInput(const char* inputPath, const char* outputPath) {
 void writeTokens(token* tokens, FILE* lexTblPtr, FILE* tokLstPtr, int count) {
 
     // Print header
-    fprintf(lexTblPtr, "lexeme\ttoken type\n");
+    fprintf(lexTblPtr, "lexeme\ttoken-type\n");
 
     // Traverse through linked list of tokens
     token* helper = tokens;
@@ -126,20 +126,22 @@ token_type getReservedType(char* lexeme) {
 }
 
 /* add token to linked list */
-void addToList(token** tokens, char* lexeme, int value, int type, int* countTokens) {
+void addToList(token** tokens, char* lexeme, int value, int type, int* countTokens, int lineNumber) {
 
     // If type is -1 then token already exists
-    if ((*tokens)->type != -1){ 
+    if ((*tokens)->type != -1){
         token* nextToken = malloc(sizeof(token));
         strcpy(nextToken->lexeme, lexeme);
         nextToken->value = value;
         nextToken->type = type;
+        nextToken->lineNumber = lineNumber;
         (*tokens)->next = nextToken;
         *tokens = (*tokens)->next;
     } else {
         strcpy((*tokens)->lexeme, lexeme);
         (*tokens)->value = value;
         (*tokens)->type = type;
+        (*tokens)->lineNumber = lineNumber;
     }
 
     *countTokens += 1;
@@ -192,7 +194,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
 
                 // Identifier can't be longer than 11 characters
                 if (letterCount > 11) {
-                    fprintf(stdout, "[SCANNER-ERROR] Identifiers may not be longer than 11 characters, at line %d.", lineNumber);
+                    fprintf(stdout, "[SCANNER-ERROR] Identifiers may not be longer than 11 characters. line %d.\n", lineNumber);
                     exit(EXIT_FAILURE);
                 }
 
@@ -210,7 +212,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
                 type = identsym;
             }
 
-            addToList(&tokens, lexeme, 0, type, &countTokens);
+            addToList(&tokens, lexeme, 0, type, &countTokens, lineNumber);
         } else {
             // Not alphabetic, go back
             matched = 0;
@@ -233,7 +235,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
 
                 // Number can't be longer than 5 digits
                 if (numCount > 5) {
-                    fprintf(stdout, "[SCANNER-ERROR] Numbers may not be longer than 5 digits, at line %d.", lineNumber);
+                    fprintf(stdout, "[SCANNER-ERROR] Numbers may not be longer than 5 digits. line %d.\n", lineNumber);
                     exit(EXIT_FAILURE);
                 }
 
@@ -242,7 +244,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
 
                 // Identifiers can't start with numbers, throw error
                 if (isalpha(ch)) {
-                    fprintf(stdout, "[SCANNER-ERROR] Variable doesn't start with a letter, at line %d.", lineNumber);
+                    fprintf(stdout, "[SCANNER-ERROR] Variable doesn't start with a letter. line %d.\n", lineNumber);
                     exit(EXIT_FAILURE);
                 }
             }
@@ -253,7 +255,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
             // Go back 1 char
             ungetc(ch, ifp);
 
-            addToList(&tokens, lexeme, value, numbersym, &countTokens);
+            addToList(&tokens, lexeme, value, numbersym, &countTokens, lineNumber);
         } else {
             // Not a digit, go back
             matched = 0;
@@ -268,7 +270,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
             char cha = getc(ifp);
             if (cha == '=') {
                 matched = 1;
-                addToList(&tokens, ":=", 0, becomesym, &countTokens);
+                addToList(&tokens, ":=", 0, becomesym, &countTokens, lineNumber);
             } else {
                 // Not :=, go back
                 matched = 0;
@@ -279,7 +281,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
         // Check for =
         if(ch == '=') {
             matched = 1;
-            addToList(&tokens, "=", 0, equalsym, &countTokens);
+            addToList(&tokens, "=", 0, equalsym, &countTokens, lineNumber);
         }
 
         // Check for > and >=
@@ -290,10 +292,10 @@ int scan(const char* inputPath, const char* cleanInputPath,
             ch = getc(ifp);
 
             if (ch == '=') {
-                addToList(&tokens, ">=", 0, geqsym, &countTokens);
+                addToList(&tokens, ">=", 0, geqsym, &countTokens, lineNumber);
             } else {
                 ungetc(ch, ifp);
-                addToList(&tokens, ">", 0, gtrsym, &countTokens);
+                addToList(&tokens, ">", 0, gtrsym, &countTokens, lineNumber);
             }
         }
 
@@ -305,67 +307,67 @@ int scan(const char* inputPath, const char* cleanInputPath,
             ch = getc(ifp);
 
             if (ch == '=') {
-                addToList(&tokens, "<=", 0, leqsym, &countTokens);
+                addToList(&tokens, "<=", 0, leqsym, &countTokens, lineNumber);
             } else if ( ch == '>') {
-                addToList(&tokens, "<>", 0, neqsym, &countTokens);
+                addToList(&tokens, "<>", 0, neqsym, &countTokens, lineNumber);
             } else {
                 ungetc(ch, ifp);
-                addToList(&tokens, "<", 0, lessym, &countTokens);
+                addToList(&tokens, "<", 0, lessym, &countTokens, lineNumber);
             }
         }
 
         // Check for (
         if (ch == '(') {
             matched = 1;
-            addToList(&tokens, "(", 0, lparentsym, &countTokens);
+            addToList(&tokens, "(", 0, lparentsym, &countTokens, lineNumber);
         }
 
         // Check for )
         if (ch == ')') {
             matched = 1;
-            addToList(&tokens, ")", 0, rparentsym, &countTokens);
+            addToList(&tokens, ")", 0, rparentsym, &countTokens, lineNumber);
         }
 
         // Check for ,
         if (ch == ',') {
             matched = 1;
-            addToList(&tokens, ",", 0, commasym, &countTokens);
+            addToList(&tokens, ",", 0, commasym, &countTokens, lineNumber);
         }
 
         // Check for ;
         if (ch == ';') {
             matched = 1;
-            addToList(&tokens, ";", 0, semicolonsym, &countTokens);
+            addToList(&tokens, ";", 0, semicolonsym, &countTokens, lineNumber);
         }
 
         // Check for .
         if (ch == '.') {
             matched = 1;
-            addToList(&tokens, ".", 0, periodsym, &countTokens);
+            addToList(&tokens, ".", 0, periodsym, &countTokens, lineNumber);
         }
 
         // Check for +
         if (ch == '+') {
             matched = 1;
-            addToList(&tokens, "+", 0, plussym, &countTokens);
+            addToList(&tokens, "+", 0, plussym, &countTokens, lineNumber);
         }
 
         // Check for -
         if (ch == '-') {
             matched = 1;
-            addToList(&tokens, "-", 0, minussym, &countTokens);
+            addToList(&tokens, "-", 0, minussym, &countTokens, lineNumber);
         }
 
         // Check for *
         if (ch == '*') {
             matched = 1;
-            addToList(&tokens, "*", 0, multsym, &countTokens);
+            addToList(&tokens, "*", 0, multsym, &countTokens, lineNumber);
         }
 
         // Check for /
         if (ch == '/') {
             matched = 1;
-            addToList(&tokens, "/", 0, slashsym, &countTokens);
+            addToList(&tokens, "/", 0, slashsym, &countTokens, lineNumber);
         }
 
         // Increment line number on newline
@@ -374,7 +376,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
 
         // Throw error for invalid character
         if (!matched && ch != ' ' && ch != '\n' && ch != '\r' && ch != -1 && ch != 9) {
-            fprintf(stdout, "[SCANNER-ERROR] Invalid character '%c' value:%d, at line %d.", ch, ch, lineNumber);
+            fprintf(stdout, "[SCANNER-ERROR] Invalid character '%c'. line %d.\n", ch, lineNumber);
             exit(EXIT_FAILURE);
         }
     }
