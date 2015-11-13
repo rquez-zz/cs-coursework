@@ -29,13 +29,13 @@ void writeSymbolTable(symbol* symbolTable, FILE* symTblPtr) {
         if (strcmp(symbolTable[i].name, "*") != 0) {
             switch (symbolTable[i].kind) {
                 case 1:
-                    fprintf(symTblPtr, "%s\tconst\t%d\t%d\n", symbolTable[i].name, symbolTable[i].value, symbolTable[i].level);
+                    fprintf(symTblPtr, "%s\tconst\t%d\t%d\n", symbolTable[i].name, symbolTable[i].level, symbolTable[i].value);
                     break;
                 case 2:
-                    fprintf(symTblPtr, "%s\tvar\t%d\t%d\n", symbolTable[i].name, symbolTable[i].value, symbolTable[i].level);
+                    fprintf(symTblPtr, "%s\tvar\t%d\t%d\n", symbolTable[i].name, symbolTable[i].level, symbolTable[i].value);
                     break;
                 case 3:
-                    fprintf(symTblPtr, "%s\tproc\t%d\t%d\n", symbolTable[i].name, symbolTable[i].value, symbolTable[i].level);
+                    fprintf(symTblPtr, "%s\tproc\t%d\t%d\n", symbolTable[i].name, symbolTable[i].level, symbolTable[i].value);
                     break;
             }
         }
