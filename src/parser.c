@@ -24,8 +24,21 @@ FILE* openFileParser(const char* path, const char* op) {
 /* Writes symbol table to file */
 void writeSymbolTable(symbol* symbolTable, FILE* symTblPtr) {
     int i = 0;
+    fprintf(symTblPtr, "Name\tType\tValue\tLevel\n");
     for (i = 0; i < MAX_SYMBOL_TABLE_SIZE; i++) {
-        fprintf(symTblPtr, "%s\t%d\t%d\t%d\t%d\n", symbolTable[i].name, symbolTable[i].kind, symbolTable[i].value, symbolTable[i].level, symbolTable[i].address);
+        if (strcmp(symbolTable[i].name, "*") != 0) {
+            switch (symbolTable[i].kind) {
+                case 1:
+                    fprintf(symTblPtr, "%s\tconst\t%d\t%d\n", symbolTable[i].name, symbolTable[i].value, symbolTable[i].level);
+                    break;
+                case 2:
+                    fprintf(symTblPtr, "%s\tvar\t%d\t%d\n", symbolTable[i].name, symbolTable[i].value, symbolTable[i].level);
+                    break;
+                case 3:
+                    fprintf(symTblPtr, "%s\tproc\t%d\t%d\n", symbolTable[i].name, symbolTable[i].value, symbolTable[i].level);
+                    break;
+            }
+        }
     }
 }
 

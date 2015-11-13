@@ -54,22 +54,33 @@ void testParse() {
     }
     parse(testSymbolTablePath, &tokens, symbolTable);
 
-    FILE* ifp = fopen("test/testSymbolTable.txt", "r");
+    FILE* ifp = fopen("test/output/symbolTable-test-parser.txt", "r");
     char name[12];
-    int i = 0, kind = 0, value = 0, level = 0, address = 0;
+    char kindS[12];
+    char valueS[12];
+    char levelS[12];
+    int count = fscanf(ifp, "%s\t%s\t%s\t%s\n", name, kindS, valueS, levelS);
+    assert(count == 4);
+    int i = 0, kind = 0, value = 0, level = 0;
     while (i < MAX_SYMBOL_TABLE_SIZE) {
-        int count = fscanf(ifp, "%s", name);
-        count = fscanf(ifp, "%d", &kind);
-        count = fscanf(ifp, "%d", &value);
-        count = fscanf(ifp, "%d", &level);
-        count = fscanf(ifp, "%d", &address);
-        assert(count == 1);
-        int result = strcmp(symbolTable[i].name, name);
-        assert(result == 0);
-        assert(symbolTable[i].kind == kind);
-        assert(symbolTable[i].value == value);
-        assert(symbolTable[i].level == level);
-        assert(symbolTable[i].address == address);
+        if (strcmp(symbolTable[i].name, "*") != 0) {
+            int count = fscanf(ifp, "%s", name);
+            count = fscanf(ifp, "%s", kindS);
+            if (strcmp(kindS, "proc") == 0)
+                kind = 3;
+            if (strcmp(kindS, "const") == 0)
+                kind = 1;
+            if (strcmp(kindS, "var") == 0)
+                kind = 2;
+            count = fscanf(ifp, "%d", &value);
+            count = fscanf(ifp, "%d", &level);
+            assert(count == 1);
+            int result = strcmp(symbolTable[i].name, name);
+            assert(result == 0);
+            assert(symbolTable[i].kind == kind);
+            assert(symbolTable[i].value == value);
+            assert(symbolTable[i].level == level);
+        }
         i++;
     }
 }
