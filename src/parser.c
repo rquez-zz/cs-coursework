@@ -91,7 +91,7 @@ int lookupIdentifier(char* name, symbol** symbolTable, int level) {
 /* Linear probing collision resolution */
 void linearProbe(int* index, symbol** symbolTable) {
     // symbol's kind field will either be 1, 2 or 3
-    while ((*symbolTable[*index % MAX_SYMBOL_TABLE_SIZE]).kind != 0) {
+    while ((*symbolTable)[(*index) % MAX_SYMBOL_TABLE_SIZE].kind != 0) {
         *index += 1;
     }
 }
