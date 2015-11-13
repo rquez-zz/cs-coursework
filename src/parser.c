@@ -102,7 +102,7 @@ void block(token** tokens, symbol* symbolTable, int level) {
         variable(tokens, symbolTable, level);
     }
 
-    if((*tokens)->type == procsym) {
+    while ((*tokens)->type == procsym) {
         procedure(tokens, symbolTable, level);
     }
 
