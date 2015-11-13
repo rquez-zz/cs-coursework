@@ -72,17 +72,17 @@ int hashToken(char* name, int kind) {
  * Returns 3 if ident is a proc
  * Returns 0 if ident is not in symbol table
  */
-int lookupIdentifier(char* name, symbol** symbolTable) {
+int lookupIdentifier(char* name, symbol** symbolTable, int level) {
 
     int indexCon = hashToken(name, 1) % MAX_SYMBOL_TABLE_SIZE;
     int indexVar = hashToken(name, 2) % MAX_SYMBOL_TABLE_SIZE;
     int indexPro = hashToken(name, 3) % MAX_SYMBOL_TABLE_SIZE;
 
-    if (strcmp((*symbolTable)[indexCon].name, name) == 0)
+    if (strcmp((*symbolTable)[indexCon].name, name) == 0 && (*symbolTable)[indexCon].level == level)
         return 1;
-    if (strcmp((*symbolTable)[indexVar].name, name) == 0)
+    if (strcmp((*symbolTable)[indexVar].name, name) == 0 && (*symbolTable)[indexVar].level == level)
         return 2;
-    if (strcmp((*symbolTable)[indexPro].name, name) == 0)
+    if (strcmp((*symbolTable)[indexPro].name, name) == 0 && (*symbolTable)[indexPro].level == level)
         return 3;
 
     return 0;
@@ -120,7 +120,7 @@ void block(token** tokens, symbol* symbolTable, int level) {
         procedure(tokens, symbolTable, level);
     }
 
-    statement(tokens, symbolTable);
+    statement(tokens, symbolTable, level);
 
     if ((*tokens)->type != semicolonsym && (*tokens)->type != periodsym) {
         fprintf(stderr, "[PARSER-ERROR] Incorrect symbol after statement part in block.\n");
@@ -245,7 +245,7 @@ void procedure(token** tokens, symbol* symbolTable, int level) {
  *              |   writesym identsym
  *              |   e
  */
-void statement(token** tokens, symbol* symbolTable) {
+void statement(token** tokens, symbol* symbolTable, int level) {
 
     switch((*tokens)->type) {
 
@@ -253,7 +253,7 @@ void statement(token** tokens, symbol* symbolTable) {
         case identsym:
 
             // This identifier can only be a variable
-            switch(lookupIdentifier((*tokens)->lexeme, &symbolTable)) {
+            switch(lookupIdentifier((*tokens)->lexeme, &symbolTable, level)) {
                 case 0:
                     fprintf(stderr, "[PARSER-ERROR] '%s' Undeclared identifier.\n", (*tokens)->lexeme);
                     exit(EXIT_FAILURE);
@@ -272,7 +272,7 @@ void statement(token** tokens, symbol* symbolTable) {
             }
 
             *tokens = (*tokens)->next;
-            expression(tokens, symbolTable);
+            expression(tokens, symbolTable, level);
 
             if ((*tokens)->type != semicolonsym) {
                 fprintf(stderr, "[PARSER-ERROR] ';' missing.\n");
@@ -291,7 +291,7 @@ void statement(token** tokens, symbol* symbolTable) {
             }
 
             // This identifier can only be a variable
-            switch(lookupIdentifier((*tokens)->lexeme, &symbolTable)) {
+            switch(lookupIdentifier((*tokens)->lexeme, &symbolTable, level)) {
                 case 0:
                     fprintf(stderr, "[PARSER-ERROR] '%s' Undeclared identifier.\n", (*tokens)->lexeme);
                     exit(EXIT_FAILURE);
@@ -322,11 +322,11 @@ void statement(token** tokens, symbol* symbolTable) {
                 fprintf(stderr, "[PARSER-ERROR] Statement expected.\n");
                 exit(EXIT_FAILURE);
             }
-            statement(tokens, symbolTable);
+            statement(tokens, symbolTable, level);
 
             while ((*tokens)->type == semicolonsym) {
                 *tokens = (*tokens)->next;
-                statement(tokens,symbolTable);
+                statement(tokens,symbolTable, level);
             }
 
             if ((*tokens)->type != endsym) {
@@ -340,7 +340,7 @@ void statement(token** tokens, symbol* symbolTable) {
         case ifsym:
             *tokens = (*tokens)->next;
 
-            condition(tokens, symbolTable);
+            condition(tokens, symbolTable, level);
 
             if ((*tokens)->type != thensym) {
                 fprintf(stderr, "[PARSER-ERROR] 'then' expected.\n");
@@ -359,11 +359,11 @@ void statement(token** tokens, symbol* symbolTable) {
                 fprintf(stderr, "[PARSER-ERROR] Statement expected.\n");
                 exit(EXIT_FAILURE);
             }
-            statement(tokens,symbolTable);
+            statement(tokens, symbolTable, level);
 
             if ((*tokens)->type == elsesym) {
                 *tokens = (*tokens)->next;
-                statement(tokens,symbolTable);
+                statement(tokens, symbolTable, level);
             }
             break;
 
@@ -371,7 +371,7 @@ void statement(token** tokens, symbol* symbolTable) {
         case whilesym:
             *tokens = (*tokens)->next;
 
-            condition(tokens, symbolTable);
+            condition(tokens, symbolTable, level);
 
             if ((*tokens)->type != dosym) {
                 fprintf(stderr, "[PARSER-ERROR] 'do' expected.\n");
@@ -390,7 +390,7 @@ void statement(token** tokens, symbol* symbolTable) {
                 fprintf(stderr, "[PARSER-ERROR] Statement expected.\n");
                 exit(EXIT_FAILURE);
             }
-            statement(tokens,symbolTable);
+            statement(tokens, symbolTable, level);
 
             break;
 
@@ -424,16 +424,16 @@ void statement(token** tokens, symbol* symbolTable) {
 /* condition :=     oddsym expression
  *              |   expression rel-op expression
  */
-void condition(token** tokens, symbol* symbolTable) {
+void condition(token** tokens, symbol* symbolTable, int level) {
 
     if ((*tokens)->type == oddsym) {
 
         (*tokens) = (*tokens)->next;
-        expression(tokens, symbolTable);
+        expression(tokens, symbolTable, level);
 
     } else {
 
-        expression(tokens, symbolTable);
+        expression(tokens, symbolTable, level);
 
         // relational operations between [9-14]
         if ((*tokens)->type < 9 || (*tokens)->type > 14) {
@@ -442,12 +442,12 @@ void condition(token** tokens, symbol* symbolTable) {
         }
         (*tokens) = (*tokens)->next;
 
-        expression(tokens, symbolTable);
+        expression(tokens, symbolTable, level);
     }
 }
 
 /* expression := [plussym | minussym] term { (plussym | minussym) term } */
-void expression(token** tokens, symbol* symbolTable) {
+void expression(token** tokens, symbol* symbolTable, int level) {
 
     if ((*tokens)->type == plussym || (*tokens)->type == minussym) {
         (*tokens) = (*tokens)->next;
@@ -458,33 +458,33 @@ void expression(token** tokens, symbol* symbolTable) {
         exit(EXIT_FAILURE);
     }
 
-    term(tokens, symbolTable);
+    term(tokens, symbolTable, level);
 
     while ((*tokens)->type == plussym || (*tokens)->type == minussym) {
         (*tokens) = (*tokens)->next;
-        term(tokens, symbolTable);
+        term(tokens, symbolTable, level);
     }
 }
 
 /* term := factor { (multsym | slashsym) factor } */
-void term(token** tokens, symbol* symbolTable) {
+void term(token** tokens, symbol* symbolTable, int level) {
 
-    factor(tokens, symbolTable);
+    factor(tokens, symbolTable, level);
 
     while ((*tokens)->type == multsym || (*tokens)->type == slashsym) {
         (*tokens) = (*tokens)->next;
-        factor(tokens, symbolTable);
+        factor(tokens, symbolTable, level);
     }
 }
 
 /* factor := identsym | numbersym | lparentsym expression rparentsym */
-void factor(token** tokens, symbol* symbolTable) {
+void factor(token** tokens, symbol* symbolTable, int level) {
 
     switch((*tokens)->type) {
 
         case identsym:
             // This identifier can only be a variable or constant
-            switch(lookupIdentifier((*tokens)->lexeme, &symbolTable)) {
+            switch(lookupIdentifier((*tokens)->lexeme, &symbolTable, level)) {
                 case 0:
                     fprintf(stderr, "[PARSER-ERROR] '%s' Undeclared identifier.\n", (*tokens)->lexeme);
                     exit(EXIT_FAILURE);
@@ -506,7 +506,7 @@ void factor(token** tokens, symbol* symbolTable) {
 
         case lparentsym:
             (*tokens) = (*tokens)->next;
-            expression(tokens, symbolTable);
+            expression(tokens, symbolTable, level);
             if ((*tokens)->type != rparentsym) {
                 fprintf(stderr, "[PARSER-ERROR] ')' is missing.\n");
                 exit(EXIT_FAILURE);
