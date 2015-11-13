@@ -13,9 +13,7 @@ int main(int argc, char* argv[]) {
 
     fprintf(stdout, "[SCANNER] Starting...\n");
     token tokens;
-    if (scan(inputPath, cleanInputPath, lexTablePath, tokenListPath, &tokens) != 0) {
-        return -1;
-    }
+    scan(inputPath, cleanInputPath, lexTablePath, tokenListPath, &tokens);
 
     fprintf(stdout, "[PARSER] Starting...\n");
     symbol symbolTable[MAX_SYMBOL_TABLE_SIZE];
@@ -27,14 +25,10 @@ int main(int argc, char* argv[]) {
         symbolTable[j].level = 0;
         symbolTable[j].address = 0;
     }
-    if (parse(symbolTablePath, &tokens, symbolTable) != 0) {
-        return -1;
-    }
+    parse(symbolTablePath, &tokens, symbolTable);
 
     fprintf(stdout, "[GENERATOR] Starting...\n");
-    if (generate(mcodePath, &tokens, symbolTable) != 0) {
-        return -1;
-    }
+    generate(mcodePath, &tokens, symbolTable);
 
     return 0;
 }

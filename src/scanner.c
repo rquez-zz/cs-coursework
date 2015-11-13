@@ -6,8 +6,7 @@ FILE* openFileScanner(const char* path, const char* op) {
     filePtr = fopen(path, op);
     if(filePtr == NULL) {
         fprintf(stderr, "[SCANNER-ERROR] Error opening %s\n", path);
-        perror("");
-        return NULL;
+        exit(EXIT_FAILURE);
     }
     return filePtr;
 }
@@ -194,7 +193,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
                 // Identifier can't be longer than 11 characters
                 if (letterCount > 11) {
                     fprintf(stdout, "[SCANNER-ERROR] Identifiers may not be longer than 11 characters, at line %d.", lineNumber);
-                    return (-1);
+                    exit(EXIT_FAILURE);
                 }
 
                 // Get next ch
@@ -235,7 +234,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
                 // Number can't be longer than 5 digits
                 if (numCount > 5) {
                     fprintf(stdout, "[SCANNER-ERROR] Numbers may not be longer than 5 digits, at line %d.", lineNumber);
-                    return (-1);
+                    exit(EXIT_FAILURE);
                 }
 
                 // Get next ch
@@ -244,7 +243,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
                 // Identifiers can't start with numbers, throw error
                 if (isalpha(ch)) {
                     fprintf(stdout, "[SCANNER-ERROR] Variable doesn't start with a letter, at line %d.", lineNumber);
-                    return (-1);
+                    exit(EXIT_FAILURE);
                 }
             }
 
@@ -378,7 +377,7 @@ int scan(const char* inputPath, const char* cleanInputPath,
         // Throw error for invalid character
         if (!matched && ch != ' ' && ch != '\n' && ch != '\r' && ch != -1) {
             fprintf(stdout, "[SCANNER-ERROR] Invalid character %c, at line %d.", ch, lineNumber);
-            return -1;
+            exit(EXIT_FAILURE);
         }
     }
 
