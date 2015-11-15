@@ -1,0 +1,5 @@
+const;
+int x;
+begin
+  x:=p;
+end.
