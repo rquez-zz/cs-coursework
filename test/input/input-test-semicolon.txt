@@ -1,0 +1,4 @@
+var x y;
+begin
+  x := 2;
+end.
