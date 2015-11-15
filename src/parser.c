@@ -133,6 +133,10 @@ void program(token* tokens, symbol* symbolTable, instruction* instructions, int 
 /* block := [constant] [variable] {procedure} [statement] */
 void block(token** tokens, symbol* symbolTable, instruction* instructions, int level, int* cx) {
 
+    // JMP - Correct address retrieved below
+    int procedureInstructionIndex = *cx;
+    emit(7, 0, 0, cx, &instructions);
+
     if ((*tokens)->type == constsym) {
         constant(tokens, symbolTable, level);
     }
@@ -145,12 +149,21 @@ void block(token** tokens, symbol* symbolTable, instruction* instructions, int l
         procedure(tokens, symbolTable, instructions, level, cx);
     }
 
+    // Give JMP the correct jump address
+    instructions[procedureInstructionIndex].modifier = *cx;
+
+    // INC - Allocate enough space for AR_SIZE local variables
+    emit(6, 0, AR_SIZE, cx, &instructions);
+
     statement(tokens, symbolTable, instructions, level, cx);
 
     if ((*tokens)->type != semicolonsym && (*tokens)->type != periodsym) {
         fprintf(stderr, "[PARSER-ERROR] Incorrect symbol after statement part in block. line %d\n", (*tokens)->lineNumber);
         exit(EXIT_FAILURE);
     }
+
+    // OPR - Return from a procedure call
+    emit(2, 0, 0, cx, &instructions);
 }
 
 /* constant := constsym identsym equalsym numbersym {commasym identsym equalsym numbersym} semicolonsym*/

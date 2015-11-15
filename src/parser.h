@@ -7,6 +7,8 @@
 #include "token.h"
 #include "instruction.h"
 
+#define AR_SIZE (4)
+
 void parse(const char* symbolTablePath, const char* mcodePath, token* tokens, symbol* symbolTable, instruction* instructions);
 FILE* openFileParser(const char* path, const char* op);
 void writeSymbolTable(symbol* symbolTable, FILE* symTblPtr);
