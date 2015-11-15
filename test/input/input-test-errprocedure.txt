@@ -1,0 +1,13 @@
+var x, y;
+procedure fact;
+	var answer;
+	begin
+		answer := y;
+		y := y - 1;
+		x := fact * answer;
+	end;
+begin
+	y := 72;
+	call fact;
+	write x;
+end.
