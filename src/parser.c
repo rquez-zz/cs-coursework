@@ -239,7 +239,7 @@ void procedure(token** tokens, symbol* symbolTable, instruction* instructions, i
         exit(EXIT_FAILURE);
     }
 
-    addToSymbolTable(&symbolTable, (*tokens)->lexeme, 3, 0, level, 0);
+    addToSymbolTable(&symbolTable, (*tokens)->lexeme, 3, 0, level, *cx);
 
     *tokens = (*tokens)->next;
     if ((*tokens)->type != semicolonsym) {
@@ -337,7 +337,8 @@ void statement(token** tokens, symbol* symbolTable, instruction* instructions, i
             }
 
             // This identifier can only be a variable
-            switch(lookupIdentifier((*tokens)->lexeme, &symbolTable, level)) {
+            kindLookup = lookupIdentifier((*tokens)->lexeme, &symbolTable, level);
+            switch(kindLookup) {
                 case 0:
                     fprintf(stderr, "[PARSER-ERROR] '%s' Undeclared identifier. line %d\n", (*tokens)->lexeme, (*tokens)->lineNumber);
                     exit(EXIT_FAILURE);
@@ -347,6 +348,11 @@ void statement(token** tokens, symbol* symbolTable, instruction* instructions, i
                 case 2:
                     fprintf(stderr, "[PARSER-ERROR] Call of a variable is meaningless. line %d\n", (*tokens)->lineNumber) ;
                     exit(EXIT_FAILURE);
+                case 3:
+                    // CAL - Call the procedure at M
+                    hashIndex = hashToken((*tokens)->lexeme, kindLookup) % MAX_SYMBOL_TABLE_SIZE;
+                    emit(5, level - symbolTable[hashIndex].level, symbolTable[hashIndex].address, cx, &instructions);
+                    break;
             }
 
             *tokens = (*tokens)->next;
