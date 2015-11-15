@@ -5,8 +5,9 @@
 
 #include "symbol.h"
 #include "token.h"
+#include "instruction.h"
 
-void parse(const char* symbolTablePath, const char* mcodePath, token* tokens, symbol* symbolTable);
+void parse(const char* symbolTablePath, const char* mcodePath, token* tokens, symbol* symbolTable, instruction* instructions);
 FILE* openFileParser(const char* path, const char* op);
 void writeSymbolTable(symbol* symbolTable, FILE* symTblPtr);
 void addToSymbolTable(symbol** symbolTable, char* name, int kind, int value, int level, int address);

@@ -1,5 +1,5 @@
-#ifndef SYMBOL_H 
-#define SYMBOL_H 
+#ifndef SYMBOL_H
+#define SYMBOL_H
 
 #define MAX_SYMBOL_TABLE_SIZE (100)
 

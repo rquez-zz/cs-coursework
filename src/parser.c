@@ -1,7 +1,6 @@
 #include "parser.h"
-#include "generator.h"
 
-void parse(const char* symbolTablePath, const char* mcodePath, token* tokens, symbol* symbolTablePtr) {
+void parse(const char* symbolTablePath, const char* mcodePath, token* tokens, symbol* symbolTablePtr, instruction* instructions) {
 
     program(tokens, symbolTablePtr, 0);
     FILE* symTblPtr = openFileParser(symbolTablePath, "w");

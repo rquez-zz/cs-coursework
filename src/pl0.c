@@ -17,6 +17,9 @@ int main(int argc, char* argv[]) {
 
     fprintf(stdout, "[PARSER] Starting...\n");
     symbol symbolTable[MAX_SYMBOL_TABLE_SIZE];
+    instruction instructions[MAX_SYMBOL_TABLE_SIZE];
+
+    // Initialize symbolTable and instructions array
     int j = 0;
     for (j = 0; j < MAX_SYMBOL_TABLE_SIZE; j++) {
         strcpy(symbolTable[j].name, "*");
@@ -24,8 +27,12 @@ int main(int argc, char* argv[]) {
         symbolTable[j].value = 0;
         symbolTable[j].level = 0;
         symbolTable[j].address = 0;
+        instructions[j].opcode = 0;
+        instructions[j].level = 0;
+        instructions[j].modifier = 0;
     }
-    parse(mcodePath, symbolTablePath, &tokens, symbolTable);
+
+    parse(mcodePath, symbolTablePath, &tokens, symbolTable, instructions);
 
     return 0;
 }
