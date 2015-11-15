@@ -1,0 +1,5 @@
+var x, y;
+begin
+    if x := 7 then x:= 8
+    x := y + 96
+end.
