@@ -1,7 +1,6 @@
 #include <assert.h>
 #include "../src/scanner.c"
 #include "../src/parser.c"
-#include "../src/generator.c"
 
 void setup() {
 
@@ -45,6 +44,7 @@ void testParse() {
     scan(testInputAll, testCleanOutput, testLexTable, testTokenListPath, &tokens);
 
     symbol symbolTable[MAX_SYMBOL_TABLE_SIZE];
+    instruction instructions[MAX_SYMBOL_TABLE_SIZE];
     int j = 0;
     for (j = 0; j < MAX_SYMBOL_TABLE_SIZE; j++) {
         strcpy(symbolTable[j].name, "*");
@@ -52,8 +52,12 @@ void testParse() {
         symbolTable[j].value = 0;
         symbolTable[j].level = 0;
         symbolTable[j].address = 0;
+        instructions[j].opcode = 0;
+        instructions[j].level = 0;
+        instructions[j].modifier = 0;
     }
-    parse(testMcodePath, testSymbolTablePath, &tokens, symbolTable);
+
+    parse(testMcodePath, testSymbolTablePath, &tokens, symbolTable, instructions);
 
     FILE* ifp = fopen("test/output/symbolTable-test-parser.txt", "r");
     char name[12];

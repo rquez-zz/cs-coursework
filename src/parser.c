@@ -57,6 +57,19 @@ void addToSymbolTable(symbol** symbolTable, char* name, int kind, int value, int
     (*symbolTable)[index].address = address;
 }
 
+/* Adds the instruction to the instructions array and increments the index */
+void emit(int opcode, int level, int modifier, int* cx, instruction** instructions) {
+
+    if (*cx > MAX_SYMBOL_TABLE_SIZE) {
+        fprintf(stderr, "[PARSER-ERROR] Can't have more than %d instructions.\n", MAX_SYMBOL_TABLE_SIZE);
+    }
+
+    (*instructions)[*cx].opcode = opcode;
+    (*instructions)[*cx].level = level;
+    (*instructions)[*cx].modifier = modifier;
+    (*cx)++;
+}
+
 /* Hash function that hashs on name, kind and a prime */
 int hashToken(char* name, int kind) {
     int sum = 0;

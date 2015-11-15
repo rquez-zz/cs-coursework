@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -g -O2 -Wall
-OBJECTS = src/pl0.o src/generator.o src/parser.o src/scanner.o
+OBJECTS = src/pl0.o src/parser.o src/scanner.o
 TEST_OBJECTS = test/test.o
 PROGRAM = bin/pl0
 TEST_PROGRAM = bin/test
