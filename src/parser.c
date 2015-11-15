@@ -6,6 +6,7 @@ void parse(const char* symbolTablePath, const char* mcodePath, token* tokens, sy
     FILE* symTblPtr = openFileParser(symbolTablePath, "w");
     writeSymbolTable(symbolTablePtr, symTblPtr);
     FILE* mcodePtr = openFileParser(symbolTablePath, "w");
+    writeInstructions(instructions, mcodePtr);
 }
 
 /* Opens a file and returns a FILE pointer */
@@ -38,6 +39,14 @@ void writeSymbolTable(symbol* symbolTable, FILE* symTblPtr) {
                     break;
             }
         }
+    }
+}
+
+/* Writes instructions array to file */
+void writeInstructions(instruction* instructions, FILE* mcodePtr) {
+    int i = 0;
+    for (i = 0; i < MAX_SYMBOL_TABLE_SIZE; i++) {
+        fprintf(mcodePtr, "%d\t%d\t%d\n", instructions[i].opcode, instructions[i].level, instructions[i].modifier);
     }
 }
 
