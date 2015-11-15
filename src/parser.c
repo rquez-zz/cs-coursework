@@ -310,6 +310,8 @@ void statement(token** tokens, symbol* symbolTable, instruction* instructions, i
                 exit(EXIT_FAILURE);
             }
 
+            // STO
+            emit(4, level, symbolTable[hashIndex].address, cx, &instructions);
             break;
 
         // callsym identsym
@@ -511,14 +513,28 @@ void term(token** tokens, symbol* symbolTable, instruction* instructions, int le
 /* factor := identsym | numbersym | lparentsym expression rparentsym */
 void factor(token** tokens, symbol* symbolTable, instruction* instructions, int level, int* cx) {
 
+    int kindLookup = 0;
+    int hashIndex = 0;
+
     switch((*tokens)->type) {
 
         case identsym:
             // This identifier can only be a variable or constant
-            switch(lookupIdentifier((*tokens)->lexeme, &symbolTable, level)) {
+            kindLookup = lookupIdentifier((*tokens)->lexeme, &symbolTable, level);
+            switch(kindLookup) {
                 case 0:
                     fprintf(stderr, "[PARSER-ERROR] '%s' Undeclared identifier. line %d\n", (*tokens)->lexeme, (*tokens)->lineNumber);
                     exit(EXIT_FAILURE);
+                case 1:
+                    // LIT
+                    hashIndex = hashToken((*tokens)->lexeme, kindLookup) % MAX_SYMBOL_TABLE_SIZE;
+                    emit(1, level, symbolTable[hashIndex].value, cx, &instructions);
+                    break;
+                case 2:
+                    // LOD
+                    hashIndex = hashToken((*tokens)->lexeme, kindLookup) % MAX_SYMBOL_TABLE_SIZE;
+                    emit(3, level, symbolTable[hashIndex].address, cx, &instructions);
+                    break;
                 case 3:
                     fprintf(stderr, "[PARSER-ERROR] '%s' is a procedure and can't be used in an expression. line %d\n", (*tokens)->lexeme, (*tokens)->lineNumber);
                     exit(EXIT_FAILURE);
@@ -528,6 +544,9 @@ void factor(token** tokens, symbol* symbolTable, instruction* instructions, int 
             break;
 
         case numbersym:
+            // LIT
+            emit(1, level, (*tokens)->value, cx, &instructions);
+
             (*tokens) = (*tokens)->next;
             break;
 
