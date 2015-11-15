@@ -1,26 +1,16 @@
 #include "generator.h"
 
-#define MAXTABLE 100
-// the struct and this will be moved to a header at some point
-
-struct emit
-{
-	char operation;
-	
-	int lexLevel;
-
-	int addresslocation;
-	// might need to make these all arrays of sub 
-	
-};
 
 void generate(FILE* mcodePtr, char* op, int level, int address) {
+	// these should be symbol table levels and  symbol table op and symbol table adress
 
 	int codeindex = 0;
-	struct emit emitter[MAXTABLE];
+	struct emit emitter[MAX_SYMBOL_TABLE_SIZE];
 	// this size will be defined at some point not sure yet
 
-	if(codeindex > MAXTABLE)
+	int i = 0;
+
+	if(codeindex > MAX_SYMBOL_TABLE_SIZE)
 		return -1;
 	else
 	{
@@ -30,6 +20,15 @@ void generate(FILE* mcodePtr, char* op, int level, int address) {
 
 		codeindex++;
 	}
+
+//	for(i = 0; i < MAX_SYMBOL_TABLE_SIZE; i++)
+//	{
+//		fprintf(mcodePtr, "%c\t%d\t%d", emitter[i].operation, emitter[i].lexLevel, emitter[i].addresslocation );
+//	}
+
+	//start of pring function 
+	// printing will be solved later
+
 
 
 }
