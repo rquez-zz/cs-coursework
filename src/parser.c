@@ -2,10 +2,11 @@
 
 void parse(const char* symbolTablePath, const char* mcodePath, token* tokens, symbol* symbolTablePtr, instruction* instructions) {
 
-    program(tokens, symbolTablePtr, 0);
+    int cx = 0;
+    program(tokens, symbolTablePtr, instructions, 0, &cx);
     FILE* symTblPtr = openFileParser(symbolTablePath, "w");
     writeSymbolTable(symbolTablePtr, symTblPtr);
-    FILE* mcodePtr = openFileParser(symbolTablePath, "w");
+    FILE* mcodePtr = openFileParser(mcodePath, "w");
     writeInstructions(instructions, mcodePtr);
 }
 
@@ -88,7 +89,10 @@ int hashToken(char* name, int kind) {
     return (sum + kind) * 71;
 }
 
-/* Returns 1 if ident is a const
+/*
+ * Takes a token name and level, and returns the token's kind in the symbolTable
+ *
+ * Returns 1 if ident is a const
  * Returns 2 if ident is a var
  * Returns 3 if ident is a proc
  * Returns 0 if ident is not in symbol table
@@ -118,8 +122,8 @@ void linearProbe(int* index, symbol** symbolTable) {
 }
 
 /* program := block periodsym */
-void program(token* tokens, symbol* symbolTable, int level) {
-    block(&tokens, symbolTable, level);
+void program(token* tokens, symbol* symbolTable, instruction* instructions, int level, int* cx) {
+    block(&tokens, symbolTable, instructions, level, cx);
     if (tokens->type != periodsym) {
         fprintf(stderr, "[PARSER-ERROR] '.' expected. line %d\n", tokens->lineNumber);
         exit(EXIT_FAILURE);
@@ -127,7 +131,7 @@ void program(token* tokens, symbol* symbolTable, int level) {
 }
 
 /* block := [constant] [variable] {procedure} [statement] */
-void block(token** tokens, symbol* symbolTable, int level) {
+void block(token** tokens, symbol* symbolTable, instruction* instructions, int level, int* cx) {
 
     if ((*tokens)->type == constsym) {
         constant(tokens, symbolTable, level);
@@ -138,10 +142,10 @@ void block(token** tokens, symbol* symbolTable, int level) {
     }
 
     while ((*tokens)->type == procsym) {
-        procedure(tokens, symbolTable, level);
+        procedure(tokens, symbolTable, instructions, level, cx);
     }
 
-    statement(tokens, symbolTable, level);
+    statement(tokens, symbolTable, instructions, level, cx);
 
     if ((*tokens)->type != semicolonsym && (*tokens)->type != periodsym) {
         fprintf(stderr, "[PARSER-ERROR] Incorrect symbol after statement part in block. line %d\n", (*tokens)->lineNumber);
@@ -214,7 +218,7 @@ void variable(token** tokens, symbol* symbolTable, int level) {
 }
 
 /* procedure := procsym identsym semicolonsym block semicolonsym */
-void procedure(token** tokens, symbol* symbolTable, int level) {
+void procedure(token** tokens, symbol* symbolTable, instruction* instructions, int level, int* cx) {
 
     *tokens = (*tokens)->next;
     if ((*tokens)->type != identsym) {
@@ -246,7 +250,7 @@ void procedure(token** tokens, symbol* symbolTable, int level) {
         fprintf(stderr, "[PARSER-ERROR] Incorrect symbol after procedure declaration. line %d\n", (*tokens)->lineNumber);
         exit(EXIT_FAILURE);
     }
-    block(tokens, symbolTable, ++level);
+    block(tokens, symbolTable, instructions, ++level, cx);
 
     if ((*tokens)->type != semicolonsym) {
         fprintf(stderr, "[PARSER-ERROR] ';' missing. line %d\n", (*tokens)->lineNumber);
@@ -266,7 +270,10 @@ void procedure(token** tokens, symbol* symbolTable, int level) {
  *              |   writesym identsym
  *              |   e
  */
-void statement(token** tokens, symbol* symbolTable, int level) {
+void statement(token** tokens, symbol* symbolTable, instruction* instructions, int level, int* cx) {
+
+    int kindLookup = 0;
+    int hashIndex = 0;
 
     switch((*tokens)->type) {
 
@@ -274,7 +281,8 @@ void statement(token** tokens, symbol* symbolTable, int level) {
         case identsym:
 
             // This identifier can only be a variable
-            switch(lookupIdentifier((*tokens)->lexeme, &symbolTable, level)) {
+            kindLookup = lookupIdentifier((*tokens)->lexeme, &symbolTable, level);
+            switch(kindLookup) {
                 case 0:
                     fprintf(stderr, "[PARSER-ERROR] '%s' Undeclared identifier. line %d\n", (*tokens)->lexeme, (*tokens)->lineNumber);
                     exit(EXIT_FAILURE);
@@ -286,6 +294,8 @@ void statement(token** tokens, symbol* symbolTable, int level) {
                     exit(EXIT_FAILURE);
             }
 
+            hashIndex = hashToken((*tokens)->lexeme, kindLookup) % MAX_SYMBOL_TABLE_SIZE;
+
             *tokens = (*tokens)->next;
             if ((*tokens)->type != becomesym) {
                 fprintf(stderr, "[PARSER-ERROR] Assignment operator expected. line %d\n", (*tokens)->lineNumber);
@@ -293,7 +303,7 @@ void statement(token** tokens, symbol* symbolTable, int level) {
             }
 
             *tokens = (*tokens)->next;
-            expression(tokens, symbolTable, level);
+            expression(tokens, symbolTable, instructions, level, cx);
 
             if ((*tokens)->type != semicolonsym) {
                 fprintf(stderr, "[PARSER-ERROR] ';' missing. line %d\n", (*tokens)->lineNumber);
@@ -343,11 +353,11 @@ void statement(token** tokens, symbol* symbolTable, int level) {
                 fprintf(stderr, "[PARSER-ERROR] Statement expected. line %d\n", (*tokens)->lineNumber);
                 exit(EXIT_FAILURE);
             }
-            statement(tokens, symbolTable, level);
+            statement(tokens, symbolTable, instructions, level, cx);
 
             while ((*tokens)->type == semicolonsym) {
                 *tokens = (*tokens)->next;
-                statement(tokens,symbolTable, level);
+                statement(tokens,symbolTable, instructions, level, cx);
             }
 
             if ((*tokens)->type != endsym) {
@@ -361,7 +371,7 @@ void statement(token** tokens, symbol* symbolTable, int level) {
         case ifsym:
             *tokens = (*tokens)->next;
 
-            condition(tokens, symbolTable, level);
+            condition(tokens, symbolTable, instructions, level, cx);
 
             if ((*tokens)->type != thensym) {
                 fprintf(stderr, "[PARSER-ERROR] 'then' expected. line %d\n", (*tokens)->lineNumber);
@@ -380,11 +390,11 @@ void statement(token** tokens, symbol* symbolTable, int level) {
                 fprintf(stderr, "[PARSER-ERROR] Statement expected. line %d\n", (*tokens)->lineNumber);
                 exit(EXIT_FAILURE);
             }
-            statement(tokens, symbolTable, level);
+            statement(tokens, symbolTable, instructions, level, cx);
 
             if ((*tokens)->type == elsesym) {
                 *tokens = (*tokens)->next;
-                statement(tokens, symbolTable, level);
+                statement(tokens, symbolTable, instructions, level, cx);
             }
             break;
 
@@ -392,7 +402,7 @@ void statement(token** tokens, symbol* symbolTable, int level) {
         case whilesym:
             *tokens = (*tokens)->next;
 
-            condition(tokens, symbolTable, level);
+            condition(tokens, symbolTable, instructions, level, cx);
 
             if ((*tokens)->type != dosym) {
                 fprintf(stderr, "[PARSER-ERROR] 'do' expected. line %d\n", (*tokens)->lineNumber);
@@ -411,7 +421,7 @@ void statement(token** tokens, symbol* symbolTable, int level) {
                 fprintf(stderr, "[PARSER-ERROR] Statement expected. line %d\n", (*tokens)->lineNumber);
                 exit(EXIT_FAILURE);
             }
-            statement(tokens, symbolTable, level);
+            statement(tokens, symbolTable, instructions, level, cx);
 
             break;
 
@@ -445,16 +455,16 @@ void statement(token** tokens, symbol* symbolTable, int level) {
 /* condition :=     oddsym expression
  *              |   expression rel-op expression
  */
-void condition(token** tokens, symbol* symbolTable, int level) {
+void condition(token** tokens, symbol* symbolTable, instruction* instructions, int level, int* cx) {
 
     if ((*tokens)->type == oddsym) {
 
         (*tokens) = (*tokens)->next;
-        expression(tokens, symbolTable, level);
+        expression(tokens, symbolTable, instructions, level, cx);
 
     } else {
 
-        expression(tokens, symbolTable, level);
+        expression(tokens, symbolTable, instructions, level, cx);
 
         // relational operations between [9-14]
         if ((*tokens)->type < 9 || (*tokens)->type > 14) {
@@ -463,12 +473,12 @@ void condition(token** tokens, symbol* symbolTable, int level) {
         }
         (*tokens) = (*tokens)->next;
 
-        expression(tokens, symbolTable, level);
+        expression(tokens, symbolTable, instructions, level, cx);
     }
 }
 
 /* expression := [plussym | minussym] term { (plussym | minussym) term } */
-void expression(token** tokens, symbol* symbolTable, int level) {
+void expression(token** tokens, symbol* symbolTable, instruction* instructions, int level, int* cx) {
 
     if ((*tokens)->type == plussym || (*tokens)->type == minussym) {
         (*tokens) = (*tokens)->next;
@@ -479,27 +489,27 @@ void expression(token** tokens, symbol* symbolTable, int level) {
         exit(EXIT_FAILURE);
     }
 
-    term(tokens, symbolTable, level);
+    term(tokens, symbolTable, instructions, level, cx);
 
     while ((*tokens)->type == plussym || (*tokens)->type == minussym) {
         (*tokens) = (*tokens)->next;
-        term(tokens, symbolTable, level);
+        term(tokens, symbolTable, instructions, level, cx);
     }
 }
 
 /* term := factor { (multsym | slashsym) factor } */
-void term(token** tokens, symbol* symbolTable, int level) {
+void term(token** tokens, symbol* symbolTable, instruction* instructions, int level, int* cx) {
 
-    factor(tokens, symbolTable, level);
+    factor(tokens, symbolTable, instructions, level, cx);
 
     while ((*tokens)->type == multsym || (*tokens)->type == slashsym) {
         (*tokens) = (*tokens)->next;
-        factor(tokens, symbolTable, level);
+        factor(tokens, symbolTable, instructions, level, cx);
     }
 }
 
 /* factor := identsym | numbersym | lparentsym expression rparentsym */
-void factor(token** tokens, symbol* symbolTable, int level) {
+void factor(token** tokens, symbol* symbolTable, instruction* instructions, int level, int* cx) {
 
     switch((*tokens)->type) {
 
@@ -523,7 +533,7 @@ void factor(token** tokens, symbol* symbolTable, int level) {
 
         case lparentsym:
             (*tokens) = (*tokens)->next;
-            expression(tokens, symbolTable, level);
+            expression(tokens, symbolTable, instructions, level, cx);
             if ((*tokens)->type != rparentsym) {
                 fprintf(stderr, "[PARSER-ERROR] ')' is missing. line %d\n", (*tokens)->lineNumber);
                 exit(EXIT_FAILURE);
