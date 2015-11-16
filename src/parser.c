@@ -210,6 +210,8 @@ void constant(token** tokens, symbol* symbolTable, int level) {
 /* variable := varsym identsym {commasym identsym} semicolonsym */
 void variable(token** tokens, symbol* symbolTable, int level) {
 
+    int stackAddress = 0;
+
     do {
         *tokens = (*tokens)->next;
         if ((*tokens)->type != identsym) {
@@ -217,7 +219,8 @@ void variable(token** tokens, symbol* symbolTable, int level) {
             exit(EXIT_FAILURE);
         }
 
-        addToSymbolTable(&symbolTable, (*tokens)->lexeme, 2, 0, level, 0);
+        addToSymbolTable(&symbolTable, (*tokens)->lexeme, 2, 0, level, stackAddress);
+        stackAddress++;
 
         *tokens = (*tokens)->next;
     } while ((*tokens)->type == commasym);
@@ -324,7 +327,7 @@ void statement(token** tokens, symbol* symbolTable, instruction* instructions, i
             }
 
             // STO
-            emit(4, level, symbolTable[hashIndex].address, cx, &instructions);
+            emit(4, level - symbolTable[hashIndex].level, symbolTable[hashIndex].address, cx, &instructions);
             break;
 
         // callsym identsym
@@ -552,7 +555,7 @@ void factor(token** tokens, symbol* symbolTable, instruction* instructions, int 
                 case 2:
                     // LOD
                     hashIndex = hashToken((*tokens)->lexeme, kindLookup) % MAX_SYMBOL_TABLE_SIZE;
-                    emit(3, level, symbolTable[hashIndex].address, cx, &instructions);
+                    emit(3, level - symbolTable[hashIndex].level, symbolTable[hashIndex].address, cx, &instructions);
                     break;
                 case 3:
                     fprintf(stderr, "[PARSER-ERROR] '%s' is a procedure and can't be used in an expression. line %d\n", (*tokens)->lexeme, (*tokens)->lineNumber);
