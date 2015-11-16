@@ -20,7 +20,7 @@ ERRRELATIONAL = test/input/input-test-err_relationalop.txt
 ERRMISPARENT = test/input/input-test-err_rparenthesis.txt
 ERRCONST = test/input/input-test-errconst.txt
 ERRPROCEDURE = test/input/input-test-errprocedure.txt
-ERRSEMICOLON = test/input/input-test-errsemicolon.txt
+ERRCOMMA = test/input/input-test-errsemicolon.txt
 ERRTHEN = test/input/input-test-errthenexpected.txt
 ERRPERIOD = test/input/input-test-errperiod.txt
 ERRASSIGN = test/input/input-test-errassign.txt
@@ -93,9 +93,9 @@ test-errprocedure:
 	@echo '[MAKE] Should error with "procedure cant be used in an expression"'
 	@$(PROGRAM) $(ERRPROCEDURE) $(CLEANINPUT) $(LEXEMETABLE) $(TOKENLIST) $(SYMBOLTABLE) $(MCODE)
 
-test-errsemicolon:
-	@echo '[MAKE] Should error with "; missing"'
-	@$(PROGRAM) $(ERRSEMICOLON) $(CLEANINPUT) $(LEXEMETABLE) $(TOKENLIST) $(SYMBOLTABLE) $(MCODE)
+test-errcomma:
+	@echo '[MAKE] Should error with ", missing"'
+	@$(PROGRAM) $(ERRCOMMA) $(CLEANINPUT) $(LEXEMETABLE) $(TOKENLIST) $(SYMBOLTABLE) $(MCODE)
 
 test-errthen:
 	@echo '[MAKE] Should error with "then expected"'

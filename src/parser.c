@@ -227,6 +227,11 @@ void variable(token** tokens, symbol* symbolTable, int level) {
         *tokens = (*tokens)->next;
     } while ((*tokens)->type == commasym);
 
+    if ((*tokens)->type == identsym) {
+        fprintf(stderr, "[PARSER-ERROR] ',' missing between variable declarations. line %d\n", (*tokens)->lineNumber);
+        exit(EXIT_FAILURE);
+    }
+
     if ((*tokens)->type != semicolonsym) {
         fprintf(stderr, "[PARSER-ERROR] ';' missing. line %d\n", (*tokens)->lineNumber);
         exit(EXIT_FAILURE);
