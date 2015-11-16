@@ -12,7 +12,7 @@
 void parse(const char* symbolTablePath, const char* mcodePath, token* tokens, symbol* symbolTable, instruction* instructions);
 FILE* openFileParser(const char* path, const char* op);
 void writeSymbolTable(symbol* symbolTable, FILE* symTblPtr);
-void writeInstructions(instruction* instructions, FILE* mcodePtr);
+void writeInstructions(instruction* instructions, FILE* mcodePtr, int cx);
 void addToSymbolTable(symbol** symbolTable, char* name, int kind, int value, int level, int address);
 void emit(int opcode, int level, int modifier, int* cx, instruction** instructions);
 int hashToken(char* name, int kind);
