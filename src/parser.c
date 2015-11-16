@@ -1,13 +1,12 @@
 #include "parser.h"
 
-void parse(const char* symbolTablePath, const char* mcodePath, token* tokens, symbol* symbolTablePtr, instruction* instructions) {
+void parse(const char* symbolTablePath, const char* mcodePath, token* tokens, symbol* symbolTablePtr, instruction* instructions, int* cx) {
 
-    int cx = 0;
-    program(tokens, symbolTablePtr, instructions, 0, &cx);
+    program(tokens, symbolTablePtr, instructions, 0, cx);
     FILE* symTblPtr = openFileParser(symbolTablePath, "w");
     writeSymbolTable(symbolTablePtr, symTblPtr);
     FILE* mcodePtr = openFileParser(mcodePath, "w");
-    writeInstructions(instructions, mcodePtr, cx);
+    writeInstructions(instructions, mcodePtr, *cx);
 }
 
 /* Opens a file and returns a FILE pointer */
