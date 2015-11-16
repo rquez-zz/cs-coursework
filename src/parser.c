@@ -554,8 +554,10 @@ void condition(token** tokens, symbol* symbolTable, instruction* instructions, i
 /* expression := [plussym | minussym] term { (plussym | minussym) term } */
 void expression(token** tokens, symbol* symbolTable, instruction* instructions, int level, int* cx) {
 
+    int type = 0;
     if ((*tokens)->type == plussym || (*tokens)->type == minussym) {
         (*tokens) = (*tokens)->next;
+        type = (*tokens)->type;
     }
 
     if ((*tokens)->type != identsym && (*tokens)->type != numbersym && (*tokens)->type != lparentsym) {
@@ -568,6 +570,25 @@ void expression(token** tokens, symbol* symbolTable, instruction* instructions, 
     while ((*tokens)->type == plussym || (*tokens)->type == minussym) {
         (*tokens) = (*tokens)->next;
         term(tokens, symbolTable, instructions, level, cx);
+
+        if ((*tokens)->type == plussym) {
+            // ADD
+            emit(2, 0, 2, cx, &instructions);
+        } else {
+            // SUB
+            emit(2, 0, 3, cx, &instructions);
+        }
+    }
+
+    // Emit instruction if expression has a +/- prefix
+    if (type != 0) {
+        if ((*tokens)->type == plussym) {
+            // ADD
+            emit(2, 0, 2, cx, &instructions);
+        } else {
+            // SUB
+            emit(2, 0, 3, cx, &instructions);
+        }
     }
 }
 
@@ -579,6 +600,14 @@ void term(token** tokens, symbol* symbolTable, instruction* instructions, int le
     while ((*tokens)->type == multsym || (*tokens)->type == slashsym) {
         (*tokens) = (*tokens)->next;
         factor(tokens, symbolTable, instructions, level, cx);
+
+        if ((*tokens)->type == multsym) {
+            // MULT
+            emit(2, 0, 4, cx, &instructions);
+        } else {
+            // DIV
+            emit(2, 0, 5, cx, &instructions);
+        }
     }
 }
 
