@@ -157,13 +157,16 @@ void block(token** tokens, symbol* symbolTable, instruction* instructions, int l
 
     statement(tokens, symbolTable, instructions, level, cx);
 
-    if ((*tokens)->type != semicolonsym && (*tokens)->type != periodsym) {
+    if ((*tokens)->type == semicolonsym) {
+        // OPR - Return from a procedure call
+        emit(2, 0, 0, cx, &instructions);
+    } else if ((*tokens)->type == periodsym) {
+        // SIO - Stop the Machine
+        emit(11, 0, 3, cx, &instructions);
+    } else {
         fprintf(stderr, "[PARSER-ERROR] Incorrect symbol after statement part in block. line %d\n", (*tokens)->lineNumber);
         exit(EXIT_FAILURE);
     }
-
-    // OPR - Return from a procedure call
-    emit(2, 0, 0, cx, &instructions);
 }
 
 /* constant := constsym identsym equalsym numbersym {commasym identsym equalsym numbersym} semicolonsym*/
