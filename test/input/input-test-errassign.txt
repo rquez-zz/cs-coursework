@@ -1,4 +1,4 @@
-const;
+const p := 100;
 var x;
 begin
   x:=p;
