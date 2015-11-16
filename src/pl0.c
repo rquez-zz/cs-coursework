@@ -32,7 +32,8 @@ int main(int argc, char* argv[]) {
         instructions[j].modifier = 0;
     }
 
-    parse(symbolTablePath, mcodePath, &tokens, symbolTable, instructions);
+    int cx = 0;
+    parse(symbolTablePath, mcodePath, &tokens, symbolTable, instructions, &cx);
 
     return 0;
 }

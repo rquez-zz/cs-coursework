@@ -57,7 +57,8 @@ void testParse() {
         instructions[j].modifier = 0;
     }
 
-    parse(testMcodePath, testSymbolTablePath, &tokens, symbolTable, instructions);
+    int cx = 0;
+    parse(testMcodePath, testSymbolTablePath, &tokens, symbolTable, instructions, &cx);
 
     FILE* ifp = fopen("test/output/symbolTable-test-parser.txt", "r");
     char name[12];
@@ -88,11 +89,18 @@ void testParse() {
         }
         i++;
     }
-}
 
-
-void testGenerate() {
-
+    i = 0;
+    ifp = fopen("test/output/mcode-test-parser.txt", "r");
+    while (i < cx) {
+        int op, l, m;
+        int count = fscanf(ifp, "%d\t%d\t%d\n", &op, &l, &m);
+        assert(count == 3);
+        assert(instructions[i].opcode == op);
+        assert(instructions[i].level == l);
+        assert(instructions[i].modifier == m);
+        i++;
+    }
 }
 
 int main() {
@@ -100,7 +108,6 @@ int main() {
     setup();
     testScan();
     testParse();
-    testGenerate();
     printf("ALL TESTS PASSED!\n");
     return 0;
 }
