@@ -293,6 +293,7 @@ void statement(token** tokens, symbol* symbolTable, instruction* instructions, i
 
     int kindLookup = 0;
     int hashIndex = 0;
+    int jumpIndex = 0;
 
     switch((*tokens)->type) {
 
@@ -406,6 +407,11 @@ void statement(token** tokens, symbol* symbolTable, instruction* instructions, i
             }
             *tokens = (*tokens)->next;
 
+            // JPC - Branch to M if the conditional is false
+            // Has a bogus address
+            jumpIndex = *cx;
+            emit(8, 0, 0, cx, &instructions);
+
             if ((*tokens)->type != identsym &&
                     (*tokens)->type != callsym &&
                     (*tokens)->type != beginsym &&
@@ -420,9 +426,19 @@ void statement(token** tokens, symbol* symbolTable, instruction* instructions, i
             statement(tokens, symbolTable, instructions, level, cx);
 
             if ((*tokens)->type == elsesym) {
+
+                // If there's an else then the branch should jump here
+                instructions[jumpIndex].modifier = *cx;
+
                 *tokens = (*tokens)->next;
                 statement(tokens, symbolTable, instructions, level, cx);
+            } else {
+
+                // If there's no else then jump past the if block
+                instructions[jumpIndex].modifier = *cx;
             }
+
+
             break;
 
         // whilesym condition dosym statement
@@ -489,18 +505,49 @@ void condition(token** tokens, symbol* symbolTable, instruction* instructions, i
         (*tokens) = (*tokens)->next;
         expression(tokens, symbolTable, instructions, level, cx);
 
+        // ODD
+        emit(2, 0, 6, cx, &instructions);
     } else {
 
         expression(tokens, symbolTable, instructions, level, cx);
 
         // relational operations between [9-14]
-        if ((*tokens)->type < 9 || (*tokens)->type > 14) {
+        int op = (*tokens)->type;
+        if (op < 9 || op > 14) {
             fprintf(stderr, "[PARSER-ERROR] relational operator expected. line %d\n", (*tokens)->lineNumber);
             exit(EXIT_FAILURE);
         }
         (*tokens) = (*tokens)->next;
 
         expression(tokens, symbolTable, instructions, level, cx);
+
+        switch(op) {
+            case 9:
+                // EQL
+                emit(2, 0, 8, cx, &instructions);
+                break;
+            case 10:
+                // NEQ
+                emit(2, 0, 9, cx, &instructions);
+                break;
+            case 11:
+                // LSS
+                emit(2, 0, 10, cx, &instructions);
+                break;
+            case 12:
+                // LEQ
+                emit(2, 0, 11, cx, &instructions);
+                break;
+            case 13:
+                // GTR
+                emit(2, 0, 12, cx, &instructions);
+                break;
+            case 14:
+                // GEQ
+                emit(2, 0, 13, cx, &instructions);
+                break;
+        }
+
     }
 }
 
