@@ -1,7 +1,6 @@
 #include <assert.h>
 #include "../src/scanner.c"
 #include "../src/parser.c"
-#include "../src/generator.c"
 
 void setup() {
 
@@ -45,6 +44,7 @@ void testParse() {
     scan(testInputAll, testCleanOutput, testLexTable, testTokenListPath, &tokens);
 
     symbol symbolTable[MAX_SYMBOL_TABLE_SIZE];
+    instruction instructions[MAX_SYMBOL_TABLE_SIZE];
     int j = 0;
     for (j = 0; j < MAX_SYMBOL_TABLE_SIZE; j++) {
         strcpy(symbolTable[j].name, "*");
@@ -52,8 +52,13 @@ void testParse() {
         symbolTable[j].value = 0;
         symbolTable[j].level = 0;
         symbolTable[j].address = 0;
+        instructions[j].opcode = 0;
+        instructions[j].level = 0;
+        instructions[j].modifier = 0;
     }
-    parse(testMcodePath, testSymbolTablePath, &tokens, symbolTable);
+
+    int cx = 0;
+    parse(testMcodePath, testSymbolTablePath, &tokens, symbolTable, instructions, &cx);
 
     FILE* ifp = fopen("test/output/symbolTable-test-parser.txt", "r");
     char name[12];
@@ -84,11 +89,18 @@ void testParse() {
         }
         i++;
     }
-}
 
-
-void testGenerate() {
-
+    i = 0;
+    ifp = fopen("test/output/mcode-test-parser.txt", "r");
+    while (i < cx) {
+        int op, l, m;
+        int count = fscanf(ifp, "%d\t%d\t%d\n", &op, &l, &m);
+        assert(count == 3);
+        assert(instructions[i].opcode == op);
+        assert(instructions[i].level == l);
+        assert(instructions[i].modifier == m);
+        i++;
+    }
 }
 
 int main() {
@@ -96,7 +108,6 @@ int main() {
     setup();
     testScan();
     testParse();
-    testGenerate();
     printf("ALL TESTS PASSED!\n");
     return 0;
 }

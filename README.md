@@ -22,3 +22,4 @@ You can supply an input file with
 * Clean input file is at `output/cleanInput.txt`
 * Lexeme table is at `output/lexemeTable.txt`
 * Token list is at `output/tokenList.txt`
+* Machine code is at `output/mcode.txt`
