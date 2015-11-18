@@ -9,13 +9,9 @@ int main(int argc, char* argv[]) {
     const char* symbolTablePath = argv[5];
     const char* mcodePath = argv[6];
 
-    fprintf(stdout, "[PL0] Starting...\n");
-
-    fprintf(stdout, "[SCANNER] Starting...\n");
     token tokens;
     scan(inputPath, cleanInputPath, lexTablePath, tokenListPath, &tokens);
 
-    fprintf(stdout, "[PARSER] Starting...\n");
     symbol symbolTable[MAX_SYMBOL_TABLE_SIZE];
     instruction instructions[MAX_SYMBOL_TABLE_SIZE];
 

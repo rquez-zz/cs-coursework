@@ -227,6 +227,11 @@ void variable(token** tokens, symbol* symbolTable, int level) {
         *tokens = (*tokens)->next;
     } while ((*tokens)->type == commasym);
 
+    if ((*tokens)->type == identsym) {
+        fprintf(stderr, "[PARSER-ERROR] ',' missing between variable declarations. line %d\n", (*tokens)->lineNumber);
+        exit(EXIT_FAILURE);
+    }
+
     if ((*tokens)->type != semicolonsym) {
         fprintf(stderr, "[PARSER-ERROR] ';' missing. line %d\n", (*tokens)->lineNumber);
         exit(EXIT_FAILURE);
@@ -338,7 +343,7 @@ void statement(token** tokens, symbol* symbolTable, instruction* instructions, i
 
             *tokens = (*tokens)->next;
             if ((*tokens)->type != identsym) {
-                fprintf(stderr, "[PARSER-ERROR] Identifier must be followed by 'call'. line %d\n", (*tokens)->lineNumber);
+                fprintf(stderr, "[PARSER-ERROR] 'call' must be followed by an identifier. line %d\n", (*tokens)->lineNumber);
                 exit(EXIT_FAILURE);
             }
 
@@ -389,6 +394,11 @@ void statement(token** tokens, symbol* symbolTable, instruction* instructions, i
 
             if ((*tokens)->type != endsym) {
                 fprintf(stderr, "[PARSER-ERROR] 'end' expected. line %d\n", (*tokens)->lineNumber);
+                exit(EXIT_FAILURE);
+            }
+
+            if ((*tokens)->next == NULL) {
+                fprintf(stderr, "[PARSER-ERROR] '.' expected. line %d\n", (*tokens)->lineNumber);
                 exit(EXIT_FAILURE);
             }
             *tokens = (*tokens)->next;
