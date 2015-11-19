@@ -6,6 +6,9 @@
 * Tyler Mellor
 * Joesph Leavitt
 
+### Documentation
+Screenshots are located in the `docs` directory.
+
 ### Compile
 `make`
 
