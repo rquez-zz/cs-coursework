@@ -62,9 +62,59 @@ public class crcheck {
         return input;
     }
 
-    static int calculate() {
+    /**
+     * Calculate the CRC for each line and returns it as an array of strings with zero padding
+     *
+     * @param bytes
+     * @return
+     */
+    public static String[] calculate(Byte[][] bytes) {
 
-        return 0;
+        int remainder = 0;
+        ArrayList<String> list = new ArrayList<String>();
+
+        // Calculate the CRC for each line
+        for(int i = 0; i < 8; i++) {
+
+            // Calculate CRC for two bytes at a time
+            int crcTemp;
+            for(int j = 0; j < bytes[i].length; j+=2) {
+
+                // Merge two bytes
+                int mergedBytes = (bytes[i][j] << 8) | bytes[i][j+1];
+
+                // XOR the mergedBytes with the current remainder left shifted by 1
+                crcTemp = mergedBytes ^ (remainder << 1);
+
+                // Pad the temp crc value by 15
+                crcTemp <<= 15;
+
+                // Calculate CRC for each bit in the merged bytes
+                for (int zeros = Integer.numberOfLeadingZeros(crcTemp); zeros <= 16; zeros = Integer.numberOfLeadingZeros(crcTemp)) {
+
+                    // Line up divisor with the current bit
+                    int bitCRC = divisor << (16 - zeros);
+
+                    //XOR them to get the CRC result
+                    crcTemp ^= bitCRC;
+
+                }
+
+                remainder = crcTemp;
+            }
+
+            // Parse CRC has a hex string with padded zeros
+            StringBuilder sb = new StringBuilder();
+            sb.append(Integer.toHexString(remainder));
+            while (sb.length() < 8) {
+                sb.insert(0, '0');
+            }
+
+            // Add CRC to list
+            list.add(sb.toString());
+        }
+
+        return list.toArray(new String[list.size()]);
     }
 
     static boolean verify(int crc) {
