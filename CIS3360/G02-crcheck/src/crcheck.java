@@ -179,6 +179,43 @@ public class crcheck {
         return lastLine;
     }
 
+    /**
+     * Outputs the CRC line calculations
+     *
+     * @param crcArray
+     * @param input
+     */
+    public static void outputCRC(String[] crcArray, Byte[][] input) {
+        for (int i = 0; i < input.length; i++) {
+            for (Byte b : input[i]) {
+                System.out.print((char)b.byteValue());
+            }
+            System.out.println(" - " + crcArray[i]);
+        }
+    }
+
+    public static void outputFileToCalculate(Byte[][] input) {
+        System.out.println("CRC16 Input test from file\n");
+        for (Byte[] ba : input) {
+            for (Byte b : ba) {
+                if (b != '.') {
+                    System.out.print((char) b.byteValue());
+                }
+            }
+            if (ba[0] == '.')
+                break;
+            System.out.println();
+        }
+    }
+
+    public static void outputFileToVerify(Byte[][] input) {
+        System.out.println("CRC16 Input test from file\n");
+        for (Byte[] ba : input) {
+            for (Byte b : ba) {
+                System.out.print((char) b.byteValue());
+            }
+            System.out.println();
+        }
 
     }
 
