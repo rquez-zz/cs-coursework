@@ -117,9 +117,69 @@ public class crcheck {
         return list.toArray(new String[list.size()]);
     }
 
-    static boolean verify(int crc) {
+    /**
+     * Calculates the CRC of the input and verifies it
+     * with the existing CRC at the end of the input
+     *
+     * @param input
+     * @return
+     */
+    public static boolean verify(Byte[][] input) {
 
-        return false;
+        // Get the CRC from the last row
+        byte[] crc = new byte[8];
+        Byte[] lastLine = new Byte[56];
+        for (int i = 0; i < input[7].length; i++) {
+            if (i <= 55)
+                lastLine[i] = input[7][i];
+            else
+                crc[i-56] = input[7][i];
+        }
+        String hex = new String(crc);
+
+        // Replace the existing final row with a row without the crc
+        input[7] = lastLine;
+
+        // Calculate the CRC for each line
+        String[] crcArray = calculate(input);
+
+        // Replace final row with real CRC
+        input[7] = getFinalLine(crcArray, input);
+
+        outputCRC(crcArray, input);
+        System.out.println("\nCRC 16 result : " + crcArray[7]);
+
+        // Verify result
+        if (crcArray[7].equals(hex))
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * Replaces the final row when calculating CRC with a row
+     * that includes the CRC
+     *
+     * @param crcArray
+     * @param input
+     * @return
+     */
+    public static Byte[] getFinalLine(String[] crcArray, Byte[][] input) {
+
+        // Add final CRC to input buffer
+        byte[] finalCrc = crcArray[crcArray.length - 1].getBytes();
+        Byte[] lastLine = new Byte[64];
+        for (int i = 0; i < lastLine.length; i++) {
+            if (i >= 56) {
+                lastLine[i] = finalCrc[i - 56];
+            } else {
+                lastLine[i] = input[7][i];
+            }
+        }
+        return lastLine;
+    }
+
+
     }
 
     public static void main(String args[]) {
