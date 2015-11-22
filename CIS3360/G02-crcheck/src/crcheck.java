@@ -1,10 +1,13 @@
 import java.io.*;
+import java.util.ArrayList;
 
 /**
  * Created by Ricardo Vasquez on 11/19/2015.
  * Program 2: CRC Codes
  */
 public class crcheck {
+
+    private static final int divisor = 0b1010000001010011;
 
     /**
      * Reads from the reader the characters from the input as 8 lines of 64 characters.
