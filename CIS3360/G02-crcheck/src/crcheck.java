@@ -16,13 +16,47 @@ public class crcheck {
      * @return
      * @throws IOException
      */
-    public static char[][] read(Reader reader) throws IOException {
-        char[][] input = new char[8][64];
+    public static Byte[][] read(Reader reader) throws IOException {
 
-        for (int i = 0; i < input.length; i++) {
-            for (int j = 0; j < input[i].length; j++) {
-                input[i][j] = (char) reader.read();
+        ArrayList<Byte[]> lines = new ArrayList<Byte[]>();
+        ArrayList<Byte> line = new ArrayList<Byte>();
+
+        // Parse file
+        for (byte b = (byte)reader.read(); b != -1; b = (byte)reader.read()) {
+            // Check for Non ASCII Character
+            if (b > 128 || b < 0) {
+                throw new IOException("Input file can only have ASCI characters.");
             }
+            // Break the line after 64 characters
+            if (line.size() == 64) {
+                lines.add(line.toArray(new Byte[line.size()]));
+                line = new ArrayList<Byte>();
+            }
+            // Add Character if not a newline
+            if (b != '\n') {
+                line.add(b);
+            }
+        }
+
+        // Pad the input
+        while(lines.size() < 8) {
+            if (lines.size() == 7) {
+                while (line.size() < 56) {
+                    line.add(new Byte((byte) '.'));
+                }
+            } else {
+                while (line.size() < 64) {
+                    line.add(new Byte((byte) '.'));
+                }
+            }
+            lines.add(line.toArray(new Byte[line.size()]));
+            line = new ArrayList<Byte>();
+        }
+
+        // Unwrap array list
+        Byte[][] input = new Byte[lines.size()][];
+        for (int i = 0; i < lines.size(); i++) {
+            input[i] = lines.get(i);
         }
 
         return input;
