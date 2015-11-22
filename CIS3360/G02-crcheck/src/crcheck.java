@@ -249,6 +249,8 @@ public class crcheck {
             } else {
                 System.out.println("\nCRC 16 verification failed.");
             }
+        } else {
+            throw new RuntimeException("Invalid first argument. Must be 'c' or 'v'.");
         }
     }
 }
