@@ -221,20 +221,34 @@ public class crcheck {
 
     public static void main(String args[]) {
 
-        String flag = args[0];
-        String inputPath = args[1];
-        char[][] input;
+        if (args.length < 2) {
+            throw new RuntimeException("Invalid arguments. Flag 'c' or 'v' and file path are needed.");
+        }
 
-        try (Reader reader = new BufferedReader(new FileReader(inputPath))) {
+        char flag = args[0].charAt(0);
+        Byte[][] input;
+
+        try (Reader reader = new BufferedReader(new FileReader(args[1]))) {
             input = read(reader);
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
+            throw new RuntimeException(e.getMessage());
         }
 
-        for (char[] c : input) {
-            System.out.println(new String(c));
+        if (flag == 'c') {
+            outputFileToCalculate(input);
+            System.out.println("\nCRC 16 calculation progress:\n");
+            String[] crcArray = calculate(input);
+            input[7] = getFinalLine(crcArray, input);
+            outputCRC(crcArray, input);
+            System.out.println("\nCRC 16 result : " + crcArray[7]);
+        } else if (flag == 'v') {
+            outputFileToVerify(input);
+            System.out.println("\nCRC 16 calculation progress:\n");
+            if (verify(input)) {
+                System.out.println("\nCRC 16 verification passed.");
+            } else {
+                System.out.println("\nCRC 16 verification failed.");
+            }
         }
-
     }
 }
