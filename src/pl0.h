@@ -13,3 +13,15 @@
 #define MCODE_PATH "output/mcode.txt"
 #define ACODE_PATH "output/acode.txt"
 #define STACKTRACE_PATH "output/stacktrace.txt"
+
+#define TOKENLIST_SWITCH "-t"
+#define SYMBOLTABLE_SWITCH "-s"
+#define MCODE_SWITCH "-m"
+#define ACODE_SWITCH "-a"
+#define STACKTRACE_SWITCH "-s"
+
+void printTokenList(token* tokens);
+void printSymbolTable(symbol* symbolTable);
+void printMachineCode(instruction* instructions);
+void printDisassembledCode();
+void printStackTrace();

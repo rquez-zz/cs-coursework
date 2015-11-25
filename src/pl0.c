@@ -39,6 +39,46 @@ int main(int argc, char* argv[]) {
     // TODO: Initialize acode
     // TODO: Intialize stack
 
+    // Loop through all the arguments
+    int i = 0;
+    for (i = 1; i <= argc; i++) {
+
+        if (strcmp(argv[i], TOKENLIST_SWITCH) == 0) {
+            printTokenList(&tokens);
+        } else if (strcmp(argv[i], SYMBOLTABLE_SWITCH) == 0) {
+            printSymbolTable(symbolTable);
+        } else if (strcmp(argv[i], MCODE_SWITCH) == 0) {
+            printMachineCode(mcode);
+        } else if (strcmp(argv[i], ACODE_SWITCH) == 0) {
+            // TODO: Pass correct param
+            printDisassembledCode();
+        } else if (strcmp(argv[i], STACKTRACE_SWITCH) == 0) {
+            // TODO: Pass correct param
+            printStackTrace();
+        } else {
+            // TODO: Throw error
+        }
+    }
 
     return 0;
+}
+
+void printTokenList(token* tokens) {
+
+}
+
+void printSymbolTable(symbol* symbolTable) {
+
+}
+
+void printMachineCode(instruction* mcode) {
+
+}
+
+void printDisassembledCode() {
+
+}
+
+void printStackTrace() {
+
 }
