@@ -4,6 +4,7 @@
 
 #include "scanner.h"
 #include "parser.h"
+#include "pm0.h"
 
 #define INPUT_PATH "input/input.txt"
 #define CLEANINPUT_PATH "output/cleaninput.txt"

@@ -36,8 +36,7 @@ int main(int argc, char* argv[]) {
     parse(symbolTablePath, mcodePath, &tokens, symbolTable, mcode, &cx);
 
     // Fetch and execute machine code in the stack
-    // TODO: Initialize acode
-    // TODO: Intialize stack
+    stack(acodePath, stacktracePath, mcode);
 
     // Loop through all the arguments
     int i = 0;

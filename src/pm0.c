@@ -1,31 +1,10 @@
 #include "pm0.h"
 
-#define BASE(l, bp) (bp - l*6)
-
-const int MAX_STACK_HEIGHT = 200;
-const int MAX_CODE_LENGTH = 500;
-const int MAX_LINE_LENGTH = 10;
-const int MAX_LEXI_LEVEL = 3;
-const char* WRITE = "w";
-const char* READ = "r";
-
-int stack(const char* inputPath, const char* outputPath) {
-
-    // Open input file for reading
-    FILE* inputPtr= openFile(inputPath, READ);
-    if (inputPtr == NULL) {
-        printf("[STACK-ERROR] Error opening \"%s\".\n", inputPath);
-        return 1;
-    }
-    printf("[STACK-LOG] %s opened for input.\n", inputPath);
+int stack(const char* acodePath, const char* stackTracePath, instruction* mcode) {
 
     // Open output file for writing
-    FILE* outputPtr = openFile(outputPath, WRITE);
-    if (outputPtr == NULL) {
-        printf("Error opening \"%s\"\n", outputPath);
-        return 1;
-    }
-    printf("[STACK-LOG] %s opened for output.\n", outputPath);
+    FILE* acodePtr = openFile(acodePath, "w");
+    FILE* stackTracePtr = openFile(stackTracePath, "w");
 
     // Intialize registers
     int SP = 0; // Points to the top of the stack
@@ -33,46 +12,32 @@ int stack(const char* inputPath, const char* outputPath) {
     int PC = 0; // The index of the next instruction
     instruction* IR; // The current instruction container
     int halt = 0;
-    printf("[STACK-LOG] Registers intialized.\n");
 
     // Initialize stack
-    int stack[MAX_STACK_HEIGHT];
-    memset(stack, 0, MAX_STACK_HEIGHT * sizeof(int));
-    printf("[STACK-LOG] Stack of length %d initalized to 0.\n", MAX_STACK_HEIGHT);
-
-    // Read instructions
-    instruction instructions[MAX_CODE_LENGTH];
-    read(inputPtr, instructions);
-    printf("[STACK-LOG] Instructions loaded into memory, closing input file.\n");
-    fclose(inputPtr);
+    int stack[MAX_STACK_HEIGHT] = { 0 };
 
     // Build and write Instructions string to file
-    fprintf(outputPtr, "%s", buildInstructionsString(instructions));
-    printf("[STACK-LOG] Instructions written to output file.\n");
+    fprintf(acodePtr, "%s", buildInstructionsString(mcode));
 
     // Write header for stacktrace
-    fprintf(outputPtr, "\t\t\t\tpc\tbp\tsp\tstack\n");
-    fprintf(outputPtr, "Initial Values\t\t\t%d\t%d\t%d\n", PC, BP, SP);
-
-    printf("[STACK-LOG] Begin fetch/execute cycle.\n");
+    fprintf(stackTracePtr, "\t\t\t\tpc\tbp\tsp\tstack\n");
+    fprintf(stackTracePtr, "Initial Values\t\t\t%d\t%d\t%d\n", PC, BP, SP);
 
     // Fetch Cycle
     while(halt == 0) {
         // Fetch instruction
-        IR = &instructions[PC];
-        printf("[STACK-LOG] FETCHED: %d %d %d\n", IR->opcode, IR->lex, IR->param);
+        IR = &mcode[PC];
 
         // Execute instruction
         int prevPC = PC;
         execute(IR, &PC, &SP, &BP, &halt, stack);
-        printf("[STACK-LOG] EXECUTED: PC:%d SP:%d BP:%d HALT:%d\n", PC, SP, BP, halt);
 
         // Write execution trace line to file
-        fprintf(outputPtr, "%s", buildTraceLine(prevPC, IR, PC, BP, SP, stack));
+        fprintf(stackTracePtr, "%s", buildTraceLine(prevPC, IR, PC, BP, SP, stack));
     }
 
-    printf("[STACK-LOG] Stack operations halted, closing output file.\n");
-    fclose(outputPtr);
+    fclose(acodePtr);
+    fclose(stackTracePtr);
 
     return 0;
 }
@@ -82,27 +47,11 @@ FILE* openFile(const char* path, const char* op) {
     FILE* filePtr;
     filePtr = fopen(path, op);
     if(filePtr == NULL) {
-        perror("[STACK-ERROR] Error opening file.");
+        fprintf(stderr, "[PARSER-ERROR] Error opening %s\n", path);
+        perror("");
         return NULL;
     }
     return filePtr;
-}
-
-/* Fills the instruction array with instructions from the input file */
-void read(FILE* inputPtr, instruction* instructions) {
-
-    // Char array of each line in the file
-    char line[MAX_LINE_LENGTH];
-
-    // Loop through the end of the file
-    int i = 0;
-    while ( fgets(line, MAX_LINE_LENGTH, (FILE*)inputPtr) != NULL ) {
-        // Parse token chars to int and assign instruction
-        instructions[i].opcode = (int)atoi((char *)strtok(line, " "));
-        instructions[i].lex = (int)atoi((char *)strtok(NULL, " "));
-        instructions[i].param = (int)atoi((char *)strtok(NULL, " "));
-        i++;
-    }
 }
 
 /* Build string showing all instructions */
@@ -118,10 +67,10 @@ char* buildInstructionsString(instruction* instructions) {
         sprintf(text+strlen(text), "%d\t%s\t%d\t%d\n",
                 i,
                 getOpcodeName(instructions[i].opcode),
-                instructions[i].lex,
-                instructions[i].param);
+                instructions[i].level,
+                instructions[i].modifier);
         // Check if last instruction is reached
-        if (instructions[i].opcode == 11 && instructions[i].param == 3)
+        if (instructions[i].opcode == 11 && instructions[i].modifier == 3)
             i = -1;
         else
             i++;
@@ -174,8 +123,8 @@ char* buildTraceLine(int prevPC, instruction* IR, int PC, int BP, int SP, int* s
     sprintf(line+strlen(line), "%d\t%s\t%d\t%d\t%d\t%d\t%d\t%s\n",
             prevPC,
             getOpcodeName(IR->opcode),
-            IR->lex,
-            IR->param,
+            IR->level,
+            IR->modifier,
             PC,
             BP,
             SP,
@@ -207,8 +156,8 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
 
     // Read Instructions
     int opcode = IR->opcode;
-    int lex = IR->lex;
-    int param =  IR->param;
+    int lex = IR->level;
+    int param =  IR->modifier;
 
     // Switch statement on opcode
     switch (opcode) {
@@ -356,10 +305,9 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
         case 10: // SIO 2
             *SP = *SP + 1;
             int result = scanf("%d", &stack[*SP]);
-            if (result == 1)
-                printf("[STACK-LOG] SIO 0 2 input read successfully.\n");
-            else
-                printf("[STACK-ERROR] SIO 0 2 error reading input.\n");
+            if (result != 1) {
+                fprintf(stderr, "[PARSER-ERROR] Error reading input.");
+            }
             *PC = *PC + 1;
             break;
         case 11: // SIO 3
