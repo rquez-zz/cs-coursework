@@ -11,11 +11,12 @@ int main(int argc, char* argv[]) {
     const char* acodePath = ACODE_PATH;
     const char* stacktracePath = STACKTRACE_PATH;
 
+    // Scan the code into tokens
     token tokens;
     scan(inputPath, cleanInputPath, lexTablePath, tokenListPath, &tokens);
 
     symbol symbolTable[MAX_SYMBOL_TABLE_SIZE];
-    instruction instructions[MAX_SYMBOL_TABLE_SIZE];
+    instruction mcode[MAX_SYMBOL_TABLE_SIZE];
 
     // Initialize symbolTable and instructions array
     int j = 0;
@@ -25,13 +26,19 @@ int main(int argc, char* argv[]) {
         symbolTable[j].value = 0;
         symbolTable[j].level = 0;
         symbolTable[j].address = 0;
-        instructions[j].opcode = 0;
-        instructions[j].level = 0;
-        instructions[j].modifier = 0;
+        mcode[j].opcode = 0;
+        mcode[j].level = 0;
+        mcode[j].modifier = 0;
     }
 
+    // Parse the tokens into a symbol table and machine code
     int cx = 0;
-    parse(symbolTablePath, mcodePath, &tokens, symbolTable, instructions, &cx);
+    parse(symbolTablePath, mcodePath, &tokens, symbolTable, mcode, &cx);
+
+    // Fetch and execute machine code in the stack
+    // TODO: Initialize acode
+    // TODO: Intialize stack
+
 
     return 0;
 }
