@@ -2,12 +2,14 @@
 
 int main(int argc, char* argv[]) {
 
-    const char* inputPath = argv[1];
-    const char* cleanInputPath = argv[2];
-    const char* lexTablePath = argv[3];
-    const char* tokenListPath = argv[4];
-    const char* symbolTablePath = argv[5];
-    const char* mcodePath = argv[6];
+    const char* inputPath = INPUT_PATH;
+    const char* cleanInputPath = CLEANINPUT_PATH;
+    const char* lexTablePath = LEXEMETABLE_PATH;
+    const char* tokenListPath = TOKENLIST_PATH;
+    const char* symbolTablePath = SYMBOLTABLE_PATH;
+    const char* mcodePath = MCODE_PATH;
+    const char* acodePath = ACODE_PATH;
+    const char* stacktracePath = STACKTRACE_PATH;
 
     token tokens;
     scan(inputPath, cleanInputPath, lexTablePath, tokenListPath, &tokens);
