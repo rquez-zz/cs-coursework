@@ -44,17 +44,17 @@ int main(int argc, char* argv[]) {
     for (i = 1; i <= argc; i++) {
 
         if (strcmp(argv[i], TOKENLIST_SWITCH) == 0) {
-            printTokenList(&tokens);
+            printTokenList(tokenListPath);
         } else if (strcmp(argv[i], SYMBOLTABLE_SWITCH) == 0) {
-            printSymbolTable(symbolTable);
+            printSymbolTable(symbolTablePath);
         } else if (strcmp(argv[i], MCODE_SWITCH) == 0) {
-            printMachineCode(mcode);
+            printMachineCode(mcodePath);
         } else if (strcmp(argv[i], ACODE_SWITCH) == 0) {
             // TODO: Pass correct param
             printDisassembledCode();
         } else if (strcmp(argv[i], STACKTRACE_SWITCH) == 0) {
             // TODO: Pass correct param
-            printStackTrace();
+            printStackTrace(stacktracePath);
         } else {
             // TODO: Throw error
         }
@@ -63,22 +63,71 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-void printTokenList(token* tokens) {
+void printTokenList(const char* tokenListPath) {
+   
+    FILE* tokenListFilePtr;
+    tokenListFilePtr = fopen(tokenListPath, "r");
+    char buffer[500];
 
+    fgets(buffer, sizeof buffer, tokenListPtr);
+
+    printf("\n%s\n\n", buffer);
+    
+    fclose(tokenListFilePtr);
+    
 }
 
-void printSymbolTable(symbol* symbolTable) {
+void printSymbolTable(const char* symbolTablePath) {
+   
+    FILE* symbolTableFilePtr;
+    symbolTableFilePtr = fopen(symbolTablePath, "r);
+    char buffer[500];
+    
+    printf("\n");
+    while(!feof(symbolTableFilePtr))
+    {
+        fgets(buffer, sizeof buffer, symbolTableFilePtr);
+        printf("%s", buffer);
+    }
+    printf("\n\n");
 
+    fclose(symbolTableFilePtr);
+    
 }
 
-void printMachineCode(instruction* mcode) {
-
+void printMachineCode(const char* mcodePath) {
+   
+    FILE* mcodeFilePtr;
+    mcodeFilePtr = fopen(mcodePath, "r");
+    char buffer[500];
+    
+    printf("\n");
+    while(!feof(mcodeFilePtr))
+    {
+        fgets(buffer, sizeof buffer, mcodeFilePtr);
+        printf("%s", buffer);
+    }
+    printf("\n\n"); 
+    
+    fclose(mcodeFilePtr);
+    
 }
 
 void printDisassembledCode() {
 
+  
+
 }
 
-void printStackTrace() {
+void printStackTrace(const char* stacktracePath) {
+    
+    FILE* stacktraceFilePtr;
+    stacktraceFilePtr = fopen(stacktracePath, "r");
+    char buffer[500];
+    
+    // TODO: print to screen
+    
+    
+    fclose(stacktraceFilePtr);
 
 }
