@@ -577,13 +577,14 @@ void expression(token** tokens, symbol* symbolTable, instruction* instructions, 
     term(tokens, symbolTable, instructions, level, cx);
 
     while ((*tokens)->type == plussym || (*tokens)->type == minussym) {
+        int type = (*tokens)->type;
         (*tokens) = (*tokens)->next;
         term(tokens, symbolTable, instructions, level, cx);
 
-        if ((*tokens)->type == plussym) {
+        if (type == plussym) {
             // ADD
             emit(2, 0, 2, cx, &instructions);
-        } else {
+        } else if (type == minussym) {
             // SUB
             emit(2, 0, 3, cx, &instructions);
         }
