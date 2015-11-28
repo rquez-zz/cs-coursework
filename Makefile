@@ -2,8 +2,8 @@ CC = gcc
 CFLAGS = -g -O2 -Wall
 OBJECTS = src/pl0.o src/parser.o src/scanner.o src/pm0.o
 TEST_OBJECTS = test/test.o
-PROGRAM = bin/pl0
-TEST_PROGRAM = bin/test
+PROGRAM = pl0
+TEST_PROGRAM = test
 
 pl0 : $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(PROGRAM)
@@ -19,9 +19,6 @@ clean :
 	@rm $(PROGRAM)
 	@rm $(TEST_OBJECTS)
 	@rm $(TEST_PROGRAM)
-
-run :
-	$(PROGRAM)
 
 test : test.o
 	$(CC) $(CFLAGS) $(TEST_OBJECTS) -o $(TEST_PROGRAM)
