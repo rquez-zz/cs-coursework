@@ -19,10 +19,12 @@
 #define SYMBOLTABLE_SWITCH "-s"
 #define MCODE_SWITCH "-m"
 #define ACODE_SWITCH "-a"
-#define STACKTRACE_SWITCH "-s"
+#define STACKTRACE_SWITCH "-v"
 
-void printTokenList(token* tokens);
-void printSymbolTable(symbol* symbolTable);
-void printMachineCode(instruction* instructions);
-void printDisassembledCode();
-void printStackTrace();
+void printTokenList(const char* tokenListPath);
+void printSymbolTable(const char* symbolTablePath);
+void printMachineCode(const char* mCodePath);
+void printDisassembledCode(const char* aCodePath);
+void printStackTrace(const char* stackTracePath);
+FILE* open(const char* path, const char* op);
+void print(FILE* filePtr);

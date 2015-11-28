@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 
     // Loop through all the arguments
     int i = 0;
-    for (i = 1; i <= argc; i++) {
+    for (i = 1; i < argc; i++) {
 
         if (strcmp(argv[i], TOKENLIST_SWITCH) == 0) {
             printTokenList(tokenListPath);
@@ -49,10 +49,8 @@ int main(int argc, char* argv[]) {
         } else if (strcmp(argv[i], MCODE_SWITCH) == 0) {
             printMachineCode(mcodePath);
         } else if (strcmp(argv[i], ACODE_SWITCH) == 0) {
-            // TODO: Pass correct param
-            printDisassembledCode();
+            printDisassembledCode(acodePath);
         } else if (strcmp(argv[i], STACKTRACE_SWITCH) == 0) {
-            // TODO: Pass correct param
             printStackTrace(stacktracePath);
         } else {
             // TODO: Throw error
@@ -63,69 +61,64 @@ int main(int argc, char* argv[]) {
 }
 
 void printTokenList(const char* tokenListPath) {
-   
-    FILE* tokenListFilePtr;
-    tokenListFilePtr = fopen(tokenListPath, "r");
-    char buffer[500];
 
-    fgets(buffer, sizeof buffer, tokenListPtr);
-
-    printf("\n%s\n\n", buffer);
-    
+    FILE* tokenListFilePtr = open(tokenListPath, "r");
+    printf("TOKEN LIST\n");
+    print(tokenListFilePtr);
+    printf("\n\n");
     fclose(tokenListFilePtr);
-    
 }
 
 void printSymbolTable(const char* symbolTablePath) {
-   
-    FILE* symbolTableFilePtr;
-    symbolTableFilePtr = fopen(symbolTablePath, "r);
-    char buffer[500];
-    
-    printf("\n");
-    while(!feof(symbolTableFilePtr))
-    {
-        fgets(buffer, sizeof buffer, symbolTableFilePtr);
-        printf("%s", buffer);
-    }
-    printf("\n\n");
 
+    FILE* symbolTableFilePtr = open(symbolTablePath, "r");
+    printf("SYMBOL TABLE\n");
+    print(symbolTableFilePtr);
+    printf("\n");
     fclose(symbolTableFilePtr);
-    
 }
 
 void printMachineCode(const char* mcodePath) {
-   
-    FILE* mcodeFilePtr;
-    mcodeFilePtr = fopen(mcodePath, "r");
-    char buffer[500];
-    
+
+    FILE* mcodeFilePtr = open(mcodePath, "r");
+    printf("MACHINE CODE\n");
+    print(mcodeFilePtr);
     printf("\n");
-    while(!feof(mcodeFilePtr))
-    {
-        fgets(buffer, sizeof buffer, mcodeFilePtr);
-        printf("%s", buffer);
-    }
-    printf("\n\n"); 
-    
     fclose(mcodeFilePtr);
-    
 }
 
-void printDisassembledCode( /* pass in correct path */ ) {
+void printDisassembledCode(const char* acodePath) {
 
-    // TODO: implement something that prints disassembled code to screen
-  
+    FILE* acodeFilePtr = openFile(acodePath, "r");
+    printf("DISASSEMBLED CODE\n");
+    print(acodeFilePtr);
+    printf("\n");
+    fclose(acodeFilePtr);
 }
 
 void printStackTrace(const char* stacktracePath) {
-    
-    FILE* stacktraceFilePtr;
-    stacktraceFilePtr = fopen(stacktracePath, "r");
-    char buffer[500];
-    
-    // TODO: implement something that prints the stack-trace print to screen
-    
-    fclose(stacktraceFilePtr);
 
+    FILE* stacktraceFilePtr = openFile(stacktracePath, "r");
+    printf("STACKTRACE\n");
+    print(stacktraceFilePtr);
+    printf("\n");
+    fclose(stacktraceFilePtr);
+}
+
+/* Opens a file and returns a FILE pointer */
+FILE* open(const char* path, const char* op) {
+    FILE* filePtr;
+    filePtr = fopen(path, op);
+    if(filePtr == NULL) {
+        perror("[STACK-ERROR] Error opening file.");
+        return NULL;
+    }
+    return filePtr;
+}
+
+void print(FILE* filePtr) {
+    char buffer[500];
+    while (fgets(buffer, sizeof buffer, filePtr) != NULL) {
+        printf("%s", buffer);
+    }
 }
