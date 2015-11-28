@@ -7,6 +7,8 @@ void parse(const char* symbolTablePath, const char* mcodePath, token* tokens, sy
     writeSymbolTable(symbolTablePtr, symTblPtr);
     FILE* mcodePtr = openFileParser(mcodePath, "w");
     writeInstructions(instructions, mcodePtr, *cx);
+    fclose(symTblPtr);
+    fclose(mcodePtr);
 }
 
 /* Opens a file and returns a FILE pointer */
