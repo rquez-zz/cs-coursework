@@ -13,10 +13,22 @@ Screenshots are located in the `docs` directory.
 `make`
 
 ### Run
-`make run`
+`./pl0 [-t] [-s] [-m] [-a] [-v]`
 
-You can supply an input file with
-`make run INPUT=input/input2.txt`
+    -t
+        Prints the token list
+
+    -s
+        Prints the symbol table
+
+    -m
+        Prints the machine code
+
+    -a
+        Prints the disassembled code
+
+    -v
+        Prints the VM execution stacktrace
 
 ### Test
 `make test`
@@ -26,3 +38,5 @@ You can supply an input file with
 * Lexeme table is at `output/lexemeTable.txt`
 * Token list is at `output/tokenList.txt`
 * Machine code is at `output/mcode.txt`
+* Disassembled code is at `output/acode.txt`
+* Stacktrace is at `output/stacktrace.txt`
