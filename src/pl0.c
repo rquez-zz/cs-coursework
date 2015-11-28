@@ -113,10 +113,10 @@ void printMachineCode(const char* mcodePath) {
     
 }
 
-void printDisassembledCode() {
+void printDisassembledCode( /* pass in correct path */ ) {
 
+    // TODO: implement something that prints disassembled code to screen
   
-
 }
 
 void printStackTrace(const char* stacktracePath) {
@@ -125,8 +125,7 @@ void printStackTrace(const char* stacktracePath) {
     stacktraceFilePtr = fopen(stacktracePath, "r");
     char buffer[500];
     
-    // TODO: print to screen
-    
+    // TODO: implement something that prints the stack-trace print to screen
     
     fclose(stacktraceFilePtr);
 
