@@ -1,6 +1,6 @@
 #include "pm0.h"
 
-int stack(const char* acodePath, const char* stackTracePath, instruction* mcode) {
+int stack(const char* acodePath, const char* stackTracePath, instruction* mcode, symbol* symbolTable) {
 
     // Open output file for writing
     FILE* acodePtr = openFile(acodePath, "w");
@@ -30,7 +30,7 @@ int stack(const char* acodePath, const char* stackTracePath, instruction* mcode)
 
         // Execute instruction
         int prevPC = PC;
-        execute(IR, &PC, &SP, &BP, &halt, stack);
+        execute(IR, &PC, &SP, &BP, &halt, stack, &symbolTable);
 
         // Write execution trace line to file
         fprintf(stackTracePtr, "%s", buildTraceLine(prevPC, IR, PC, BP, SP, stack));
@@ -152,12 +152,13 @@ char* stackString(int* stack, int SP, int BP) {
 }
 
 /* Executes the instruction IR and increments the PC */
-void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) {
+void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack, symbol** symbolTable) {
 
     // Read Instructions
     int opcode = IR->opcode;
     int lex = IR->level;
     int param =  IR->modifier;
+    int index = IR->index;
 
     // Switch statement on opcode
     switch (opcode) {
@@ -271,6 +272,7 @@ void execute(instruction* IR, int* PC, int* SP, int* BP, int* halt, int* stack) 
             break;
         case 4: // STO
             stack[BASE(lex, *BP) + param] = stack[*SP];
+            (*symbolTable)[index].value = stack[*SP];
             stack[*SP] = 0;
             *SP = *SP - 1;
             *PC = *PC + 1;
