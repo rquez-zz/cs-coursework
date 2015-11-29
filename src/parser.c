@@ -68,8 +68,8 @@ void addToSymbolTable(symbol** symbolTable, char* name, int kind, int value, int
     (*symbolTable)[index].address = address;
 }
 
-/* Adds the instruction to the instructions array and increments the index */
-void emit(int opcode, int level, int modifier, int* cx, instruction** instructions) {
+/* Adds the instruction to the instructions array and increments the code index */
+void emit(int opcode, int level, int modifier, int index, int* cx, instruction** instructions) {
 
     if (*cx > MAX_SYMBOL_TABLE_SIZE) {
         fprintf(stderr, "[PARSER-ERROR] Can't have more than %d instructions.\n", MAX_SYMBOL_TABLE_SIZE);
@@ -78,6 +78,7 @@ void emit(int opcode, int level, int modifier, int* cx, instruction** instructio
     (*instructions)[*cx].opcode = opcode;
     (*instructions)[*cx].level = level;
     (*instructions)[*cx].modifier = modifier;
+    (*instructions)[*cx].index = index;
     (*cx)++;
 }
 
@@ -136,7 +137,7 @@ void block(token** tokens, symbol* symbolTable, instruction* instructions, int l
 
     // JMP - Correct address retrieved below
     int procedureInstructionIndex = *cx;
-    emit(7, 0, 0, cx, &instructions);
+    emit(7, 0, 0, 0, cx, &instructions);
 
     if ((*tokens)->type == constsym) {
         constant(tokens, symbolTable, level);
@@ -154,16 +155,16 @@ void block(token** tokens, symbol* symbolTable, instruction* instructions, int l
     instructions[procedureInstructionIndex].modifier = *cx;
 
     // INC - Allocate enough space for AR_SIZE local variables
-    emit(6, 0, AR_SIZE, cx, &instructions);
+    emit(6, 0, AR_SIZE, 0, cx, &instructions);
 
     statement(tokens, symbolTable, instructions, level, cx);
 
     if ((*tokens)->type == semicolonsym) {
         // OPR - Return from a procedure call
-        emit(2, 0, 0, cx, &instructions);
+        emit(2, 0, 0, 0, cx, &instructions);
     } else if ((*tokens)->type == periodsym) {
         // SIO - Stop the Machine
-        emit(11, 0, 3, cx, &instructions);
+        emit(11, 0, 3, 0, cx, &instructions);
     } else {
         fprintf(stderr, "[PARSER-ERROR] Incorrect symbol after statement part in block. line %d\n", (*tokens)->lineNumber);
         exit(EXIT_FAILURE);
@@ -300,6 +301,7 @@ void statement(token** tokens, symbol* symbolTable, instruction* instructions, i
     int kindLookup = 0;
     int hashIndex = 0;
     int jumpIndex = 0;
+    char* lexeme = "";
 
     switch((*tokens)->type) {
 
@@ -307,7 +309,8 @@ void statement(token** tokens, symbol* symbolTable, instruction* instructions, i
         case identsym:
 
             // This identifier can only be a variable
-            kindLookup = lookupIdentifier((*tokens)->lexeme, &symbolTable, level);
+            lexeme = (*tokens)->lexeme;
+            kindLookup = lookupIdentifier(lexeme, &symbolTable, level);
             switch(kindLookup) {
                 case 0:
                     fprintf(stderr, "[PARSER-ERROR] '%s' Undeclared identifier. line %d\n", (*tokens)->lexeme, (*tokens)->lineNumber);
@@ -337,7 +340,8 @@ void statement(token** tokens, symbol* symbolTable, instruction* instructions, i
             }
 
             // STO
-            emit(4, level - symbolTable[hashIndex].level, symbolTable[hashIndex].address, cx, &instructions);
+            int index = ((getAsciiName(lexeme) + 2) * 71) % MAX_SYMBOL_TABLE_SIZE;
+            emit(4, level - symbolTable[hashIndex].level, symbolTable[hashIndex].address, index, cx, &instructions);
             break;
 
         // callsym identsym
@@ -364,7 +368,7 @@ void statement(token** tokens, symbol* symbolTable, instruction* instructions, i
                 case 3:
                     // CAL - Call the procedure at M
                     hashIndex = hashToken((*tokens)->lexeme, kindLookup) % MAX_SYMBOL_TABLE_SIZE;
-                    emit(5, level - symbolTable[hashIndex].level, symbolTable[hashIndex].address, cx, &instructions);
+                    emit(5, level - symbolTable[hashIndex].level, symbolTable[hashIndex].address, 0, cx, &instructions);
                     break;
             }
 
@@ -421,7 +425,7 @@ void statement(token** tokens, symbol* symbolTable, instruction* instructions, i
             // JPC - Branch to M if the conditional is false
             // Has a bogus address
             jumpIndex = *cx;
-            emit(8, 0, 0, cx, &instructions);
+            emit(8, 0, 0, 0, cx, &instructions);
 
             if ((*tokens)->type != identsym &&
                     (*tokens)->type != callsym &&
@@ -517,7 +521,7 @@ void condition(token** tokens, symbol* symbolTable, instruction* instructions, i
         expression(tokens, symbolTable, instructions, level, cx);
 
         // ODD
-        emit(2, 0, 6, cx, &instructions);
+        emit(2, 0, 6, 0, cx, &instructions);
     } else {
 
         expression(tokens, symbolTable, instructions, level, cx);
@@ -535,27 +539,27 @@ void condition(token** tokens, symbol* symbolTable, instruction* instructions, i
         switch(op) {
             case 9:
                 // EQL
-                emit(2, 0, 8, cx, &instructions);
+                emit(2, 0, 8, 0, cx, &instructions);
                 break;
             case 10:
                 // NEQ
-                emit(2, 0, 9, cx, &instructions);
+                emit(2, 0, 9, 0, cx, &instructions);
                 break;
             case 11:
                 // LSS
-                emit(2, 0, 10, cx, &instructions);
+                emit(2, 0, 10, 0, cx, &instructions);
                 break;
             case 12:
                 // LEQ
-                emit(2, 0, 11, cx, &instructions);
+                emit(2, 0, 11, 0, cx, &instructions);
                 break;
             case 13:
                 // GTR
-                emit(2, 0, 12, cx, &instructions);
+                emit(2, 0, 12, 0, cx, &instructions);
                 break;
             case 14:
                 // GEQ
-                emit(2, 0, 13, cx, &instructions);
+                emit(2, 0, 13, 0,cx, &instructions);
                 break;
         }
 
@@ -585,10 +589,10 @@ void expression(token** tokens, symbol* symbolTable, instruction* instructions, 
 
         if (type == plussym) {
             // ADD
-            emit(2, 0, 2, cx, &instructions);
+            emit(2, 0, 2, 0, cx, &instructions);
         } else if (type == minussym) {
             // SUB
-            emit(2, 0, 3, cx, &instructions);
+            emit(2, 0, 3, 0, cx, &instructions);
         }
     }
 
@@ -596,10 +600,10 @@ void expression(token** tokens, symbol* symbolTable, instruction* instructions, 
     if (type != 0) {
         if ((*tokens)->type == plussym) {
             // ADD
-            emit(2, 0, 2, cx, &instructions);
+            emit(2, 0, 2, 0, cx, &instructions);
         } else {
             // SUB
-            emit(2, 0, 3, cx, &instructions);
+            emit(2, 0, 3, 0, cx, &instructions);
         }
     }
 }
@@ -615,10 +619,10 @@ void term(token** tokens, symbol* symbolTable, instruction* instructions, int le
 
         if ((*tokens)->type == multsym) {
             // MULT
-            emit(2, 0, 4, cx, &instructions);
+            emit(2, 0, 4, 0, cx, &instructions);
         } else {
             // DIV
-            emit(2, 0, 5, cx, &instructions);
+            emit(2, 0, 5, 0, cx, &instructions);
         }
     }
 }
@@ -641,12 +645,12 @@ void factor(token** tokens, symbol* symbolTable, instruction* instructions, int 
                 case 1:
                     // LIT
                     hashIndex = hashToken((*tokens)->lexeme, kindLookup) % MAX_SYMBOL_TABLE_SIZE;
-                    emit(1, level, symbolTable[hashIndex].value, cx, &instructions);
+                    emit(1, level, symbolTable[hashIndex].value, 0, cx, &instructions);
                     break;
                 case 2:
                     // LOD
                     hashIndex = hashToken((*tokens)->lexeme, kindLookup) % MAX_SYMBOL_TABLE_SIZE;
-                    emit(3, level - symbolTable[hashIndex].level, symbolTable[hashIndex].address, cx, &instructions);
+                    emit(3, level - symbolTable[hashIndex].level, symbolTable[hashIndex].address, 0, cx, &instructions);
                     break;
                 case 3:
                     fprintf(stderr, "[PARSER-ERROR] '%s' is a procedure and can't be used in an expression. line %d\n", (*tokens)->lexeme, (*tokens)->lineNumber);
@@ -658,7 +662,7 @@ void factor(token** tokens, symbol* symbolTable, instruction* instructions, int 
 
         case numbersym:
             // LIT
-            emit(1, level, (*tokens)->value, cx, &instructions);
+            emit(1, level, (*tokens)->value, 0, cx, &instructions);
 
             (*tokens) = (*tokens)->next;
             break;
@@ -677,4 +681,12 @@ void factor(token** tokens, symbol* symbolTable, instruction* instructions, int 
             fprintf(stderr, "[PARSER-ERROR] The preceding factor cannot begin with '%s'. line %d\n", (*tokens)->lexeme, (*tokens)->lineNumber);
             exit(EXIT_FAILURE);
     }
+}
+
+int getAsciiName(char* name) {
+    int sum = 0;
+    for (; *name; name++) {
+        sum += *name;
+    }
+    return sum;
 }
