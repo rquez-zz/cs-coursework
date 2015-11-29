@@ -36,7 +36,11 @@ int main(int argc, char* argv[]) {
     parse(symbolTablePath, mcodePath, &tokens, symbolTable, mcode, &cx);
 
     // Fetch and execute machine code in the stack
-    stack(acodePath, stacktracePath, mcode);
+    stack(acodePath, stacktracePath, mcode, symbolTable);
+
+    FILE* symTblPtr = openFileParser(symbolTablePath, "w");
+    writeSymbolTable(symbolTable, symTblPtr);
+    fclose(symTblPtr);
 
     // Loop through all the arguments
     int i = 0;
