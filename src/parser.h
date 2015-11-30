@@ -14,7 +14,7 @@ FILE* openFileParser(const char* path, const char* op);
 void writeSymbolTable(symbol* symbolTable, FILE* symTblPtr);
 void writeInstructions(instruction* instructions, FILE* mcodePtr, int cx);
 void addToSymbolTable(symbol** symbolTable, char* name, int kind, int value, int level, int address);
-void emit(int opcode, int level, int modifier, int* cx, instruction** instructions);
+void emit(int opcode, int level, int modifier, int name, int* cx, instruction** instructions);
 int hashToken(char* name, int kind);
 void linearProbe(int* index, symbol** symbolTable);
 void program(token* tokens, symbol* symbolTable, instruction* instructions, int level, int* cx);
@@ -28,3 +28,4 @@ void expression(token** tokens, symbol* symbolTable, instruction* instructions, 
 void term(token** tokens, symbol* symbolTable, instruction* instructions, int level, int* cx);
 void factor(token** tokens, symbol* symbolTable, instruction* instructions, int level, int* cx);
 int lookupIdentifier(char* name, symbol** symbolTable, int level);
+int getAsciiName(char* name);

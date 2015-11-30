@@ -10,6 +10,9 @@ typedef struct instruction {
 
 	int modifier;
 
+    // Index of symbol in symbol table
+    int index;
+
 } instruction;
 
 #endif /* INSTRUCTION_H */
