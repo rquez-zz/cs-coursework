@@ -30,8 +30,8 @@ Screenshots are located in the `docs` directory.
     -v
         Prints the VM execution stacktrace
 
-### Test
-`make test`
+### Input
+* Input file is at `input/input.txt`
 
 ### Output
 * Clean input file is at `output/cleanInput.txt`

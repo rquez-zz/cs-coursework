@@ -57,7 +57,8 @@ int main(int argc, char* argv[]) {
         } else if (strcmp(argv[i], STACKTRACE_SWITCH) == 0) {
             printStackTrace(stacktracePath);
         } else {
-            // TODO: Throw error
+            fprintf(stderr, "Invalid argument: %s\n", argv[i]);
+            return -1;
         }
     }
 
