@@ -1,0 +1,5 @@
+const;
+var x;
+begin
+  x:=p;
+end.
