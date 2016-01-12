@@ -55,6 +55,7 @@ public class CS2ProgrammingWeek4
 	 */
 	static boolean groupSumsTarget(int start, int[] nums, int target) 
 	{
+		return false;
 	}
 
 	//	Problem #2
@@ -80,7 +81,8 @@ public class CS2ProgrammingWeek4
 	 */
 	static boolean groupSumsTarget6(int start, int[] nums, int target) 
 	{
-	}	
+		return false;
+	}
 
 	//	Problem #3
 	//	Given an array of ints, is it possible to choose a group of some 
@@ -106,7 +108,8 @@ public class CS2ProgrammingWeek4
 	 */
 	static boolean groupSumsTargetNoAdj(int start, int[] nums, int target) 
 	{
-	}	
+		return false;
+	}
 
 	//	Problem #4
 	//	Given an array of ints, is it possible to choose a group of some 
@@ -132,6 +135,7 @@ public class CS2ProgrammingWeek4
 	 */
 	static boolean groupSumsTarget5(int start, int[] nums, int target) 
 	{
+		return false;
 	}
 	
 	//	Problem #5
@@ -160,6 +164,7 @@ public class CS2ProgrammingWeek4
 	 */
 	static boolean groupSumsTargetClump(int start, int[] nums, int target) 
 	{
+		return false;
 	}
 	
 	//	Problem #6
@@ -184,6 +189,7 @@ public class CS2ProgrammingWeek4
 	 */
 	static boolean divideArray(int[] nums) 
 	{
+		return false;
 	}
 	
 	//	Problem #7
@@ -209,6 +215,7 @@ public class CS2ProgrammingWeek4
 	 */
 	static boolean oddDivide10(int[] nums) 
 	{
+		return false;
 	}
 	
 	//	Problem #8
@@ -233,6 +240,7 @@ public class CS2ProgrammingWeek4
 	 */
 	static boolean divide53(int[] nums) 
 	{
+		return false;
 	}
 	
 	///////////////////////////////////////////

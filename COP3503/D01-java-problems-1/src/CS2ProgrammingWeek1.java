@@ -1,4 +1,3 @@
-﻿
 ///////////////////////////////////////////
 //
 // Test frame for CS2 programming assignments
