@@ -1,4 +1,3 @@
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,7 +7,7 @@ import java.util.Random;
 
 import static junit.framework.TestCase.assertEquals;
 
-public class PermutationsTest {
+public class BacktrackingAlgorithmsTest {
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream systemOut = System.out;
@@ -27,7 +26,7 @@ public class PermutationsTest {
         for (int i = 0; i < length; i++)
             array[i] = i + 1;
 
-        Permutations.permutate(array, 0);
+        BacktrackingAlgorithms.permutate(array, 0);
         String[] permutations = outContent.toString().split(" \n");
 
         assertEquals(factorial(length), permutations.length);
@@ -47,7 +46,7 @@ public class PermutationsTest {
         for (int i = 0; i < length; i++)
             array[i] = (char)(i + 97);
 
-        Permutations.permutate(array, 0);
+        BacktrackingAlgorithms.permutate(array, 0);
 
         String[] permutations = outContent.toString().split(" \n");
 
@@ -65,7 +64,7 @@ public class PermutationsTest {
            array[i] = rand.nextInt(11);
         }
 
-        Permutations.subsets(0, new boolean[length], array);
+        BacktrackingAlgorithms.subsets(0, new boolean[length], array);
         String[] subsets = outContent.toString().split(" \n");
         assertEquals(subsets.length, (int)Math.pow(2, length) - 1);
     }
@@ -80,7 +79,7 @@ public class PermutationsTest {
             array[i] = rand.nextInt(11);
         }
 
-        Permutations.subsets(array);
+        BacktrackingAlgorithms.subsets(array);
         String[] subsets = outContent.toString().split(" \n");
         assertEquals(subsets.length, (int)Math.pow(2, length) - 1);
         printOutSet(subsets, array);
@@ -96,7 +95,7 @@ public class PermutationsTest {
             array[i] = rand.nextInt(11);
         }
 
-        Permutations.combinations(0, 2, 0, new int[2], array);
+        BacktrackingAlgorithms.combinations(0, 2, 0, new int[2], array);
         String[] combos = outContent.toString().split(" \n");
         assertEquals(combos.length, combos(4,2));
         printOutSet(combos,array);
@@ -113,7 +112,7 @@ public class PermutationsTest {
             array[i] = rand.nextInt(11);
         }
 
-        Permutations.combinations(k,array);
+        BacktrackingAlgorithms.combinations(k,array);
         String[] combos = outContent.toString().split(" \n");
         assertEquals(combos.length, combos(n,k));
         printOutSet(combos,array);

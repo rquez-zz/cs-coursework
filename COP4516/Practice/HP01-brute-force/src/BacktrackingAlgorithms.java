@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 /**
  *
- * Practice on Permutations
+ * Practice on BacktrackingAlgorithms
  */
-public class Permutations {
+public class BacktrackingAlgorithms {
 
     /**
      * Permutate k integers in array
