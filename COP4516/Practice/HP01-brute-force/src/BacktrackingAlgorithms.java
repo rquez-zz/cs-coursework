@@ -168,7 +168,7 @@ public class BacktrackingAlgorithms {
      * @return
      */
     public static int gcd(int a, int b) {
-        return b == a ? a : gcd(b, a % b);
+        return b == 0 ? a : gcd(b, a % b);
     }
 
     private static void swap(char[] array, int i, int k) {
