@@ -1,18 +1,32 @@
 # cs-coursework
-Collection of my computer science coursework at the University of Central Florida
+Collection of my computer science coursework at the University of Central Florida. Work is organized by course number which is described below. 
 
-COP2800 - Object Oriented Programming I
+* CDA3103 - Computer Logic and Organization  
+Introduce fundamentals of the organization and design of computers from both the computer 
+programmer's perspective and computer ''architect's'' perspective. This folder includes the MySpim project which is a MIPS processor simulator written in C.
 
-COP2805 - Object Oriented Programming II
+* CIS3360 - Security In Computing  
+The security in computing is concerned with protecting the information, the systems and hardware that use, store and transmit that information.
+This folder includes implementations of the Hill Cipher and CRC algorithm written in C. 
 
-COP3502 - Computer Science I (Data Structures)
+* COP2800 - Object Oriented Programming I (Java)  
+An introduction to OO in Java.
 
-COP3503 - Computer Science II (Algorithms)
+* COP2805 - Object Oriented Programming II (Java)  
+A continuation of COP2800 that focuses on intermediate topics in Java such as exceptions, threads, and MVC.
 
-CDA3103 - Computer Logic and Organization
+* COP3402 - System Software (Compilers)  
+This course is designed to provide a fundamental understanding of real and virtual machines as language processor and the implementation of compilers. This folder includes a the PL0 which is a compiler simulation written in C. 
 
-COP3402 - System Software
+* COP3502 - Computer Science I (Data Structures)  
+Course on problem solving techniques, order analysis and notation, abstract data types, and recursion. This folder includes implementations of linked lists and binary trees in C.
 
-COT4210 - Discrete Structures II (Theory of Computation)
+* COP3503 - Computer Science II (Algorithms)  
+Intermediate to advanced level course on algorithm design and analysis. Folder includes Java programs implementing various algorithms such as MiniMax, Huffman Compression, and Dynamic Programming.
 
-CIS3360 - Security In Computing
+* COP4020 - Programming Languages (Haskell)  
+
+* COP4516 - Team Dynamics (Programming Contest Problems)  
+
+* COT4210 - Discrete Structures II (Theory of Computation)  
+This course examines different models of computation and determines their computational ability. This folder includes Java implemenations of DFA minimization, checking for valid CNF context free grammars, and Turing machines.
