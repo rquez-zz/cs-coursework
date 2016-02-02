@@ -247,7 +247,6 @@ public class BallonsTest {
             expected[i] = expected[i].trim();
         }
 
-
         assertArrayEquals(expected, actual);
     }
 }
