@@ -12,7 +12,6 @@ public class MonkeyTest {
     @Test
     public void test_monkeyMain() {
 
-
         String input =
                 "3\n" +
                 "[]\n" +
