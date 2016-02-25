@@ -1,5 +1,7 @@
 module RegularExpressionsTesting where
 
+import Prelude hiding ((<*>))
+
 import Test.HUnit
 
 import RegularExpressions
@@ -40,6 +42,10 @@ test_number_0 =
 test_number_1 =
   TestCase (assertEqual "number \"123\"" (True) (number "123"))
 
+-- added after Tuesday's class: a single 0 is a valid number
+test_number_2 =
+  TestCase (assertEqual "number \"0\"" (True) (number "0"))
+
 -- test for fractionalNumber
 
 test_frac_0 =
@@ -57,6 +63,14 @@ test_frac_3 =
 test_frac_4 =
   TestCase (assertEqual "fractional \"1020.000123\"" (True) (fractional "1020.000123"))
 
+-- added after Tuesday's class: a fractional number can start with a single 0
+test_frac_5 =
+  TestCase (assertEqual "fractional \"0.123\"" (True) (fractional "0.123"))
+
+test_frac_6 =
+  TestCase (assertEqual "fractional \"0.0\"" (True) (fractional "0.0"))
+
+
 -- group tests
 
 tests = TestList [
@@ -72,12 +86,15 @@ tests = TestList [
 --
   TestLabel "number" test_number_0,
   TestLabel "number" test_number_1,
+  TestLabel "number" test_number_2,
 --
   TestLabel "fractional number" test_frac_0,
   TestLabel "fractional number" test_frac_1,
   TestLabel "fractional number" test_frac_2,
   TestLabel "fractional number" test_frac_3,
-  TestLabel "fractional number" test_frac_4
+  TestLabel "fractional number" test_frac_4,
+  TestLabel "fractional number" test_frac_5,
+  TestLabel "fractional number" test_frac_6
   ]
 
 runTests = runTestTT tests

@@ -2,6 +2,8 @@ module RegularExpressions where
 
 import Prelude hiding ((<*>))
 import Data.Char
+import Data.List
+import Data.Maybe
 
 type RegExp         = String -> Bool
 
@@ -34,11 +36,22 @@ plus                :: RegExp -> RegExp
 plus e              = e ||| (e <**> star e)
 
 number              :: RegExp
-number              = (\s -> (/= '0') (head s) && all (isDigit) s)
+number              = (\s -> a s && b s || s == "0")
+                        where
+                                a = (\s -> (head s) /= '0')
+                                b = (\s -> all (isDigit) s)
 
 fractional          :: RegExp
-fractional          =   (\s-> (hasDot s && hasNoZerosBegin s && hasNoZerosEnd s) || (hasNoZerosBegin s && endsInDotZero s))
-                        where   hasDot = (\s -> any (== '.') s)
-                                hasNoZerosBegin = (\s -> (head s) /= '0')
-                                hasNoZerosEnd = (\s -> (last s) /= '0')
-                                endsInDotZero = (\s -> (drop ((length s) - 2) s) == ".0")
+fractional          = (\s ->
+                                c s &&
+                                ((a l 1 s && b head l s) && (a r 2 s && b last r s) ||
+                                a' l 1 s && (a r 2 s && b last r s) ||
+                                a' r 2 s && (a l 1 s && b head l s) ||
+                                a' l 1 s && a' r 2 s)
+                        ) where a = (\x y s-> length (x s) > y)
+                                a' = (\x y s -> not (a x y s))
+                                b = (\f x s -> f (x s) /= '0')
+                                c = (\s -> elem '.' s)
+                                l = (\s -> fst (p s))
+                                r = (\s -> snd (p s))
+                                p = (\s -> splitAt (fromJust (elemIndex '.' s)) s)
