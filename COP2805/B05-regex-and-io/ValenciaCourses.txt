@@ -6380,7 +6380,7 @@ Acquaints students with the Food and Drug Administration's Food
 Code as well as the challenges and opportunities facing hospitality
 managers in the area of sanitation management. It presents a systems
 approach to sanitation management, utilizing the Hazard Analysis
-Control Point Program (HACCP), and it provides a basic understanding
+Control PointSegment Program (HACCP), and it provides a basic understanding
 of quality sanitation management
 FSS 1050C 3 2 1
 BAKING INGREDIENTS AND TECHNOLOGY
