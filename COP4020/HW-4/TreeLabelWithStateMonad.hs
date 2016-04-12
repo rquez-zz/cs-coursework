@@ -2,12 +2,30 @@ module TreeLabelWithStateMonad where
 
 import Store
 import Control.Monad.State
+import Data.Maybe
+import qualified Data.Map.Strict as Map
 
 -- label element
 
 labelValue :: Ord a => a -> State (Store a Int) Int
-labelValue val = do
-  return 99 -- replace this stub implementation by a proper implementation of labelValue
+labelValue k = do
+    modify (putNext k)
+    gets (getValue k)
+
+putNext :: Ord a => a -> (Store a Int) -> (Store a Int)
+putNext k s
+    | g == -1       = insertStore k n s
+    | otherwise     = s
+    where   g = getValue k s
+            n = nextValue s
+
+nextValue :: (Store a Int) -> Int
+nextValue (Store m)
+    | Map.size m == 0   = 0
+    | otherwise         = (maximum (map snd (Map.toList m))) + 1
+
+getValue :: Ord a => a -> (Store a Int) -> Int
+getValue k s = fromMaybe (-1) (lookupStore k s)
 
 -- label tree
 
