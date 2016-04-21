@@ -13,7 +13,7 @@
 #define DRIVER_AUTHOR "Ricardo Vasquez <ricardov@knights.ucf.edu>"
 #define DRIVER_DESC "A simple character LKM that writes to a buffer and reads from it."
 #define DEVICE_NAME "read_write"
-#define BUFFER_SIZE 256
+#define BUFFER_SIZE 1024
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR(DRIVER_AUTHOR);

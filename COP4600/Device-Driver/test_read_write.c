@@ -81,33 +81,33 @@ void test5() {
 void test6() {
 
    int ret;
-   char send[512];
+   char send[2048];
    memset(send, 'A', sizeof(send));
 
-   ret = write(fd, send, 512);
-   ret = read(fd, receiveBig, 256);
+   ret = write(fd, send, 2048);
+   ret = read(fd, receiveBig, 1024);
 
-   assert(strlen(receiveBig) == 256);
-   printf("TEST 6: DeviceBuffer 256, UserBuffer 0, Send 512, Receive 256 - PASS\n");
+   assert(strlen(receiveBig) == 1024);
+   printf("TEST 6: DeviceBuffer 1024, UserBuffer 0, Send 2048, Receive 1024 - PASS\n");
 }
 
 // When user sends more than the device buffer over several requests
 void test7() {
 
    int ret;
-   char send[512];
+   char send[350];
 
    memset(send, 'B', sizeof(send));
-   ret = write(fd, send, 100);
+   ret = write(fd, send, 350);
    memset(send, 'C', sizeof(send));
-   ret = write(fd, send, 100);
-   memset(send, 'D', sizeof(send));
-   ret = write(fd, send, 100);
+   ret = write(fd, send, 350);
+   memset(send, 'C', sizeof(send));
+   ret = write(fd, send, 350);
 
-   ret = read(fd, receiveBig, 256);
+   ret = read(fd, receiveBig, 1024);
 
-   assert(strlen(receiveBig) == 256);
-   printf("TEST 7: DeviceBuffer 256, Send 100x3, Receive 256 - PASS\n");
+   assert(strlen(receiveBig) == 1024);
+   printf("TEST 7: DeviceBuffer 1024, Send 350x3, Receive 1024 - PASS\n");
 }
 
 int main() {
