@@ -1,20 +1,29 @@
-.class
 bin/
 output/
-.settings/
-.classpath
-.project
 doc/
 *.zip
-*.jar
 *.png
-.metadata/
-.recommenders/
-*.iml
-.idea/
 out/
 spimcore
 *.o
+
+# Java Files
+.idea/
+.class
+.classpath
+.recommenders/
+.metadata/
+.project
+.settings/
+*.iml
+*.jar
+
+# Kernel Dev Files
+modules.order
+Module.symvers
+*.cmd
+*.mod*
+*.ko
 
 # Windows image file caches
 Thumbs.db
@@ -35,13 +44,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# =========================
-# Operating System Files
-# =========================
-
 # OSX
-# =========================
-
 .DS_Store
 .AppleDouble
 .LSOverride
@@ -59,9 +62,3 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
-*/lists
-*/recursion
-*/LinkedLists
-*/Stacks
-*/Permutations
-*/trees
