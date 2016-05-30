@@ -11,14 +11,15 @@ import java.util.stream.Stream;
  * Course: CNT 4714 Summer 2016
  * Assignment title: Project 1 – Multi-threaded programming in Java
  * Date: May 31, 2016
- * Class: StationController
+ * Class: StationBuilder
  */
-public class StationFactory {
+public class StationBuilder {
 
     private final static String CONFG_FILE = "config.txt";
 
     /**
-     * Builds the stations from the given config file
+     * Builds the stations with their assigned pipes
+     * from the given config file
      * @return
      * @throws IOException
      */
@@ -27,12 +28,11 @@ public class StationFactory {
         try (Stream<String> stream = Files.lines(Paths.get(CONFG_FILE))) {
             List<Integer> input = stream.map(Integer::parseInt).collect(Collectors.toList());
 
-            int numStations = input.get(0);
+            int numStations = input.remove(0);
 
             List<Station> stations = new ArrayList<>();
-            for (int i = 1; i <= numStations; i++) {
-                // TODO: figure out what pipe each station connects to
-                stations.add(new Station(input.get(i), i-1, 0, 0));
+            for (int i = 0; i < numStations; i++) {
+                stations.add(new Station(input.get(i), i));
             }
 
             return stations;
