@@ -4,8 +4,9 @@
  * Assignment title: Project 1 – Multi-threaded programming in Java
  * Date: May 31, 2016
  * Class: Station
+ * Description: Abstraction of a station and its properties
  */
-public class Station implements Runnable {
+public class Station {
 
     // The number of times that a station needs to have
     // exclusive access to the input and output pipes
@@ -14,42 +15,14 @@ public class Station implements Runnable {
     // The station's specified number
     private int stationNumber;
 
-    // The pipe number that inflows into the station
-    private int inPipe;
+    // The pipe that inflows into the station
+    private Pipe inPipe;
 
     // The pipe number the flows out from the station
-    private int outPipe;
+    private Pipe outPipe;
 
-    /**
-     * Each station must have a specified workload, station number, and which
-     * pipes it connects to.
-     * @param workload
-     * @param stationNumber
-     * @param inPipe
-     * @param outPipe
-     */
-    public Station(int workload, int stationNumber, int inPipe, int outPipe) {
-        this.workload = workload;
+    public Station(int stationNumber) {
         this.stationNumber = stationNumber;
-        this.inPipe = inPipe;
-        this.outPipe = outPipe;
-    }
-
-    public void output() {
-
-    }
-
-    public void input() {
-
-    }
-
-    public void doWork() {
-
-    }
-
-    @Override
-    public void run() {
-
     }
 
     public int getWorkload() {
@@ -58,5 +31,25 @@ public class Station implements Runnable {
 
     public void setWorkload(int workload) {
         this.workload = workload;
+    }
+
+    public Pipe getInPipe() {
+        return inPipe;
+    }
+
+    public void setInPipe(Pipe inPipe) {
+        this.inPipe = inPipe;
+    }
+
+    public Pipe getOutPipe() {
+        return outPipe;
+    }
+
+    public void setOutPipe(Pipe outPipe) {
+        this.outPipe = outPipe;
+    }
+
+    public int getStationNumber() {
+        return stationNumber;
     }
 }
